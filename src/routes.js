@@ -17,8 +17,20 @@
 
 */
 
-import { EditBanner } from "views";
-import { Dashboard, Icons, ListKategori, TambahKategori, ListBanner, EditKategori, TambahBanner} from "views";
+import {
+  Dashboard,
+  Icons,
+  ListKategori,
+  TambahKategori,
+  ListBanner,
+  EditKategori,
+  TambahBanner,
+  ListUser,
+  EditProduk,
+  TambahProduk,
+  ListProduk,
+  EditBanner,
+} from "views";
 
 var routes = [
   {
@@ -70,6 +82,36 @@ var routes = [
     path: "/banner/edit/:id",
     name: "Edit Banner",
     component: EditBanner,
+    layout: "/admin",
+    sidebar: false,
+  },
+  {
+    path: "/produk",
+    name: "Data Produk",
+    icon: "nc-icon nc-bag-16",
+    component: ListProduk,
+    layout: "/admin",
+    sidebar: true,
+  },
+  {
+    path: "/user",
+    name: "Data User",
+    icon: "nc-icon nc-circle-10",
+    component: ListUser,
+    layout: "/admin",
+    sidebar: true,
+  },
+  {
+    path: "/produk/tambah",
+    name: "Tambah Produk",
+    component: TambahProduk,
+    layout: "/admin",
+    sidebar: false,
+  },
+  {
+    path: "/produk/edit/:id",
+    name: "Edit Produk",
+    component: EditProduk,
     layout: "/admin",
     sidebar: false,
   },
