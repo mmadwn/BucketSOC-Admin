@@ -135,18 +135,21 @@ class TambahKategori extends Component {
                     <Col md={6}>
                       <FormGroup>
                         <label>Logo Kategori</label>
+                        <text style={{ color: "red" }}> *</text>
                         <Input
                           type="file"
                           onChange={(event) => this.handleImage(event)}
                         />
                         <Label style={{ color: "red" }}>
-                          Gambar harus dalam format .svg. Ukuran file maksimal adalah 100KB.
+                          Gambar harus dalam format .svg (ukuran ideal: 57 x 57
+                          pixel). Ukuran file maksimal adalah 100KB.
                         </Label>
                       </FormGroup>
                     </Col>
                     <Col md={6}>
                       <FormGroup>
                         <label>Nama Kategori</label>
+                        <text style={{ color: "red" }}> *</text>
                         <Input
                           type="text"
                           value={namaKategori}

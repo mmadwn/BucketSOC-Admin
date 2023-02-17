@@ -162,6 +162,7 @@ class EditBanner extends Component {
                     <img src={image} width="200" alt="Banner" />
                     <FormGroup>
                       <label>Gambar Banner</label>
+                      <text style={{ color: "red" }}> *</text>
                       <Input
                         type="file"
                         onChange={(event) => this.handleImage(event)}
@@ -174,6 +175,7 @@ class EditBanner extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Judul Banner</label>
+                      <text style={{ color: "red" }}> *</text>
                       <Input
                         type="text"
                         value={judulBanner}
@@ -183,6 +185,7 @@ class EditBanner extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Status</label>
+                      <text style={{ color: "red" }}> *</text>
                       <Input
                         type="select"
                         name="active"
@@ -195,6 +198,7 @@ class EditBanner extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Deskripsi Banner</label>
+                      <text style={{ color: "red" }}> *</text>
                       <Input
                         type="textarea"
                         style={{

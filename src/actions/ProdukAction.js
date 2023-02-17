@@ -94,93 +94,237 @@ export const tambahProduk = (data) => {
     //Upload data ke Firebase Storage
     const storage = getStorage();
     const listRef = ref_storage(storage, "Produk/");
-    let imageName = data.imageToDB.name.replace(/ /g, "_");
-    //Cek apakah nama file sudah digunakan sebelumnya di Firebase Storage
-    listAll(listRef)
-      .then((res) => {
-        let gambarList = [];
-        res.items.forEach((itemRef) => {
-          gambarList.push(itemRef._location.path_.replace("Produk/", ""));
-        });
-        if (gambarList.includes(imageName) === true) {
+    let imageName1 = data.imageToDB1.name.replace(/ /g, "_");
+
+    //Jika gambar 2 diupolod
+    if (data.imageToDB2) {
+      let imageName2 = data.imageToDB2.name.replace(/ /g, "_");
+      listAll(listRef)
+        .then((res) => {
+          let gambarList = [];
+          res.items.forEach((itemRef) => {
+            gambarList.push(itemRef._location.path_.replace("Produk/", ""));
+          });
+          if (
+            gambarList.includes(imageName1) === true &&
+            gambarList.includes(imageName2) === true
+          ) {
+            //ERROR
+            dispatchError(dispatch, TAMBAH_PRODUK, "File sudah ada");
+            Swal.fire({
+              title: "Error",
+              text: "Nama file gambar 1 atau gambar 2 sudah digunakan. Silakan ubah nama file terlebih dahulu.",
+              icon: "error",
+              confirmButtonColor: "#f69d93",
+              confirmButtonText: "OK",
+            });
+          } else {
+            //Upload gambar 1 ke firebase storage
+            const storageRef1 = ref_storage(storage, "Produk/" + imageName1);
+            const uploadTask1 = uploadBytesResumable(
+              storageRef1,
+              data.imageToDB1
+            );
+            uploadTask1.on(
+              "state_changed",
+              (snapshot) => {
+                //Berhasil upload gambar ke Firebase Storage
+              },
+              (error) => {
+                dispatchError(dispatch, TAMBAH_PRODUK, error.message);
+                Swal.fire({
+                  title: "Error",
+                  text: error.message,
+                  icon: "error",
+                  confirmButtonColor: "#f69d93",
+                  confirmButtonText: "OK",
+                });
+              },
+              () => {
+                // Handle successful uploads on complete upload gambar 1
+                getDownloadURL(uploadTask1.snapshot.ref).then(
+                  (downloadURL1) => {
+                    //Upload gambar 2 ke firebase storage
+                    const storageRef2 = ref_storage(
+                      storage,
+                      "Produk/" + imageName2
+                    );
+                    const uploadTask2 = uploadBytesResumable(
+                      storageRef2,
+                      data.imageToDB2
+                    );
+                    uploadTask2.on(
+                      "state_changed",
+                      (snapshot) => {
+                        //Berhasil upload gambar ke Firebase Storage
+                      },
+                      (error) => {
+                        dispatchError(dispatch, TAMBAH_PRODUK, error.message);
+                        Swal.fire({
+                          title: "Error",
+                          text: error.message,
+                          icon: "error",
+                          confirmButtonColor: "#f69d93",
+                          confirmButtonText: "OK",
+                        });
+                      },
+                      () => {
+                        // Handle successful uploads on complete upload gambar 2
+                        getDownloadURL(uploadTask2.snapshot.ref).then(
+                          (downloadURL2) => {
+                            //Tambahkan data ke Realtime Database
+                            const newdata = {
+                              gambar: [downloadURL1, downloadURL2],
+                              nama: data.namaProduk,
+                              deskripsi: data.deskripsiProduk,
+                              harga: data.harga,
+                              kategori: data.kategori,
+                              ready: data.ready,
+                            };
+                            //Simpan data kategori ke Firebase database
+                            set(push(ref_database(db, "/produk/")), newdata)
+                              .then((response) => {
+                                //SUKSES
+                                dispatchSuccess(
+                                  dispatch,
+                                  TAMBAH_PRODUK,
+                                  response ? response : []
+                                );
+                              })
+                              .catch((error) => {
+                                //ERROR
+                                dispatchError(
+                                  dispatch,
+                                  TAMBAH_PRODUK,
+                                  error.message
+                                );
+                                Swal.fire({
+                                  title: "Error",
+                                  text: error.message,
+                                  icon: "error",
+                                  confirmButtonColor: "#f69d93",
+                                  confirmButtonText: "OK",
+                                });
+                              });
+                          }
+                        );
+                      }
+                    );
+                  }
+                );
+              }
+            );
+          }
+        })
+        .catch((error) => {
           //ERROR
-          dispatchError(dispatch, TAMBAH_PRODUK, "File sudah ada");
+          dispatchError(dispatch, TAMBAH_PRODUK, error.message);
           Swal.fire({
             title: "Error",
-            text:
-              "File " +
-              data.imageToDB.name +
-              " sudah ada. Silakan ubah nama file terlebih dahulu.",
+            text: error.message,
             icon: "error",
             confirmButtonColor: "#f69d93",
             confirmButtonText: "OK",
           });
-        } else {
-          //Upload data ke firebase storage
-          const storageRef = ref_storage(storage, "Produk/" + imageName);
-          const uploadTask = uploadBytesResumable(storageRef, data.imageToDB);
-          uploadTask.on(
-            "state_changed",
-            (snapshot) => {
-              //Berhasil upload gambar ke Firebase Storage
-            },
-            (error) => {
-              dispatchError(dispatch, TAMBAH_PRODUK, error.message);
-              Swal.fire({
-                title: "Error",
-                text: error.message,
-                icon: "error",
-                confirmButtonColor: "#f69d93",
-                confirmButtonText: "OK",
-              });
-            },
-            () => {
-              // Handle successful uploads on complete
-              getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                const newdata = {
-                  gambar: downloadURL,
-                  nama: data.namaProduk,
-                };
-                //Simpan data kategori ke Firebase database
-                set(push(ref_database(db, "/produk/")), newdata)
-                  .then((response) => {
-                    //SUKSES
-                    dispatchSuccess(
-                      dispatch,
-                      TAMBAH_PRODUK,
-                      response ? response : []
-                    );
-                  })
-
-                  .catch((error) => {
-                    //ERROR
-                    dispatchError(dispatch, TAMBAH_PRODUK, error.message);
-                    Swal.fire({
-                      title: "Error",
-                      text: error.message,
-                      icon: "error",
-                      confirmButtonColor: "#f69d93",
-                      confirmButtonText: "OK",
-                    });
-                  });
-              });
-            }
-          );
-        }
-      })
-      .catch((error) => {
-        //ERROR
-        dispatchError(dispatch, TAMBAH_PRODUK, error.message);
-        Swal.fire({
-          title: "Error",
-          text: error.message,
-          icon: "error",
-          confirmButtonColor: "#f69d93",
-          confirmButtonText: "OK",
         });
-      });
+
+      //Jika gambar 2 tidak ada
+    } else {
+      //Cek apakah nama file sudah digunakan sebelumnya di Firebase Storage
+      listAll(listRef)
+        .then((res) => {
+          let gambarList = [];
+          res.items.forEach((itemRef) => {
+            gambarList.push(itemRef._location.path_.replace("Produk/", ""));
+          });
+          if (gambarList.includes(imageName1) === true) {
+            //ERROR
+            dispatchError(dispatch, TAMBAH_PRODUK, "File sudah ada");
+            Swal.fire({
+              title: "Error",
+              text:
+                "File " +
+                data.imageToDB1.name +
+                " sudah ada. Silakan ubah nama file terlebih dahulu.",
+              icon: "error",
+              confirmButtonColor: "#f69d93",
+              confirmButtonText: "OK",
+            });
+          } else {
+            //Upload data ke firebase storage
+            const storageRef = ref_storage(storage, "Produk/" + imageName1);
+            const uploadTask = uploadBytesResumable(
+              storageRef,
+              data.imageToDB1
+            );
+            uploadTask.on(
+              "state_changed",
+              (snapshot) => {
+                //Berhasil upload gambar ke Firebase Storage
+              },
+              (error) => {
+                dispatchError(dispatch, TAMBAH_PRODUK, error.message);
+                Swal.fire({
+                  title: "Error",
+                  text: error.message,
+                  icon: "error",
+                  confirmButtonColor: "#f69d93",
+                  confirmButtonText: "OK",
+                });
+              },
+              () => {
+                // Handle successful uploads on complete
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                  const newdata = {
+                    gambar: [downloadURL],
+                    nama: data.namaProduk,
+                    deskripsi: data.deskripsiProduk,
+                    harga: data.harga,
+                    kategori: data.kategori,
+                    ready: data.ready,
+                  };
+                  //Simpan data kategori ke Firebase database
+                  set(push(ref_database(db, "/produk/")), newdata)
+                    .then((response) => {
+                      //SUKSES
+                      dispatchSuccess(
+                        dispatch,
+                        TAMBAH_PRODUK,
+                        response ? response : []
+                      );
+                    })
+
+                    .catch((error) => {
+                      //ERROR
+                      dispatchError(dispatch, TAMBAH_PRODUK, error.message);
+                      Swal.fire({
+                        title: "Error",
+                        text: error.message,
+                        icon: "error",
+                        confirmButtonColor: "#f69d93",
+                        confirmButtonText: "OK",
+                      });
+                    });
+                });
+              }
+            );
+          }
+        })
+        .catch((error) => {
+          //ERROR
+          dispatchError(dispatch, TAMBAH_PRODUK, error.message);
+          Swal.fire({
+            title: "Error",
+            text: error.message,
+            icon: "error",
+            confirmButtonColor: "#f69d93",
+            confirmButtonText: "OK",
+          });
+        });
+    }
   };
 };
+
 export const updateProduk = (data) => {
   return (dispatch) => {
     dispatchLoading(dispatch, UPDATE_PRODUK);
@@ -228,10 +372,7 @@ export const updateProduk = (data) => {
                 //  Upload gambar yang baru
                 const storage = getStorage();
                 let imageName = data.imageToDB.name.replace(/ /g, "_");
-                const storageRef = ref_storage(
-                  storage,
-                  "Produk/" + imageName
-                );
+                const storageRef = ref_storage(storage, "Produk/" + imageName);
                 const uploadTask = uploadBytesResumable(
                   storageRef,
                   data.imageToDB
@@ -261,10 +402,7 @@ export const updateProduk = (data) => {
                           nama: data.namaProduk,
                         };
                         //Simpan data kategori ke Firebase database
-                        update(
-                          ref_database(db, "/produk/" + data.id),
-                          newdata
-                        )
+                        update(ref_database(db, "/produk/" + data.id), newdata)
                           .then((response) => {
                             //SUKSES
                             dispatchSuccess(

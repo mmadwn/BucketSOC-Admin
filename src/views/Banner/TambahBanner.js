@@ -140,17 +140,20 @@ class TambahBanner extends Component {
                     <img src={image} width="200" alt="Banner" />
                     <FormGroup>
                       <label>Gambar Banner</label>
+                      <text style={{ color: "red" }}> *</text>
                       <Input
                         type="file"
                         onChange={(event) => this.handleImage(event)}
                       />
                       <Label style={{ color: "red" }}>
-                        Gambar harus dalam format .png, .jpeg, atau .jpg (ukuran ideal:
-                        1958 x 725 pixel). Ukuran file maksimal adalah 2MB.
+                        Gambar harus dalam format .png, .jpeg, atau .jpg (ukuran
+                        ideal: 1958 x 725 pixel). Ukuran file maksimal adalah
+                        2MB.
                       </Label>
                     </FormGroup>
                     <FormGroup>
                       <label>Judul Banner</label>
+                      <text style={{ color: "red" }}> *</text>
                       <Input
                         type="text"
                         value={judulBanner}
@@ -160,6 +163,7 @@ class TambahBanner extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Status</label>
+                      <text style={{ color: "red" }}> *</text>
                       <Input
                         type="select"
                         name="active"
@@ -172,6 +176,7 @@ class TambahBanner extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Deskripsi Banner</label>
+                      <text style={{ color: "red" }}> *</text>
                       <Input
                         type="textarea"
                         style={{
