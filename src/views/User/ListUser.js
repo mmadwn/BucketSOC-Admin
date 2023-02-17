@@ -26,6 +26,7 @@ class ListUser extends Component {
       var table = $("#datatable").DataTable({
         bDestroy: true,
         pagingType: "full_numbers",
+        scrollX: true,
       });
       $('.dataTables_filter input[type="search"]').css({
         width: "350px",
@@ -57,7 +58,7 @@ class ListUser extends Component {
               </CardHeader>
               <CardBody>
                 {getListUserResult ? (
-                  <table id="datatable" className="display">
+                  <table id="datatable" className="display" width="100%">
                     <thead className="text-primary">
                       <tr>
                         <th>Nama</th>
@@ -74,7 +75,7 @@ class ListUser extends Component {
                             <label
                               style={{
                                 fontSize: "14px",
-                                width: "200px",
+                                width: "250px",
                               }}
                             >
                               {getListUserResult[key].nama}
@@ -84,7 +85,7 @@ class ListUser extends Component {
                             <label
                               style={{
                                 fontSize: "14px",
-                                width: "200px",
+                                width: "250px",
                               }}
                             >
                               {getListUserResult[key].email}
@@ -101,11 +102,11 @@ class ListUser extends Component {
                             </label>
                           </td>
                           <td>
-                            <label
+                            <div
                               style={{
                                 fontSize: "14px",
                                 textAlign: "justify",
-                                width: "200px",
+                                width: "230px",
                               }}
                             >
                               <a
@@ -116,17 +117,19 @@ class ListUser extends Component {
                                   getListUserResult[key].longitude
                                 }
                                 target="_blank"
+                                rel="noreferrer"
+                                style={{ color: "black" }}
                               >
                                 {getListUserResult[key].alamat}
                               </a>
-                            </label>
+                            </div>
                           </td>
                           <td>
                             <label
                               style={{
                                 fontSize: "14px",
                                 textAlign: "justify",
-                                width: "200px",
+                                width: "230px",
                               }}
                             >
                               {getListUserResult[key].detail_alamat}

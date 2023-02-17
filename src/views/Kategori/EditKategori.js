@@ -160,8 +160,7 @@ class EditKategori extends Component {
                           onChange={(event) => this.handleImage(event)}
                         />
                         <Label style={{ color: "red" }}>
-                          Gambar harus dalam format .svg (ukuran ideal: 57 x 57
-                          pixel). Ukuran file maksimal adalah 100KB.
+                          Gambar harus dalam format .svg. Ukuran file maksimal adalah 100KB.
                         </Label>
                       </FormGroup>
                     </Col>

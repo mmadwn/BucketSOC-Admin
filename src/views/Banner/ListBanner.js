@@ -99,6 +99,8 @@ class ListBanner extends Component {
       var table = $("#datatable").DataTable({
         bDestroy: true,
         pagingType: "full_numbers",
+        scrollX: true,
+        order: [[1, "asc"]],
       });
       $('.dataTables_filter input[type="search"]').css({
         width: "350px",
@@ -136,11 +138,11 @@ class ListBanner extends Component {
               </CardHeader>
               <CardBody>
                 {getListBannerResult ? (
-                  <table id="datatable" className="display">
+                  <table id="datatable" className="display" width="100%">
                     <thead className="text-primary">
                       <tr>
                         <th>Gambar</th>
-                        <th>Judul</th>
+                        <th>Judul Banner</th>
                         <th>Status</th>
                         <th>Aksi</th>
                       </tr>
@@ -149,11 +151,16 @@ class ListBanner extends Component {
                       {Object.keys(getListBannerResult).map((key) => (
                         <tr key={key}>
                           <td>
-                            <img
-                              src={getListBannerResult[key].gambar}
-                              width="300"
-                              alt={getListBannerResult[key].title}
-                            />
+                            <div
+                              style={{
+                                width: "300px",
+                              }}
+                            >
+                              <img
+                                src={getListBannerResult[key].gambar}
+                                alt={getListBannerResult[key].title}
+                              />
+                            </div>
                           </td>
                           <td>
                             <label
@@ -167,42 +174,58 @@ class ListBanner extends Component {
                             </label>
                           </td>
                           <td>
-                            {getListBannerResult[key].active === true
-                              ? "Aktif"
-                              : "Tidak Aktif"}
-                          </td>
-                          <td>
-                            <Button
-                              color="primary"
-                              className="ml-2"
-                              onClick={() => {
-                                this.toggle();
-                                this.deskripsi(
-                                  getListBannerResult[key].deskripsi
-                                );
+                            <label
+                              style={{
+                                textAlign: "justify",
+                                fontSize: "14px",
+                                width: "80px",
                               }}
                             >
-                              <i className="nc-icon nc-alert-circle-i" />{" "}
-                              Deskripsi
-                            </Button>
-                            <Link
-                              className="btn btn-warning ml-2"
-                              to={"/admin/banner/edit/" + key}
+                              {getListBannerResult[key].active === true
+                                ? "Aktif"
+                                : "Tidak Aktif"}
+                            </label>
+                          </td>
+                          <td>
+                            <div
+                              style={{
+                                textAlign: "justify",
+                                fontSize: "14px",
+                                width: "340px",
+                              }}
                             >
-                              <i className="nc-icon nc-ruler-pencil" /> Edit
-                            </Link>
-                            <Button
-                              color="danger"
-                              className="ml-2"
-                              onClick={() =>
-                                this.removeData(
-                                  getListBannerResult[key].gambar,
-                                  key
-                                )
-                              }
-                            >
-                              <i className="nc-icon nc-basket" /> Hapus
-                            </Button>
+                              <Button
+                                color="primary"
+                                className="ml-2"
+                                onClick={() => {
+                                  this.toggle();
+                                  this.deskripsi(
+                                    getListBannerResult[key].deskripsi
+                                  );
+                                }}
+                              >
+                                <i className="nc-icon nc-alert-circle-i" />{" "}
+                                Deskripsi
+                              </Button>
+                              <Link
+                                className="btn btn-warning ml-2"
+                                to={"/admin/banner/edit/" + key}
+                              >
+                                <i className="nc-icon nc-ruler-pencil" /> Edit
+                              </Link>
+                              <Button
+                                color="danger"
+                                className="ml-2"
+                                onClick={() =>
+                                  this.removeData(
+                                    getListBannerResult[key].gambar,
+                                    key
+                                  )
+                                }
+                              >
+                                <i className="nc-icon nc-basket" /> Hapus
+                              </Button>
+                            </div>
                           </td>
                         </tr>
                       ))}

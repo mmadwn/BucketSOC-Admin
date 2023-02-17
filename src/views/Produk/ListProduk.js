@@ -1,4 +1,3 @@
-import { getListBanner, deleteBanner } from "actions/BannerAction";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -9,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
   Col,
+  Label,
   Modal,
   ModalBody,
   ModalHeader,
@@ -19,7 +19,6 @@ import Swal from "sweetalert2";
 import $ from "jquery";
 import { getListProduk } from "actions/ProdukAction";
 import { deleteProduk } from "actions/ProdukAction";
-
 
 class ListProduk extends Component {
   constructor(props) {
@@ -99,10 +98,15 @@ class ListProduk extends Component {
       this.props;
     //initialize datatable
     $(document).ready(function () {
-      var table = $("#tabelproduk").DataTable({
+      var table = $("#datatable").DataTable({
         bDestroy: true,
         pagingType: "full_numbers",
-        scrollX: true
+        scrollX: true,
+        order: [[1, "asc"]],
+        language: {
+          thousands:".",
+          decimal:",",
+        }
       });
       $('.dataTables_filter input[type="search"]').css({
         width: "350px",
@@ -140,11 +144,7 @@ class ListProduk extends Component {
               </CardHeader>
               <CardBody>
                 {getListProdukResult ? (
-                  <table
-                    id="tabelproduk"
-                    class="display nowrap"
-                    style="width:100%"
-                  >
+                  <table id="datatable" className="display" width="100%">
                     <thead className="text-primary">
                       <tr>
                         <th>Gambar</th>
@@ -159,18 +159,23 @@ class ListProduk extends Component {
                       {Object.keys(getListProdukResult).map((key) => (
                         <tr key={key}>
                           <td>
-                            <img
-                              src={getListProdukResult[key].gambar[0]}
-                              width="100"
-                              alt={getListProdukResult[key].nama}
-                            />
+                            <div
+                              style={{
+                                width: "80px",
+                              }}
+                            >
+                              <img
+                                src={getListProdukResult[key].gambar[0]}
+                                alt={getListProdukResult[key].nama}
+                              />
+                            </div>
                           </td>
                           <td>
                             <label
                               style={{
                                 textAlign: "justify",
                                 fontSize: "14px",
-                                width: "300px",
+                                width: "280px",
                               }}
                             >
                               {getListProdukResult[key].nama}
@@ -188,77 +193,85 @@ class ListProduk extends Component {
                             </label>
                           </td>
                           <td>
+                            <Label
+                              style={{
+                                textAlign: "justify",
+                                fontSize: "14px",
+                                width: "90px",
+                              }}
+                            >
+                              {getListProdukResult[key].harga.toLocaleString(
+                                "id-ID"
+                              )}
+                            </Label>
+                          </td>
+                          <td>
                             <label
                               style={{
                                 textAlign: "justify",
                                 fontSize: "14px",
-                                width: "100px",
+                                width: "80px",
                               }}
                             >
-                              Rp{getListProdukResult[key].harga}
+                              {getListProdukResult[key].ready === true
+                                ? "Aktif"
+                                : "Tidak Aktif"}
                             </label>
                           </td>
-                          <td
-                            style={{
-                              width: "100px",
-                            }}
-                          >
-                            {getListProdukResult[key].ready === true
-                              ? "Aktif"
-                              : "Tidak Aktif"}
-                          </td>
-                          <td
-                            style={{
-                              width: "700px",
-                            }}
-                          >
-                            <Button
-                              color="primary"
-                              className="ml-2"
-                              onClick={() => {
-                                this.toggle();
-                                this.deskripsi(
-                                  getListProdukResult[key].deskripsi
-                                );
+                          <td>
+                            <div
+                              style={{
+                                textAlign: "justify",
+                                fontSize: "14px",
+                                width: "340px",
                               }}
                             >
-                              <i className="nc-icon nc-alert-circle-i" />{" "}
-                              Deskripsi
-                            </Button>
-                            <Link
-                              className="btn btn-warning ml-2"
-                              to={"/admin/banner/edit/" + key}
-                            >
-                              <i className="nc-icon nc-ruler-pencil" /> Edit
-                            </Link>
-                            <Button
-                              color="danger"
-                              className="ml-2"
-                              onClick={() =>
-                                this.removeData(
-                                  getListProdukResult[key].gambar,
-                                  key
-                                )
-                              }
-                            >
-                              <i className="nc-icon nc-basket" /> Hapus
-                            </Button>
+                              <Button
+                                color="primary"
+                                className="ml-2"
+                                onClick={() => {
+                                  this.toggle();
+                                  this.deskripsi(
+                                    getListProdukResult[key].deskripsi
+                                  );
+                                }}
+                              >
+                                <i className="nc-icon nc-alert-circle-i" />{" "}
+                                Deskripsi
+                              </Button>
+                              <Link
+                                className="btn btn-warning ml-2"
+                                to={"/admin/banner/edit/" + key}
+                              >
+                                <i className="nc-icon nc-ruler-pencil" /> Edit
+                              </Link>
+                              <Button
+                                color="danger"
+                                className="ml-2"
+                                onClick={() =>
+                                  this.removeData(
+                                    getListProdukResult[key].gambar,
+                                    key
+                                  )
+                                }
+                              >
+                                <i className="nc-icon nc-basket" /> Hapus
+                              </Button>
+                            </div>
                           </td>
                         </tr>
                       ))}
                     </tbody>
-                    {/* <tfoot className="text-primary">
+                    <tfoot className="text-primary">
                       <tr>
-                        <tr>
-                          <th>Gambar</th>
-                          <th>Nama Produk</th>
-                          <th>Kategori</th>
-                          <th>Harga</th>
-                          <th>Status</th>
-                          <th>Aksi</th>
-                        </tr>
+                        <th>Gambar</th>
+                        <th>Nama Produk</th>
+                        <th>Kategori</th>
+                        <th>Harga</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
                       </tr>
-                    </tfoot> */}
+                    </tfoot>
                   </table>
                 ) : getListProdukLoading ? (
                   <div

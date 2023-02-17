@@ -11,7 +11,6 @@ import {
   Col,
   Row,
   Spinner,
-  Table,
 } from "reactstrap";
 import Swal from "sweetalert2";
 import $ from "jquery"
@@ -60,8 +59,9 @@ class ListKategori extends Component {
         icon: "success",
         confirmButtonColor: "#f69d93",
         confirmButtonText: "OK",
+      }).then(() => {
+        window.location.reload();
       });
-      window.location.reload();
     }
   }
 
@@ -76,6 +76,8 @@ class ListKategori extends Component {
       var table = $("#datatable").DataTable({
         bDestroy: true,
         pagingType: "full_numbers",
+        scrollX: true,
+        order: [[1, "asc"]],
       });
       $('.dataTables_filter input[type="search"]').css({
         width: "350px",
@@ -113,7 +115,7 @@ class ListKategori extends Component {
               </CardHeader>
               <CardBody>
                 {getListKategoriResult ? (
-                  <table id="datatable" className="display">
+                  <table id="datatable" className="display" width="100%">
                     <thead className="text-primary">
                       <tr>
                         <th>Gambar</th>
@@ -124,43 +126,56 @@ class ListKategori extends Component {
                     <tbody>
                       {Object.keys(getListKategoriResult).map((key) => (
                         <tr key={key}>
-                          <td width="50" align="center">
-                            <img
-                              src={getListKategoriResult[key].gambar}
-                              width="50"
-                              alt={getListKategoriResult[key].nama}
-                            />
+                          <td align="center">
+                            <div
+                              style={{
+                                width: "57px",
+                              }}
+                            >
+                              <img
+                                src={getListKategoriResult[key].gambar}
+                                alt={getListKategoriResult[key].nama}
+                              />
+                            </div>
                           </td>
                           <td>
                             <label
                               style={{
                                 textAlign: "justify",
                                 fontSize: "14px",
-                                width: "200px",
+                                width: "700px",
                               }}
                             >
                               {getListKategoriResult[key].nama}
                             </label>
                           </td>
                           <td>
-                            <Link
-                              className="btn btn-warning ml-2"
-                              to={"/admin/kategori/edit/" + key}
+                            <div
+                              style={{
+                                textAlign: "justify",
+                                fontSize: "14px",
+                                width: "340px",
+                              }}
                             >
-                              <i className="nc-icon nc-ruler-pencil" /> Edit
-                            </Link>
-                            <Button
-                              color="danger"
-                              className="ml-2"
-                              onClick={() =>
-                                this.removeData(
-                                  getListKategoriResult[key].gambar,
-                                  key
-                                )
-                              }
-                            >
-                              <i className="nc-icon nc-basket" /> Hapus
-                            </Button>
+                              <Link
+                                className="btn btn-warning ml-2"
+                                to={"/admin/kategori/edit/" + key}
+                              >
+                                <i className="nc-icon nc-ruler-pencil" /> Edit
+                              </Link>
+                              <Button
+                                color="danger"
+                                className="ml-2"
+                                onClick={() =>
+                                  this.removeData(
+                                    getListKategoriResult[key].gambar,
+                                    key
+                                  )
+                                }
+                              >
+                                <i className="nc-icon nc-basket" /> Hapus
+                              </Button>
+                            </div>
                           </td>
                         </tr>
                       ))}
