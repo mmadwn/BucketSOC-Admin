@@ -484,26 +484,61 @@ export const deleteProduk = (image, id) => {
   return (dispatch) => {
     dispatchLoading(dispatch, DELETE_PRODUK);
 
-    const baseUrl =
-      "https://firebasestorage.googleapis.com/v0/b/bucketsoc.appspot.com/o/";
-    let imagePath = image.replace(baseUrl, "");
-    const indexOfEndPath = imagePath.indexOf("?");
-    imagePath = imagePath.substring(0, indexOfEndPath);
-    imagePath = imagePath.replace("%2F", "/");
-    const storage = getStorage();
-    const imageRef = ref_storage(storage, image);
+    //Jika gambar 2 ada
+    if (image[1]) {
+        const baseUrl =
+          "https://firebasestorage.googleapis.com/v0/b/bucketsoc.appspot.com/o/";
+        let imagePath1 = image[0].replace(baseUrl, "");
+        const indexOfEndPath1 = imagePath1.indexOf("?");
+        imagePath1 = imagePath1.substring(0, indexOfEndPath1);
+        imagePath1 = imagePath1.replace("%2F", "/");
+        const storage = getStorage();
+        const imageRef1 = ref_storage(storage, image[0]);
 
-    // Delete the file
-    deleteObject(imageRef)
-      .then((response) => {
-        remove(ref_database(db, "/produk/" + id))
+        // Delete the file 1
+        deleteObject(imageRef1)
           .then((response) => {
-            //SUKSES
-            dispatchSuccess(
-              dispatch,
-              DELETE_PRODUK,
-              "Kategori Berhasil Dihapus"
-            );
+            let imagePath2 = image[1].replace(baseUrl, "");
+            const indexOfEndPath2 = imagePath2.indexOf("?");
+            imagePath2 = imagePath2.substring(0, indexOfEndPath2);
+            imagePath2 = imagePath2.replace("%2F", "/");
+            const storage = getStorage();
+            const imageRef2 = ref_storage(storage, image[1]);
+            // Delete the file 2
+            deleteObject(imageRef2)
+              .then((response) => {
+                remove(ref_database(db, "/produk/" + id))
+                  .then((response) => {
+                    //SUKSES
+                    dispatchSuccess(
+                      dispatch,
+                      DELETE_PRODUK,
+                      "Produk Berhasil Dihapus"
+                    );
+                  })
+                  .catch((error) => {
+                    //ERROR
+                    dispatchError(dispatch, DELETE_PRODUK, error.message);
+                    Swal.fire({
+                      title: "Error",
+                      text: error.message,
+                      icon: "error",
+                      confirmButtonColor: "#f69d93",
+                      confirmButtonText: "OK",
+                    });
+                  });
+              })
+              .catch((error) => {
+                //ERROR
+                dispatchError(dispatch, DELETE_PRODUK, error.message);
+                Swal.fire({
+                  title: "Error",
+                  text: error.message,
+                  icon: "error",
+                  confirmButtonColor: "#f69d93",
+                  confirmButtonText: "OK",
+                });
+              });
           })
           .catch((error) => {
             //ERROR
@@ -516,17 +551,54 @@ export const deleteProduk = (image, id) => {
               confirmButtonText: "OK",
             });
           });
-      })
-      .catch((error) => {
-        //ERROR
-        dispatchError(dispatch, DELETE_PRODUK, error.message);
-        Swal.fire({
-          title: "Error",
-          text: error.message,
-          icon: "error",
-          confirmButtonColor: "#f69d93",
-          confirmButtonText: "OK",
+
+
+      //Jika tidak ada gambar 2 ==> hapus gambar 1 saja
+    } else {
+      const baseUrl =
+        "https://firebasestorage.googleapis.com/v0/b/bucketsoc.appspot.com/o/";
+      let imagePath = image[0].replace(baseUrl, "");
+      const indexOfEndPath = imagePath.indexOf("?");
+      imagePath = imagePath.substring(0, indexOfEndPath);
+      imagePath = imagePath.replace("%2F", "/");
+      const storage = getStorage();
+      const imageRef = ref_storage(storage, image[0]);
+
+      // Delete the file
+      deleteObject(imageRef)
+        .then((response) => {
+          remove(ref_database(db, "/produk/" + id))
+            .then((response) => {
+              //SUKSES
+              dispatchSuccess(
+                dispatch,
+                DELETE_PRODUK,
+                "Produk Berhasil Dihapus"
+              );
+            })
+            .catch((error) => {
+              //ERROR
+              dispatchError(dispatch, DELETE_PRODUK, error.message);
+              Swal.fire({
+                title: "Error",
+                text: error.message,
+                icon: "error",
+                confirmButtonColor: "#f69d93",
+                confirmButtonText: "OK",
+              });
+            });
+        })
+        .catch((error) => {
+          //ERROR
+          dispatchError(dispatch, DELETE_PRODUK, error.message);
+          Swal.fire({
+            title: "Error",
+            text: error.message,
+            icon: "error",
+            confirmButtonColor: "#f69d93",
+            confirmButtonText: "OK",
+          });
         });
-      });
+    }
   };
 };

@@ -51,7 +51,7 @@ export default function (state = initialState, action) {
         ...state,
         getDetailProdukLoading: action.payload.loading,
         getDetailProdukResult: action.payload.data,
-        getDetaiProdukiError: action.payload.errorMessage,
+        getDetailProdukError: action.payload.errorMessage,
       };
 
     case UPDATE_PRODUK:

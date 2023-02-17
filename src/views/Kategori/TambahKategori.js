@@ -159,7 +159,6 @@ class TambahKategori extends Component {
                       </FormGroup>
                     </Col>
                   </Row>
-
                   <Row>
                     <Col>
                       {tambahKategoriLoading ? (

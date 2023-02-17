@@ -241,7 +241,7 @@ class ListProduk extends Component {
                               </Button>
                               <Link
                                 className="btn btn-warning ml-2"
-                                to={"/admin/banner/edit/" + key}
+                                to={"/admin/produk/edit/" + key}
                               >
                                 <i className="nc-icon nc-ruler-pencil" /> Edit
                               </Link>

@@ -1,4 +1,3 @@
-import { tambahBanner } from "actions/BannerAction";
 import { getListKategori } from "actions/KategoriAction";
 import { tambahProduk } from "actions/ProdukAction";
 import React, { Component } from "react";
@@ -97,6 +96,13 @@ class TambahProduk extends Component {
       }
     }
   };
+
+  hapusImage2 = () => {
+    this.setState({
+      image2: DefaultImage,
+      imageToDB2: false,
+    });
+  }
 
   //Dijalankan ketika tombol submit di klik
   handleSubmit = (event) => {
@@ -201,6 +207,7 @@ class TambahProduk extends Component {
       deskripsiProduk,
       harga,
       ready,
+      kategori,
     } = this.state;
     const { tambahProdukLoading, getListKategoriResult } = this.props;
     return (
@@ -270,6 +277,7 @@ class TambahProduk extends Component {
                       <Input
                         type="select"
                         name="kategori"
+                        value={kategori}
                         onChange={(event) => this.handleChange(event)}
                       >
                         <option value="">-- Pilih Kategori --</option>
