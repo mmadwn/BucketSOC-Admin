@@ -71,11 +71,19 @@ class EditBanner extends Component {
     }
   };
 
+  deleteImage = (event) => {
+    event.preventDefault();
+    this.setState({
+      image: DefaultImage,
+      imageToDB: false,
+    });
+  };
+
   //Dijalankan ketika tombol submit di klik
   handleSubmit = (event) => {
-    const { judulBanner, deskripsiBanner, imageToDB } = this.state;
+    const { judulBanner, deskripsiBanner, image, imageToDB } = this.state;
     event.preventDefault();
-    if (judulBanner && deskripsiBanner) {
+    if (judulBanner && deskripsiBanner && image !== DefaultImage) {
       if (imageToDB) {
         if (
           imageToDB.name.slice(-4) === ".png" ||
@@ -163,11 +171,18 @@ class EditBanner extends Component {
                     <FormGroup>
                       <label>Gambar Banner</label>
                       <text style={{ color: "red" }}> *</text>
+                      {image !== DefaultImage ? (
+                        <FormGroup>
+                          <a href="/" onClick={this.deleteImage}>
+                            Hapus
+                          </a>
+                        </FormGroup>
+                      ) : null}
                       <Input
                         type="file"
                         onChange={(event) => this.handleImage(event)}
                       />
-                      <Label style={{ color: "red" }}>
+                      <Label style={{ color: "red", textAlign: "justify" }}>
                         Gambar harus dalam format .png, .jpeg, atau .jpg (ukuran
                         ideal: 1958 x 725 pixel). Ukuran file maksimal adalah
                         2MB.
@@ -214,12 +229,6 @@ class EditBanner extends Component {
                   </Col>
                 </Row>
                 <form onSubmit={(event) => this.handleSubmit(event)}>
-                  <Row>
-                    <Col md={6}>
-                      <FormGroup></FormGroup>
-                    </Col>
-                    <Col md={3}></Col>
-                  </Row>
                   <Row>
                     <Col>
                       {updateBannerLoading ? (

@@ -96,7 +96,7 @@ export const tambahProduk = (data) => {
     const listRef = ref_storage(storage, "Produk/");
     let imageName1 = data.imageToDB1.name.replace(/ /g, "_");
 
-    //Jika gambar 2 diupolod
+    //Jika gambar 2 diupload
     if (data.imageToDB2) {
       let imageName2 = data.imageToDB2.name.replace(/ /g, "_");
       listAll(listRef)
@@ -177,7 +177,7 @@ export const tambahProduk = (data) => {
                               gambar: [downloadURL1, downloadURL2],
                               nama: data.namaProduk,
                               deskripsi: data.deskripsiProduk,
-                              harga: data.harga,
+                              harga: Number(data.harga),
                               kategori: data.kategori,
                               ready: data.ready,
                             };
@@ -279,7 +279,7 @@ export const tambahProduk = (data) => {
                     gambar: [downloadURL],
                     nama: data.namaProduk,
                     deskripsi: data.deskripsiProduk,
-                    harga: data.harga,
+                    harga: Number(data.harga),
                     kategori: data.kategori,
                     ready: data.ready,
                   };

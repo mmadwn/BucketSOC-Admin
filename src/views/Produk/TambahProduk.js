@@ -97,12 +97,21 @@ class TambahProduk extends Component {
     }
   };
 
-  hapusImage2 = () => {
+  deleteImage1 = (event) => {
+    event.preventDefault();
+    this.setState({
+      image1: DefaultImage,
+      imageToDB1: false,
+    });
+  };
+
+  deleteImage2 = (event) => {
+    event.preventDefault();
     this.setState({
       image2: DefaultImage,
       imageToDB2: false,
     });
-  }
+  };
 
   //Dijalankan ketika tombol submit di klik
   handleSubmit = (event) => {
@@ -126,29 +135,29 @@ class TambahProduk extends Component {
         //Cek apakah gambar 2 diupload
         if (imageToDB2.name) {
           //Cek apakah nama gambar 1 tidak sama dengan nama gambar 2
-          if(imageToDB1.name !== imageToDB2.name) {
+          if (imageToDB1.name !== imageToDB2.name) {
             //Cek apakah gambar 2 sudah sesuai format => masuk action
-             if (
-               imageToDB2.name.slice(-4) === ".png" ||
-               imageToDB2.name.slice(-4) === ".jpg" ||
-               imageToDB2.name.slice(-5) === ".jpeg"
-             ) {
-               this.props.dispatch(tambahProduk(this.state));
-               //Jika gambar 2 tidak sesuai format
-             } else {
-               Swal.fire({
-                 title: "Error",
-                 text: "Maaf, gambar 2 harus dalam format .png, jpeg, atau .jpg!",
-                 icon: "error",
-                 confirmButtonColor: "#f69d93",
-                 confirmButtonText: "OK",
-               });
-             }
-             //Jika nama gambar 1 dan 2 sama
+            if (
+              imageToDB2.name.slice(-4) === ".png" ||
+              imageToDB2.name.slice(-4) === ".jpg" ||
+              imageToDB2.name.slice(-5) === ".jpeg"
+            ) {
+              this.props.dispatch(tambahProduk(this.state));
+              //Jika gambar 2 tidak sesuai format
+            } else {
+              Swal.fire({
+                title: "Error",
+                text: "Maaf, gambar 2 harus dalam format .png, jpeg, atau .jpg!",
+                icon: "error",
+                confirmButtonColor: "#f69d93",
+                confirmButtonText: "OK",
+              });
+            }
+            //Jika nama gambar 1 dan 2 sama
           } else {
             Swal.fire({
               title: "Error",
-              text: "Maaf, nama gambar tidak boleh sama !",
+              text: "Maaf, nama gambar 1 dan 2 tidak boleh sama !",
               icon: "error",
               confirmButtonColor: "#f69d93",
               confirmButtonText: "OK",
@@ -172,7 +181,7 @@ class TambahProduk extends Component {
     } else {
       Swal.fire({
         title: "Error",
-        text: "Maaf, seluruh data (kecuali gambar 2) harus diisi!",
+        text: "Maaf, seluruh data bertanda bintang harus diisi!",
         icon: "error",
         confirmButtonColor: "#f69d93",
         confirmButtonText: "OK",
@@ -234,6 +243,16 @@ class TambahProduk extends Component {
                         <FormGroup>
                           <label>Gambar 1</label>
                           <text style={{ color: "red" }}> *</text>
+                          {image1 !== DefaultImage ? (
+                            <FormGroup>
+                              <a
+                                href="/"
+                                onClick={this.deleteImage1}
+                              >
+                                Hapus
+                              </a>
+                            </FormGroup>
+                          ) : null}
                           <Input
                             type="file"
                             name="image1"
@@ -245,6 +264,16 @@ class TambahProduk extends Component {
                         <img src={image2} width="200" alt="Gambar 2" />
                         <FormGroup>
                           <label>Gambar 2</label>
+                          {image2 !== DefaultImage ? (
+                            <FormGroup>
+                              <a
+                                href="/"
+                                onClick={this.deleteImage2}
+                              >
+                                Hapus
+                              </a>
+                            </FormGroup>
+                          ) : null}
                           <Input
                             type="file"
                             name="image2"
@@ -330,12 +359,6 @@ class TambahProduk extends Component {
                   </Col>
                 </div>
                 <form onSubmit={(event) => this.handleSubmit(event)}>
-                  <Row>
-                    <Col md={6}>
-                      <FormGroup></FormGroup>
-                    </Col>
-                    <Col md={3}></Col>
-                  </Row>
                   <Row>
                     <Col>
                       {tambahProdukLoading ? (

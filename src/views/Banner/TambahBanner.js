@@ -46,9 +46,8 @@ class TambahBanner extends Component {
   handleImage = (event) => {
     //Jika event.target.files dan array ke 0nya bernilai true
     if (event.target.files && event.target.files[0]) {
-      console.log(event)
       //Ukuran file maksimal 2MB
-      if(event.target.files[0].size <= 2000000){
+      if (event.target.files[0].size <= 2000000) {
         const gambar = event.target.files[0];
         this.setState({
           image: URL.createObjectURL(gambar),
@@ -66,9 +65,17 @@ class TambahBanner extends Component {
     }
   };
 
+  deleteImage = (event) => {
+    event.preventDefault();
+    this.setState({
+      image: DefaultImage,
+      imageToDB: false,
+    });
+  };
+
   //Dijalankan ketika tombol submit di klik
   handleSubmit = (event) => {
-    const { judulBanner, deskripsiBanner,  imageToDB } = this.state;
+    const { judulBanner, deskripsiBanner, imageToDB } = this.state;
     event.preventDefault();
     if (imageToDB && judulBanner && deskripsiBanner) {
       if (
@@ -141,11 +148,18 @@ class TambahBanner extends Component {
                     <FormGroup>
                       <label>Gambar Banner</label>
                       <text style={{ color: "red" }}> *</text>
+                      {image !== DefaultImage ? (
+                        <FormGroup>
+                          <a href="/" onClick={this.deleteImage}>
+                            Hapus
+                          </a>
+                        </FormGroup>
+                      ) : null}
                       <Input
                         type="file"
                         onChange={(event) => this.handleImage(event)}
                       />
-                      <Label style={{ color: "red" }}>
+                      <Label style={{ color: "red", textAlign: "justify" }}>
                         Gambar harus dalam format .png, .jpeg, atau .jpg (ukuran
                         ideal: 1958 x 725 pixel). Ukuran file maksimal adalah
                         2MB.
@@ -192,12 +206,6 @@ class TambahBanner extends Component {
                   </Col>
                 </Row>
                 <form onSubmit={(event) => this.handleSubmit(event)}>
-                  <Row>
-                    <Col md={6}>
-                      <FormGroup></FormGroup>
-                    </Col>
-                    <Col md={3}></Col>
-                  </Row>
                   <Row>
                     <Col>
                       {tambahBannerLoading ? (

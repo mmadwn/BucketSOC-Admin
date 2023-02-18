@@ -181,6 +181,7 @@ export const tambahKategori = (data) => {
       });
   };
 };
+
 export const updateKategori = (data) => {
   return (dispatch) => {
     dispatchLoading(dispatch, UPDATE_KATEGORI);

@@ -19,6 +19,7 @@ import Swal from "sweetalert2";
 import $ from "jquery";
 import { getListProduk } from "actions/ProdukAction";
 import { deleteProduk } from "actions/ProdukAction";
+import { getListKategori } from "actions/KategoriAction";
 
 class ListProduk extends Component {
   constructor(props) {
@@ -33,6 +34,7 @@ class ListProduk extends Component {
 
   componentDidMount() {
     this.props.dispatch(getListProduk());
+    this.props.dispatch(getListKategori());
   }
 
   removeData = (image, id) => {
@@ -94,8 +96,16 @@ class ListProduk extends Component {
 
   render() {
     const { modal, modalData } = this.state;
-    const { getListProdukError, getListProdukLoading, getListProdukResult } =
+    const { getListProdukError, getListProdukLoading, getListProdukResult, getListKategoriResult } =
       this.props;
+    let kategoriList = [];
+      Object.keys(getListKategoriResult).forEach((key) => {
+        kategoriList.push({
+          key: key,
+          nama: getListKategoriResult[key].nama,
+        });
+      });
+
     //initialize datatable
     $(document).ready(function () {
       var table = $("#datatable").DataTable({
@@ -186,10 +196,14 @@ class ListProduk extends Component {
                               style={{
                                 textAlign: "justify",
                                 fontSize: "14px",
-                                width: "200px",
+                                width: "150px",
                               }}
                             >
-                              {getListProdukResult[key].kategori}
+                              {getListKategoriResult
+                                ? kategoriList.find((x) =>
+                                    x.key === getListProdukResult[key].kategori
+                                  ).nama
+                                : null}
                             </label>
                           </td>
                           <td>
@@ -347,6 +361,10 @@ const mapStateToProps = (state) => ({
   deleteProdukLoading: state.ProdukReducer.deleteProdukLoading,
   deleteProdukResult: state.ProdukReducer.deleteProdukResult,
   deleteProdukError: state.ProdukReducer.deleteProdukError,
+
+  getListKategoriLoading: state.KategoriReducer.getListKategoriLoading,
+  getListKategoriResult: state.KategoriReducer.getListKategoriResult,
+  getListKategoriError: state.KategoriReducer.getListKategoriError,
 });
 
 export default connect(mapStateToProps, null)(ListProduk);

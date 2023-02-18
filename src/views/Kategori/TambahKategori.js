@@ -60,6 +60,14 @@ class TambahKategori extends Component {
     }
   };
 
+  deleteImage = (event) => {
+    event.preventDefault();
+    this.setState({
+      image: DefaultImage,
+      imageToDB: false,
+    });
+  };
+
   //Dijalankan ketika tombol submit di klik
   handleSubmit = (event) => {
     const { namaKategori, imageToDB } = this.state;
@@ -136,11 +144,18 @@ class TambahKategori extends Component {
                       <FormGroup>
                         <label>Logo Kategori</label>
                         <text style={{ color: "red" }}> *</text>
+                        {image !== DefaultImage ? (
+                          <FormGroup>
+                            <a href="/" onClick={this.deleteImage}>
+                              Hapus
+                            </a>
+                          </FormGroup>
+                        ) : null}
                         <Input
                           type="file"
                           onChange={(event) => this.handleImage(event)}
                         />
-                        <Label style={{ color: "red" }}>
+                        <Label style={{ color: "red", textAlign: "justify" }}>
                           Gambar harus dalam format .svg (ukuran ideal: 57 x 57
                           pixel). Ukuran file maksimal adalah 100KB.
                         </Label>
