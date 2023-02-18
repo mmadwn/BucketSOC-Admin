@@ -77,7 +77,6 @@ class ListKategori extends Component {
         bDestroy: true,
         pagingType: "full_numbers",
         scrollX: true,
-        order: [[1, "asc"]],
       });
       $('.dataTables_filter input[type="search"]').css({
         width: "350px",
@@ -124,61 +123,63 @@ class ListKategori extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {Object.keys(getListKategoriResult).map((key) => (
-                        <tr key={key}>
-                          <td align="center">
-                            <div
-                              style={{
-                                width: "57px",
-                              }}
-                            >
-                              <img
-                                src={getListKategoriResult[key].gambar}
-                                alt={getListKategoriResult[key].nama}
-                              />
-                            </div>
-                          </td>
-                          <td>
-                            <label
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "700px",
-                              }}
-                            >
-                              {getListKategoriResult[key].nama}
-                            </label>
-                          </td>
-                          <td>
-                            <div
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "340px",
-                              }}
-                            >
-                              <Link
-                                className="btn btn-warning ml-2"
-                                to={"/admin/kategori/edit/" + key}
+                      {Object.keys(getListKategoriResult)
+                        .reverse()
+                        .map((key) => (
+                          <tr key={key}>
+                            <td align="center">
+                              <div
+                                style={{
+                                  width: "57px",
+                                }}
                               >
-                                <i className="nc-icon nc-ruler-pencil" /> Edit
-                              </Link>
-                              <Button
-                                color="danger"
-                                className="ml-2"
-                                onClick={() =>
-                                  this.removeData(
-                                    getListKategoriResult[key].gambar,
-                                    key
-                                  )
-                                }
+                                <img
+                                  src={getListKategoriResult[key].gambar}
+                                  alt={getListKategoriResult[key].nama}
+                                />
+                              </div>
+                            </td>
+                            <td>
+                              <label
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "700px",
+                                }}
                               >
-                                <i className="nc-icon nc-basket" /> Hapus
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                                {getListKategoriResult[key].nama}
+                              </label>
+                            </td>
+                            <td>
+                              <div
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "340px",
+                                }}
+                              >
+                                <Link
+                                  className="btn btn-warning ml-2"
+                                  to={"/admin/kategori/edit/" + key}
+                                >
+                                  <i className="nc-icon nc-ruler-pencil" /> Edit
+                                </Link>
+                                <Button
+                                  color="danger"
+                                  className="ml-2"
+                                  onClick={() =>
+                                    this.removeData(
+                                      getListKategoriResult[key].gambar,
+                                      key
+                                    )
+                                  }
+                                >
+                                  <i className="nc-icon nc-basket" /> Hapus
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                     <tfoot className="text-primary">
                       <tr>

@@ -112,7 +112,6 @@ class ListProduk extends Component {
         bDestroy: true,
         pagingType: "full_numbers",
         scrollX: true,
-        order: [[1, "asc"]],
         language: {
           thousands:".",
           decimal:",",
@@ -166,7 +165,7 @@ class ListProduk extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {Object.keys(getListProdukResult).map((key) => (
+                      {Object.keys(getListProdukResult).reverse().map((key) => (
                         <tr key={key}>
                           <td>
                             <div

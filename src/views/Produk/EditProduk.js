@@ -1,6 +1,6 @@
 import { getListKategori } from "actions/KategoriAction";
+import { updateProduk } from "actions/ProdukAction";
 import { getDetailProduk } from "actions/ProdukAction";
-import { tambahProduk } from "actions/ProdukAction";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -123,6 +123,8 @@ class EditProduk extends Component {
     const {
       namaProduk,
       deskripsiProduk,
+      image1,
+      image2,
       imageToDB1,
       imageToDB2,
       harga,
@@ -130,24 +132,83 @@ class EditProduk extends Component {
     } = this.state;
     event.preventDefault();
     //Cek jika seluruh data sudah diisi kecuali gambar 2 dan ready tidak perlu dicek
-    if (imageToDB1 && namaProduk && deskripsiProduk && harga && kategori) {
-      //Cek jika gambar 1 sudah sesuai format
-      if (
-        imageToDB1.name.slice(-4) === ".png" ||
-        imageToDB1.name.slice(-4) === ".jpg" ||
-        imageToDB1.name.slice(-5) === ".jpeg"
-      ) {
-        //Cek apakah gambar 2 diupload
-        if (imageToDB2.name) {
-          //Cek apakah nama gambar 1 tidak sama dengan nama gambar 2
-          if (imageToDB1.name !== imageToDB2.name) {
+    if (image1 !== DefaultImage && namaProduk && deskripsiProduk && harga && kategori) {
+
+      //Jika ingin ganti gambar 1
+      if (imageToDB1.name) {
+        //Cek format gambar 1 apakah sudah sesuai
+        if (
+          imageToDB1.name.slice(-4) === ".png" ||
+          imageToDB1.name.slice(-4) === ".jpg" ||
+          imageToDB1.name.slice(-5) === ".jpeg"
+        ) {
+          //Cek apakah gambar 2 ada
+          if(image2 !== DefaultImage) {
+            //Cek apakah gambar 2 diganti
+            if(imageToDB2.name) {
+              //Cek apakah nama gambar 1 tidak sama dengan nama gambar 2
+              if (imageToDB1.name !== imageToDB2.name) {
+                //Cek apakah gambar 2 sudah sesuai format => masuk action
+                if (
+                  imageToDB2.name.slice(-4) === ".png" ||
+                  imageToDB2.name.slice(-4) === ".jpg" ||
+                  imageToDB2.name.slice(-5) === ".jpeg"
+                ) {
+                  //Masuk Update Data Action
+                  this.props.dispatch(updateProduk(this.state));
+                  //Jika gambar 2 tidak sesuai format
+                } else {
+                  Swal.fire({
+                    title: "Error",
+                    text: "Maaf, gambar 2 harus dalam format .png, jpeg, atau .jpg!",
+                    icon: "error",
+                    confirmButtonColor: "#f69d93",
+                    confirmButtonText: "OK",
+                  });
+                }
+                //Jika nama gambar 1 dan 2 sama
+              } else {
+                Swal.fire({
+                  title: "Error",
+                  text: "Maaf, nama gambar 1 dan 2 tidak boleh sama !",
+                  icon: "error",
+                  confirmButtonColor: "#f69d93",
+                  confirmButtonText: "OK",
+                });
+              }
+              //Jika gambar2 tidak diganti
+            } else {
+              //Masuk Update Data Action
+              this.props.dispatch(updateProduk(this.state));
+            }
+          } else {
+            //Masuk Update Data Action
+            this.props.dispatch(updateProduk(this.state));
+          }
+          //Jika gambar 1 tidak sesuai format
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: "Maaf, gambar 1 harus dalam format .png, jpeg, atau .jpg!",
+            icon: "error",
+            confirmButtonColor: "#f69d93",
+            confirmButtonText: "OK",
+          });
+        }
+        //Jika gambar 1 tidak diganti
+      } else {
+        //Cek Jika gambar 2 ada
+        if(image2 !== DefaultImage) {
+          //Jika gambar 2 ingin diganti
+          if(imageToDB2.name) {
             //Cek apakah gambar 2 sudah sesuai format => masuk action
             if (
               imageToDB2.name.slice(-4) === ".png" ||
               imageToDB2.name.slice(-4) === ".jpg" ||
               imageToDB2.name.slice(-5) === ".jpeg"
             ) {
-              this.props.dispatch(tambahProduk(this.state));
+              //Masuk Update Data Action
+              this.props.dispatch(updateProduk(this.state));
               //Jika gambar 2 tidak sesuai format
             } else {
               Swal.fire({
@@ -158,30 +219,18 @@ class EditProduk extends Component {
                 confirmButtonText: "OK",
               });
             }
-            //Jika nama gambar 1 dan 2 sama
+            //Jika gambar 2 tidak diganti
           } else {
-            Swal.fire({
-              title: "Error",
-              text: "Maaf, nama gambar 1 dan 2 tidak boleh sama !",
-              icon: "error",
-              confirmButtonColor: "#f69d93",
-              confirmButtonText: "OK",
-            });
+            //Masuk Update Data Action
+            this.props.dispatch(updateProduk(this.state));
           }
-          //Jika gambar 2 tidak terupload => masuk action
+          //Jika tidak ada gambar 2
         } else {
-          this.props.dispatch(tambahProduk(this.state));
+          //Masuk Update Data Action
+          this.props.dispatch(updateProduk(this.state));
         }
-        //Jika gambar 1 tidak sesuai format
-      } else {
-        Swal.fire({
-          title: "Error",
-          text: "Maaf, gambar 1 harus dalam format .png, jpeg, atau .jpg!",
-          icon: "error",
-          confirmButtonColor: "#f69d93",
-          confirmButtonText: "OK",
-        });
       }
+
       //Jika ada data yang masih belum diisi
     } else {
       Swal.fire({
@@ -204,12 +253,12 @@ class EditProduk extends Component {
     ) {
       Swal.fire({
         title: "Sukses",
-        text: "Banner Sukses Diupdate!",
+        text: "Produk Sukses Diupdate!",
         icon: "success",
         confirmButtonColor: "#f69d93",
         confirmButtonText: "OK",
       });
-      this.props.history.push("/admin/banner");
+      this.props.history.push("/admin/produk");
     }
 
     if (

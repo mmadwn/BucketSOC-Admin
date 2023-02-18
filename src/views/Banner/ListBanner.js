@@ -100,7 +100,6 @@ class ListBanner extends Component {
         bDestroy: true,
         pagingType: "full_numbers",
         scrollX: true,
-        order: [[1, "asc"]],
       });
       $('.dataTables_filter input[type="search"]').css({
         width: "350px",
@@ -148,87 +147,89 @@ class ListBanner extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {Object.keys(getListBannerResult).map((key) => (
-                        <tr key={key}>
-                          <td>
-                            <div
-                              style={{
-                                width: "300px",
-                              }}
-                            >
-                              <img
-                                src={getListBannerResult[key].gambar}
-                                alt={getListBannerResult[key].title}
-                              />
-                            </div>
-                          </td>
-                          <td>
-                            <label
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "380px",
-                              }}
-                            >
-                              {getListBannerResult[key].title}
-                            </label>
-                          </td>
-                          <td>
-                            <label
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "80px",
-                              }}
-                            >
-                              {getListBannerResult[key].active === true
-                                ? "Aktif"
-                                : "Tidak Aktif"}
-                            </label>
-                          </td>
-                          <td>
-                            <div
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "340px",
-                              }}
-                            >
-                              <Button
-                                color="primary"
-                                className="ml-2"
-                                onClick={() => {
-                                  this.toggle();
-                                  this.deskripsi(
-                                    getListBannerResult[key].deskripsi
-                                  );
+                      {Object.keys(getListBannerResult)
+                        .reverse()
+                        .map((key) => (
+                          <tr key={key}>
+                            <td>
+                              <div
+                                style={{
+                                  width: "300px",
                                 }}
                               >
-                                <i className="nc-icon nc-alert-circle-i" />{" "}
-                                Deskripsi
-                              </Button>
-                              <Link
-                                className="btn btn-warning ml-2"
-                                to={"/admin/banner/edit/" + key}
+                                <img
+                                  src={getListBannerResult[key].gambar}
+                                  alt={getListBannerResult[key].title}
+                                />
+                              </div>
+                            </td>
+                            <td>
+                              <label
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "380px",
+                                }}
                               >
-                                <i className="nc-icon nc-ruler-pencil" /> Edit
-                              </Link>
-                              <Button
-                                color="danger"
-                                className="ml-2"
-                                onClick={() =>
-                                  this.removeData(
-                                    getListBannerResult[key].gambar,
-                                    key
-                                  )
-                                }
+                                {getListBannerResult[key].title}
+                              </label>
+                            </td>
+                            <td>
+                              <label
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "80px",
+                                }}
                               >
-                                <i className="nc-icon nc-basket" /> Hapus
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                                {getListBannerResult[key].active === true
+                                  ? "Aktif"
+                                  : "Tidak Aktif"}
+                              </label>
+                            </td>
+                            <td>
+                              <div
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "340px",
+                                }}
+                              >
+                                <Button
+                                  color="primary"
+                                  className="ml-2"
+                                  onClick={() => {
+                                    this.toggle();
+                                    this.deskripsi(
+                                      getListBannerResult[key].deskripsi
+                                    );
+                                  }}
+                                >
+                                  <i className="nc-icon nc-alert-circle-i" />{" "}
+                                  Deskripsi
+                                </Button>
+                                <Link
+                                  className="btn btn-warning ml-2"
+                                  to={"/admin/banner/edit/" + key}
+                                >
+                                  <i className="nc-icon nc-ruler-pencil" /> Edit
+                                </Link>
+                                <Button
+                                  color="danger"
+                                  className="ml-2"
+                                  onClick={() =>
+                                    this.removeData(
+                                      getListBannerResult[key].gambar,
+                                      key
+                                    )
+                                  }
+                                >
+                                  <i className="nc-icon nc-basket" /> Hapus
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                     <tfoot className="text-primary">
                       <tr>
