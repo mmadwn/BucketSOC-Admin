@@ -318,10 +318,7 @@ class EditProduk extends Component {
                           <text style={{ color: "red" }}> *</text>
                           {image1 !== DefaultImage ? (
                             <FormGroup>
-                              <a
-                                href="/"
-                                onClick={this.deleteImage1}
-                              >
+                              <a href="/" onClick={this.deleteImage1}>
                                 Hapus
                               </a>
                             </FormGroup>
@@ -339,10 +336,7 @@ class EditProduk extends Component {
                           <label>Gambar 2</label>
                           {image2 !== DefaultImage ? (
                             <FormGroup>
-                              <a
-                                href="/"
-                                onClick={this.deleteImage2}
-                              >
+                              <a href="/" onClick={this.deleteImage2}>
                                 Hapus
                               </a>
                             </FormGroup>
@@ -398,6 +392,11 @@ class EditProduk extends Component {
                         min={0}
                         value={harga}
                         name="harga"
+                        onKeyPress={(event) => {
+                          if (!/[0-9]/.test(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
                         onChange={(event) => this.handleChange(event)}
                       />
                     </FormGroup>
