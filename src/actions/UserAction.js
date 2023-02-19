@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 
 export const GET_LIST_USER = "GET_LIST_USER";
 
-//Function untuk baca data Kategori dari Firebase Database
+//Function untuk baca data User dari Firebase Database
 export const getListUser = () => {
   return (dispatch) => {
     //LOADING
