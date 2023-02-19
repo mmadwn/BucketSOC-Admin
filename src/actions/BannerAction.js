@@ -144,7 +144,7 @@ export const tambahBanner = (data) => {
                   active: data.active,
                   deskripsi: data.deskripsiBanner,
                 };
-                //Simpan data kategori ke Firebase database
+                //Simpan data Banner ke Firebase database
                 set(push(ref_database(db, "/banner/")), newdata)
                   .then((response) => {
                     //SUKSES
