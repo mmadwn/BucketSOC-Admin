@@ -33,6 +33,7 @@ import "datatables.net-dt/js/dataTables.dataTables"
 import "datatables.net-dt/css/jquery.dataTables.min.css"
 
 import AdminLayout from "layouts/Admin.js";
+import { Login } from "views";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -41,7 +42,8 @@ root.render(
   <BrowserRouter>
     <Switch>
       <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-      <Redirect to="/admin/dashboard" />
+      <Route path="/login" component={Login} exact />
+      <Redirect to="/login" />
     </Switch>
   </BrowserRouter>
   </Provider>
