@@ -27,6 +27,8 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
 import routes from "routes.js";
+import { connect } from "react-redux";
+import { checkLogin } from "actions/AuthAction";
 
 var ps;
 
@@ -48,6 +50,7 @@ function Dashboard(props) {
     };
   });
   React.useEffect(() => {
+    props.dispatch(checkLogin(props.history));
     mainPanel.current.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
   }, [location]);
@@ -91,4 +94,4 @@ function Dashboard(props) {
   );
 }
 
-export default Dashboard;
+export default connect()(Dashboard);

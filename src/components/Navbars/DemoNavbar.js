@@ -16,7 +16,9 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+import { logoutUser } from "actions/AuthAction";
 import React from "react";
+import { connect } from "react-redux";
 import { useLocation } from "react-router-dom";
 import {
   Collapse,
@@ -38,6 +40,7 @@ import {
 import routes from "routes.js";
 
 function Header(props) {
+  const user = JSON.parse(window.localStorage.getItem('user'))
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [color, setColor] = React.useState("transparent");
@@ -149,8 +152,8 @@ function Header(props) {
                 </p>
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem tag="a">Edit Profile</DropdownItem>
-                <DropdownItem tag="a">Logout</DropdownItem>
+                <DropdownItem tag="a" href={"/admin/profile/edit/" + user.uid}>Edit Profile</DropdownItem>
+                <DropdownItem tag="a" onClick={() => props.dispatch(logoutUser(props.history))}>Logout</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </Nav>
@@ -160,4 +163,6 @@ function Header(props) {
   );
 }
 
-export default Header;
+
+
+export default connect()(Header);

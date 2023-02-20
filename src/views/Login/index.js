@@ -1,3 +1,4 @@
+import { checkLogin } from "actions/AuthAction";
 import { loginUser } from "actions/AuthAction";
 import React, { Component } from "react";
 import { connect } from "react-redux";
@@ -26,6 +27,10 @@ class Login extends Component {
     };
   }
 
+  componentDidMount() {
+    this.props.dispatch(checkLogin(this.props.history));
+  }
+
   //Dijalankan ketika nama Kategori diisi
   handleChange = (event) => {
     this.setState({
@@ -51,10 +56,30 @@ class Login extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { loginResult } = this.props;
+    const { loginResult, checkLoginResult } = this.props;
 
+    if (checkLoginResult && prevProps.checkLoginResult !== checkLoginResult) {
+      this.props.history.push("/admin/dashboard");
+    }
+    
     if (loginResult && prevProps.loginResult !== loginResult) {
-      this.props.history.push("/admin/kategori");
+      this.props.history.push("/admin/dashboard");
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      })
+      
+      Toast.fire({
+        icon: 'success',
+        title: 'Signed in successfully!'
+      })
     }
   }
 
@@ -157,6 +182,10 @@ const mapStateToProps = (state) => ({
   loginLoading: state.AuthReducer.loginLoading,
   loginResult: state.AuthReducer.loginResult,
   loginError: state.AuthReducer.loginError,
+
+  checkLoginLoading: state.AuthReducer.checkLoginLoading,
+  checkLoginResult: state.AuthReducer.checkLoginResult,
+  checkLoginError: state.AuthReducer.checkLoginError,
 });
 
 export default connect(mapStateToProps, null)(Login)

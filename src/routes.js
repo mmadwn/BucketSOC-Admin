@@ -17,6 +17,7 @@
 
 */
 
+import { EditProfile } from "views";
 import {
   Dashboard,
   Icons,
@@ -40,6 +41,13 @@ var routes = [
     component: Dashboard,
     layout: "/admin",
     sidebar: true,
+  },
+  {
+    path: "/profile/edit/:id",
+    name: "Edit Profile",
+    component: EditProfile,
+    layout: "/admin",
+    sidebar: false,
   },
   {
     path: "/kategori",

@@ -4,6 +4,7 @@ import BannerReducer from "./banner";
 import UserReducer from "./user";
 import ProdukReducer from "./produk";
 import AuthReducer from "./auth";
+import ProfileReducer from './profile';
 
 export default combineReducers({
   KategoriReducer,
@@ -11,4 +12,5 @@ export default combineReducers({
   UserReducer,
   ProdukReducer,
   AuthReducer,
+  ProfileReducer,
 });
