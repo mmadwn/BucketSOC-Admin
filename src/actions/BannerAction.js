@@ -85,7 +85,7 @@ export const getDetailBanner = (id) => {
   };
 };
 
-//Function untuk tambah data Kategori ke Firebase Database dan Firebase Storage
+//Function untuk tambah data Banner ke Firebase Database dan Firebase Storage
 export const tambahBanner = (data) => {
   return (dispatch) => {
     //LOADING
@@ -318,7 +318,7 @@ export const updateBanner = (data) => {
         deskripsi: data.deskripsiBanner,
         active: data.active,
       };
-      //Simpan data kategori ke Firebase database
+      //Simpan data Banner ke Firebase database
       update(ref_database(db, "/banner/" + data.id), newdata)
         .then((response) => {
           //SUKSES

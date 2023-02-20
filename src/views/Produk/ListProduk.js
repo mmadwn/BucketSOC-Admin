@@ -99,24 +99,24 @@ class ListProduk extends Component {
     const { getListProdukError, getListProdukLoading, getListProdukResult, getListKategoriResult } =
       this.props;
     let kategoriList = [];
-      Object.keys(getListKategoriResult).forEach((key) => {
-        kategoriList.push({
-          key: key,
-          nama: getListKategoriResult[key].nama,
-        });
+    Object.keys(getListKategoriResult).forEach((key) => {
+      kategoriList.push({
+        key: key,
+        nama: getListKategoriResult[key].nama,
       });
+    });
 
     //initialize datatable
     $(document).ready(function () {
       var table = $("#datatable").DataTable({
-        bDestroy: true,
-        pagingType: "full_numbers",
-        scrollX: true,
-        language: {
-          thousands:".",
-          decimal:",",
-        }
-      });
+          bDestroy: true,
+          pagingType: "full_numbers",
+          scrollX: true,
+          language: {
+            thousands: ".",
+            decimal: ",",
+          },
+        });
       $('.dataTables_filter input[type="search"]').css({
         width: "350px",
         display: "inline-block",
@@ -200,8 +200,8 @@ class ListProduk extends Component {
                             >
                               {getListKategoriResult
                                 ? kategoriList.find((x) =>
-                                    x.key === getListProdukResult[key].kategori
-                                  ).nama
+                                  x.key === getListProdukResult[key].kategori
+                                ).nama
                                 : null}
                             </label>
                           </td>
