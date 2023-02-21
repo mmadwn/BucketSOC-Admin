@@ -8,20 +8,16 @@ import {
   CardHeader,
   CardTitle,
   Col,
-  Label,
   Modal,
   ModalBody,
   ModalHeader,
   Row,
   Spinner,
 } from "reactstrap";
-import Swal from "sweetalert2";
 import $ from "jquery";
-import { getListProduk } from "actions/ProdukAction";
-import { deleteProduk } from "actions/ProdukAction";
-import { getListKategori } from "actions/KategoriAction";
 import { getListPesanan } from "actions/PesananAction";
 import Item from "components/Item";
+import { updateStatus } from "actions/PesananAction";
 
 class ListPesanan extends Component {
   constructor(props) {
@@ -44,12 +40,18 @@ class ListPesanan extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(getListPesanan());
+    this.props.dispatch(updateStatus());
   }
 
-
   componentDidUpdate(prevProps) {
-    
+     const { updateStatusResult } = this.props;
+     if (
+       updateStatusResult &&
+       prevProps.updateStatusResult !== updateStatusResult
+     ) {
+       //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
+       this.props.dispatch(getListPesanan());
+     }
   }
 
   toggle() {
@@ -352,6 +354,10 @@ const mapStateToProps = (state) => ({
   getListPesananLoading: state.PesananReducer.getListPesananLoading,
   getListPesananResult: state.PesananReducer.getListPesananResult,
   getListPesananError: state.PesananReducer.getListPesananError,
+
+  updateStatusLoading: state.PesananReducer.updateStatusLoading,
+  updateStatusResult: state.PesananReducer.updateStatusResult,
+  updateStatusError: state.PesananReducer.updateStatusError,
 });
 
 export default connect(mapStateToProps, null)(ListPesanan);
