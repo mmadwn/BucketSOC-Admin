@@ -17,6 +17,7 @@
 
 */
 
+import { ListPesanan } from "views";
 import { EditProfile } from "views";
 import {
   Dashboard,
@@ -39,6 +40,14 @@ var routes = [
     name: "Dashboard",
     icon: "nc-icon nc-bank",
     component: Dashboard,
+    layout: "/admin",
+    sidebar: true,
+  },
+  {
+    path: "/pesanan",
+    name: "Data Pesanan",
+    icon: "nc-icon nc-paper",
+    component: ListPesanan,
     layout: "/admin",
     sidebar: true,
   },
@@ -131,5 +140,6 @@ var routes = [
     layout: "/admin",
     sidebar: true,
   },
+
 ];
 export default routes;

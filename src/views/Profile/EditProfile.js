@@ -55,6 +55,7 @@ class EditProfile extends Component {
 
   //Dijalankan ketika upload files
   handleImage = async (event) => {
+    console.log(event.target.files[0]);
     //Jika event.target.files dan array ke 0nya bernilai true
     if (event.target.files && event.target.files[0]) {
       //Ukuran file maksimal 2MB
@@ -65,6 +66,7 @@ class EditProfile extends Component {
           image: URL.createObjectURL(gambar),
           imageToDB: base64,
         });
+        console.log(base64)
       } else {
         Swal.fire({
           title: "Error",

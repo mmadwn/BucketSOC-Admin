@@ -29,7 +29,6 @@ export const loginUser = (email, password) => {
             //LOGIN
             signInWithEmailAndPassword(getAuth(), email, password)
               .then((response) => {
-                console.log(response)
                 // Signed in
                 //Simpan data user ke localstorage dari database
                 window.localStorage.setItem("user", JSON.stringify(Profile[0]));
