@@ -221,10 +221,10 @@
   font-size: 13px;
 }
 
-.fixed-plugin .dropdown .dropdown-menu::after, .fixed-plugin .dropdown .dropdown-menu::before {
+.fixed-plugin .dropdown .dropdown-menu::after,
+.fixed-plugin .dropdown .dropdown-menu::before {
   opacity: 0;
 }
-
 
 /* table.display {
 margin: 0 auto;

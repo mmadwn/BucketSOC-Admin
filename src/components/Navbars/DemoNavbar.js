@@ -58,7 +58,7 @@ function Header(props) {
     setDropdownOpen(!dropdownOpen);
   };
   const getBrand = () => {
-    let brandName = "Default Brand";
+    let brandName = "Edit Profile";
     routes.map((prop, key) => {
       if (window.location.href.indexOf(prop.layout + prop.path) !== -1) {
         brandName = prop.name;
@@ -79,6 +79,10 @@ function Header(props) {
       setColor("transparent");
     }
   };
+  const logout = (event) => {
+    event.preventDefault();
+    props.dispatch(logoutUser(props.history))
+  }
   React.useEffect(() => {
     window.addEventListener("resize", updateColor.bind(this));
   });
@@ -152,8 +156,8 @@ function Header(props) {
                 </p>
               </DropdownToggle>
               <DropdownMenu right>
-                <DropdownItem tag="a" href={"/admin/profile/edit/" + user.uid}>Edit Profile</DropdownItem>
-                <DropdownItem tag="a" onClick={() => props.dispatch(logoutUser(props.history))}>Logout</DropdownItem>
+                <DropdownItem tag="a" href={user ? "/admin/profile/edit/" + user.uid : null}>Edit Profile</DropdownItem>
+                <DropdownItem tag="a" href='/' onClick={logout}>Logout</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </Nav>

@@ -1,8 +1,5 @@
 import { db } from "config/FIREBASE";
-import {
-  onValue,
-  ref as ref_database,
-} from "firebase/database";
+import { onValue, ref as ref_database } from "firebase/database";
 import { dispatchError, dispatchLoading, dispatchSuccess } from "../utils";
 import Swal from "sweetalert2";
 

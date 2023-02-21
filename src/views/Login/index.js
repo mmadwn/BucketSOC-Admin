@@ -7,11 +7,9 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Col,
   FormGroup,
   Input,
   Label,
-  Row,
   Spinner,
 } from "reactstrap";
 import Swal from "sweetalert2";
@@ -61,118 +59,159 @@ class Login extends Component {
     if (checkLoginResult && prevProps.checkLoginResult !== checkLoginResult) {
       this.props.history.push("/admin/dashboard");
     }
-    
+
     if (loginResult && prevProps.loginResult !== loginResult) {
       this.props.history.push("/admin/dashboard");
       const Toast = Swal.mixin({
         toast: true,
-        position: 'top-end',
+        position: "top-end",
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
         didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-      })
-      
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+      });
+
       Toast.fire({
-        icon: 'success',
-        title: 'Signed in successfully!'
-      })
+        icon: "success",
+        title: "Signed in successfully!",
+      });
     }
   }
 
   render() {
-    const {loginLoading} = this.props;
+    const { loginLoading } = this.props;
     const { email, password } = this.state;
     return (
       <div className="h-100">
-        <Row className="justify-content-center mt-5">
-          <Col md="3" className="mt-5">
-            <Card style={{ boxShadow: "0 4px 24px 10px rgba(4, 3, 3, 0.1)" }}>
-              <CardHeader>
-                <FormGroup>
-                  <img
-                    width="150"
-                    src={Logo}
-                    className="mx-auto d-block"
-                    alt="Logo"
-                    style={{
-                      borderRadius: "1000px",
-                      marginTop: "20px",
-                      marginBottom: "20px",
-                    }}
-                  />
-                </FormGroup>
-                <FormGroup>
-                  <Label
-                    style={{
-                      textAlign: "center",
-                      fontSize: "20px",
-                      display: "flow-root",
-                      fontWeight: "lighter",
-                    }}
-                  >
-                    Sistem Informasi Admin Bucket SOC
-                  </Label>
-                </FormGroup>
-              </CardHeader>
-              <CardBody>
-                <form onSubmit={(event) => this.handleSubmit(event)}>
-                  <FormGroup>
-                    <Label style={{ fontSize: "13px" }} for="email">
-                      Alamat Email
-                    </Label>
-                    <text style={{ color: "red" }}> *</text>
-                    <Input
-                      type="email"
-                      name="email"
-                      value={email}
-                      placeholder="Masukkan Email"
-                      onChange={(event) => this.handleChange(event)}
-                    ></Input>
-                  </FormGroup>
-                  <FormGroup>
-                    <Label style={{ fontSize: "13px" }} for="password">
-                      Password
-                    </Label>
-                    <text style={{ color: "red" }}> *</text>
-                    <Input
-                      type="password"
-                      name="password"
-                      value={password}
-                      placeholder="Masukkan Password"
-                      onChange={(event) => this.handleChange(event)}
-                    ></Input>
-                  </FormGroup>
-                  <FormGroup
-                    style={{ justifyContent: "center", display: "flex" }}
-                  >
-                    {loginLoading ? (
-                      <Button
-                        style={{ alignSelf: "center" }}
-                        color="primary"
-                        type="submit"
-                        disabled
+        <div className="authentication h-100">
+          <div className="container-fluid h-100">
+            <div
+              className="row justify-content-center h-100 align-items-center"
+              style={{ backgroundColor: "#fffbfa" }}
+            >
+              <div className="col-md-6" style={{ maxWidth: "450px" }}>
+                <Card
+                  style={{
+                    boxShadow: "0 4px 24px 10px rgba(4, 3, 3, 0.1)",
+                  }}
+                >
+                  <CardHeader>
+                    <FormGroup>
+                      <img
+                        width="150"
+                        src={Logo}
+                        className="mx-auto d-block"
+                        alt="Logo"
+                        style={{
+                          borderRadius: "1000px",
+                          marginTop: "20px",
+                          marginBottom: "30px",
+                        }}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label
+                        style={{
+                          textAlign: "center",
+                          fontSize: "20px",
+                          display: "flow-root",
+                          fontWeight: "lighter",
+                        }}
                       >
-                        <Spinner size="sm" color="light" /> Loading
-                      </Button>
-                    ) : (
-                      <Button
-                        style={{ alignSelf: "center" }}
-                        color="primary"
-                        type="submit"
+                        Sistem Informasi Admin Bucket SOC
+                      </Label>
+                    </FormGroup>
+                  </CardHeader>
+                  <CardBody>
+                    <form onSubmit={(event) => this.handleSubmit(event)}>
+                      <FormGroup
+                        style={{ marginLeft: "10px", marginRight: "10px" }}
                       >
-                        Login
-                      </Button>
-                    )}
-                  </FormGroup>
-                </form>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
+                        <Label style={{ fontSize: "13px" }} for="email">
+                          Email
+                        </Label>
+                        <text style={{ color: "red" }}> *</text>
+                        <Input
+                          type="email"
+                          name="email"
+                          value={email}
+                          placeholder="Masukkan Email"
+                          onChange={(event) => this.handleChange(event)}
+                        ></Input>
+                      </FormGroup>
+                      <FormGroup
+                        style={{
+                          marginTop: "10px",
+                          marginLeft: "10px",
+                          marginRight: "10px",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <Label style={{ fontSize: "13px" }} for="password">
+                          Password
+                        </Label>
+                        <text style={{ color: "red" }}> *</text>
+                        <Input
+                          type="password"
+                          name="password"
+                          value={password}
+                          placeholder="Masukkan Password"
+                          onChange={(event) => this.handleChange(event)}
+                        ></Input>
+                      </FormGroup>
+                      <FormGroup
+                        style={{
+                          justifyContent: "center",
+                          display: "flex",
+                        }}
+                      >
+                        {loginLoading ? (
+                          <Button
+                            style={{
+                              alignSelf: "center",
+                              height: "45px",
+                              borderRadius: "7px",
+                              boxShadow: "rgb(255, 176, 168) 0px 0px 10px 1px",
+                              width: "100%",
+                              marginLeft: "8px",
+                              marginRight: "8px",
+                              fontSize: "14px",
+                            }}
+                            color="primary"
+                            type="submit"
+                            disabled
+                          >
+                            <Spinner size="sm" color="light" /> Loading
+                          </Button>
+                        ) : (
+                          <Button
+                            style={{
+                              alignSelf: "center",
+                              height: "45px",
+                              borderRadius: "7px",
+                              boxShadow: "rgb(255, 176, 168) 0px 0px 10px 1px",
+                              width: "100%",
+                              marginLeft: "8px",
+                              marginRight: "8px",
+                              fontSize: "14px",
+                            }}
+                            color="primary"
+                            type="submit"
+                          >
+                            Login
+                          </Button>
+                        )}
+                      </FormGroup>
+                    </form>
+                  </CardBody>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -188,4 +227,4 @@ const mapStateToProps = (state) => ({
   checkLoginError: state.AuthReducer.checkLoginError,
 });
 
-export default connect(mapStateToProps, null)(Login)
+export default connect(mapStateToProps, null)(Login);

@@ -34,7 +34,7 @@ class EditProfile extends Component {
       alamat: "",
       detail_alamat: "",
       latitude: "",
-      longitude: ""
+      longitude: "",
     };
   }
 
@@ -54,15 +54,16 @@ class EditProfile extends Component {
   };
 
   //Dijalankan ketika upload files
-  handleImage = (event) => {
+  handleImage = async (event) => {
     //Jika event.target.files dan array ke 0nya bernilai true
     if (event.target.files && event.target.files[0]) {
       //Ukuran file maksimal 2MB
       if (event.target.files[0].size <= 2000000) {
         const gambar = event.target.files[0];
+        const base64 = await this.convertBase64(gambar);
         this.setState({
           image: URL.createObjectURL(gambar),
-          imageToDB: gambar,
+          imageToDB: base64,
         });
       } else {
         Swal.fire({
@@ -76,17 +77,42 @@ class EditProfile extends Component {
     }
   };
 
+  convertBase64 = (gambar) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(gambar);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   deleteImage = (event) => {
     event.preventDefault();
     this.setState({
       image: DefaultImage,
       imageToDB: false,
+      imageLama: false,
     });
   };
 
   //Dijalankan ketika tombol submit di klik
   handleSubmit = (event) => {
-    const { uid, nama, imageToDB, imageLama, email, nomerHp, alamat, detail_alamat, latitude, longitude } = this.state;
+    const {
+      uid,
+      nama,
+      imageToDB,
+      imageLama,
+      email,
+      nomerHp,
+      alamat,
+      detail_alamat,
+      latitude,
+      longitude,
+    } = this.state;
     const data = {
       uid: uid,
       avatar: imageToDB ? imageToDB : imageLama ? imageLama : '',
@@ -95,16 +121,19 @@ class EditProfile extends Component {
       nomerHp: nomerHp,
       alamat: alamat,
       detail_alamat: detail_alamat,
-      latitude: latitude,
-      longitude: longitude,
-    }
+      latitude: Number(latitude),
+      longitude: Number(longitude),
+    };
     event.preventDefault();
     if (nama && email && nomerHp && alamat && detail_alamat && latitude && longitude) {
       if (imageToDB) {
+        let imagePath = imageToDB.replace("data:image/", "");
+        const indexOfEndPath = imagePath.indexOf(";");
+        imagePath = imagePath.substring(0, indexOfEndPath);
         if (
-          imageToDB.name.slice(-4) === ".png" ||
-          imageToDB.name.slice(-4) === ".jpg" ||
-          imageToDB.name.slice(-5) === ".jpeg"
+          imagePath === "png" ||
+          imagePath === "jpg" ||
+          imagePath === "jpeg"
         ) {
           this.props.dispatch(updateProfile(data));
         } else {
@@ -141,13 +170,12 @@ class EditProfile extends Component {
       //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
       Swal.fire({
         title: "Sukses",
-        text: 'Profile Sukses Diupdate!',
+        text: "Profile Sukses Diupdate!",
         icon: "success",
         confirmButtonColor: "#f69d93",
         confirmButtonText: "OK",
-      }).then(() => {
-        window.location.reload();
       });
+      this.props.history.push("/admin/dashboard");
     }
 
     if (
@@ -155,8 +183,12 @@ class EditProfile extends Component {
       prevProps.getDetailProfileResult !== getDetailProfileResult
     ) {
       this.setState({
-        image: getDetailProfileResult.avatar ? getDetailProfileResult.avatar : DefaultImage,
-        imageLama: getDetailProfileResult.avatar ? getDetailProfileResult.avatar : null,
+        image: getDetailProfileResult.avatar
+          ? getDetailProfileResult.avatar
+          : DefaultImage,
+        imageLama: getDetailProfileResult.avatar
+          ? getDetailProfileResult.avatar
+          : null,
         nama: getDetailProfileResult.nama,
         email: getDetailProfileResult.email,
         nomerHp: getDetailProfileResult.nomerHp,
@@ -169,7 +201,16 @@ class EditProfile extends Component {
   }
 
   render() {
-    const { nama, image, email, nomerHp, alamat, detail_alamat, latitude, longitude } = this.state;
+    const {
+      nama,
+      image,
+      email,
+      nomerHp,
+      alamat,
+      detail_alamat,
+      latitude,
+      longitude,
+    } = this.state;
     const { updateProfileLoading } = this.props;
     return (
       <div className="content">
