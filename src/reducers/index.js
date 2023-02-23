@@ -6,6 +6,7 @@ import ProdukReducer from "./produk";
 import AuthReducer from "./auth";
 import ProfileReducer from './profile';
 import PesananReducer from './pesanan';
+import InvoiceReducer from './invoice';
 
 export default combineReducers({
   KategoriReducer,
@@ -15,4 +16,5 @@ export default combineReducers({
   AuthReducer,
   ProfileReducer,
   PesananReducer,
+  InvoiceReducer,
 });

@@ -79,7 +79,7 @@ class ListKategori extends Component {
         scrollX: true,
       });
       $('.dataTables_filter input[type="search"]').css({
-        width: "350px",
+        width: "320",
         display: "inline-block",
       });
       table.on("page.dt", function () {

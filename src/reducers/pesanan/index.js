@@ -1,5 +1,5 @@
 import {
-    GET_LIST_PESANAN, UPDATE_STATUS
+    GET_LIST_PESANAN, UPDATE_STATUS, GET_DETAIL_PESANAN
   } from "actions/PesananAction";
   
   const initialState = {
@@ -10,6 +10,10 @@ import {
     updateStatusLoading: false,
     updateStatusResult: false,
     updateStatusError: false,
+
+    getDetailPesananLoading: false,
+    getDetailPesananResult: false,
+    getDetailPesananError: false,
   };
   
   export default function (state = initialState, action) {
@@ -28,6 +32,14 @@ import {
           updateStatusLoading: action.payload.loading,
           updateStatusResult: action.payload.data,
           updateStatusError: action.payload.errorMessage,
+        };
+
+        case GET_DETAIL_PESANAN:
+        return {
+          ...state,
+          getDetailPesananLoading: action.payload.loading,
+          getDetailPesananResult: action.payload.data,
+          getDetailPesananError: action.payload.errorMessage,
         };
 
       default:

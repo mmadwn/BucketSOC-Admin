@@ -15,6 +15,7 @@ import axios from "axios";
 
 export const GET_LIST_PESANAN = "GET_LIST_PESANAN";
 export const UPDATE_STATUS = "UPDATE_STATUS";
+export const GET_DETAIL_PESANAN = "GET_DETAIL_PESANAN";
 
 let check_midtrans = 0;
 let check_biteship = 0;
@@ -327,6 +328,36 @@ export const getListPesanan = () => {
       (error) => {
         //ERROR
         dispatchError(dispatch, GET_LIST_PESANAN, error.message);
+        Swal.fire({
+          title: "Error",
+          text: error.message,
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      }
+    );
+  };
+};
+
+export const getDetailPesanan = (id) => {
+  return (dispatch) => {
+    //LOADING
+    dispatchLoading(dispatch, GET_DETAIL_PESANAN);
+
+    return onValue(
+      ref(db, "/pesanan/" + id),
+      (snapshot) => {
+        const data = snapshot.val();
+        //SUKSES
+        dispatchSuccess(dispatch, GET_DETAIL_PESANAN, data);
+      },
+      {
+        onlyOnce: true,
+      },
+      (error) => {
+        //ERROR
+        dispatchError(dispatch, GET_DETAIL_PESANAN, error.message);
         Swal.fire({
           title: "Error",
           text: error.message,

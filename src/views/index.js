@@ -13,5 +13,6 @@ import EditProduk from "./Produk/EditProduk";
 import TambahProduk from "./Produk/TambahProduk";
 import Login from "./Login";
 import ListPesanan from "./Pesanan/ListPesanan";
+import DetailPesanan from "./Pesanan/DetailPesanan";
 
-export { ListKategori, TambahKategori, EditKategori,ListBanner, TambahBanner, EditBanner, ListUser, ListProduk, EditProduk, TambahProduk, Login, Dashboard, Icons, EditProfile, ListPesanan };
+export { ListKategori, TambahKategori, EditKategori,ListBanner, TambahBanner, EditBanner, ListUser, ListProduk, EditProduk, TambahProduk, Login, Dashboard, Icons, EditProfile, ListPesanan, DetailPesanan};

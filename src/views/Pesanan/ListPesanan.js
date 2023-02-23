@@ -18,7 +18,6 @@ import $ from "jquery";
 import { getListPesanan } from "actions/PesananAction";
 import Item from "components/Item";
 import { updateStatus } from "actions/PesananAction";
-import axios from "axios";
 
 class ListPesanan extends Component {
   constructor(props) {
@@ -84,7 +83,7 @@ class ListPesanan extends Component {
         },
       });
       $('.dataTables_filter input[type="search"]').css({
-        width: "350px",
+        width: "320",
         display: "inline-block",
       });
       table.on("page.dt", function () {
@@ -104,12 +103,6 @@ class ListPesanan extends Component {
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">Tabel Data Pesanan</CardTitle>
-                <Link
-                  to="/admin/produk/tambah"
-                  className="btn btn-primary float-right"
-                >
-                  <i className="nc-icon nc-simple-add" /> Tambah Produk
-                </Link>
                 <Button
                   style={{ backgroundColor: "#232531" }}
                   className="btn float-left"
@@ -328,19 +321,12 @@ class ListPesanan extends Component {
                                   width: "120px",
                                 }}
                               >
-                                <Button
-                                  color="primary"
-                                  className="ml-2"
-                                  onClick={() => {
-                                    this.toggle();
-                                    this.deskripsi(
-                                      getListPesananResult[key].deskripsi
-                                    );
-                                  }}
+                                <Link
+                                  className="btn btn-primary ml-2"
+                                  to={"/admin/pesanan/detail/" + key}
                                 >
-                                  <i className="nc-icon nc-alert-circle-i" />{" "}
-                                  Detail
-                                </Button>
+                                  <i className="nc-icon nc-alert-circle-i" /> Detail
+                                </Link>
                               </div>
                             </td>
                           </tr>

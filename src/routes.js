@@ -18,6 +18,7 @@
 */
 
 import { ListPesanan } from "views";
+import { DetailPesanan } from "views";
 import { EditProfile } from "views";
 import {
   Dashboard,
@@ -50,6 +51,13 @@ var routes = [
     component: ListPesanan,
     layout: "/admin",
     sidebar: true,
+  },
+  {
+    path: "/pesanan/detail/:id",
+    name: "Detail Pesanan",
+    component: DetailPesanan,
+    layout: "/admin",
+    sidebar: false,
   },
   {
     path: "/profile/edit/:id",
