@@ -18,6 +18,7 @@ import $ from "jquery";
 import { getListPesanan } from "actions/PesananAction";
 import Item from "components/Item";
 import { updateStatus } from "actions/PesananAction";
+import axios from "axios";
 
 class ListPesanan extends Component {
   constructor(props) {
@@ -34,7 +35,6 @@ class ListPesanan extends Component {
       total_ongkir: "",
       total_tagihan: "",
       item: "",
-
     };
     this.toggle = this.toggle.bind(this);
   }
@@ -44,14 +44,14 @@ class ListPesanan extends Component {
   }
 
   componentDidUpdate(prevProps) {
-     const { updateStatusResult } = this.props;
-     if (
-       updateStatusResult &&
-       prevProps.updateStatusResult !== updateStatusResult
-     ) {
-       //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
-       this.props.dispatch(getListPesanan());
-     }
+    const { updateStatusResult } = this.props;
+    if (
+      updateStatusResult &&
+      prevProps.updateStatusResult !== updateStatusResult
+    ) {
+      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
+      this.props.dispatch(getListPesanan());
+    }
   }
 
   toggle() {
@@ -74,17 +74,15 @@ class ListPesanan extends Component {
     //initialize datatable
     $(document).ready(function () {
       var table = $("#datatable").DataTable({
-          bDestroy: true,
-          pagingType: "full_numbers",
-          scrollX: true,
-          "order": [
-            [0, "desc"]
-          ],
-          language: {
-            thousands: ".",
-            decimal: ",",
-          },
-        });
+        bDestroy: true,
+        pagingType: "full_numbers",
+        scrollX: true,
+        order: [[0, "desc"]],
+        language: {
+          thousands: ".",
+          decimal: ",",
+        },
+      });
       $('.dataTables_filter input[type="search"]').css({
         width: "350px",
         display: "inline-block",
@@ -134,144 +132,221 @@ class ListPesanan extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {Object.keys(getListPesananResult).reverse().map((key) => (
-                        <tr key={key}>
-                          <td style={{verticalAlign: 'top'}}>
-                            <label
-                              style={{
-                                fontSize: "13px",
-                                width: "140px",
-                              }}
-                            >
-                              {getListPesananResult[key].order_id}
-                            </label>
-                          </td>
-                          <td style={{verticalAlign: 'top'}}>
-                            <p
-                              style={{
-                                fontSize: "13px",
-                                width: '180px',
-                              }}
-                            >
-                              <label style={{ fontWeight: 'bold', margin: 0}}>Nama : </label>
-                              <br/>{getListPesananResult[key].user.nama}
-                            </p>
-                            <p
-                              style={{
-                                fontSize: "13px",
-                                width: '180px',
-                              }}
-                            ><label style={{ fontWeight: 'bold', margin: 0}}>Email : </label>
-                              <br/>{getListPesananResult[key].user.email}
-                            </p>
-                            <p
-                              style={{
-                                fontSize: "13px",
-                                width: '180px',
-                              }}
-                            ><label style={{ fontWeight: 'bold', margin: 0}}>No. Telepon : </label>
-                              <br/>{getListPesananResult[key].user.nomerHp}
-                            </p>
-                          </td>
-                          <td style={{verticalAlign: 'top'}}>
-                            <p
-                              style={{
-                                fontSize: "13px",
-                                width: '180px',
-                              }}
-                            >
-                              <label style={{ fontWeight: 'bold', margin: 0}}>Tanggal Pemesanan : </label>
-                              <br/>{getListPesananResult[key].tanggal_pemesanan}
-                            </p>
-                            <p
-                              style={{
-                                fontSize: "13px",
-                                width: '180px',
-                              }}
-                            ><label style={{ fontWeight: 'bold', margin: 0}}>Permintaan Pengiriman : </label>
-                              <br/>{getListPesananResult[key].tanggal_pengiriman}
-                            </p>
-                            <p
-                              style={{
-                                fontSize: "13px",
-                                width: '180px',
-                              }}
-                            ><label style={{ fontWeight: 'bold', margin: 0}}>Metode Pengiriman : </label>
-                              <br/>{getListPesananResult[key].metode_pengiriman}
-                            </p>
-                          </td>
-                          <td>
-                            <div style={{
-                                width: '150px',
-                              }}>
-                            <Item item={getListPesananResult[key].item}/>
-                            </div>
-                          </td>
-                          <td style={{verticalAlign: 'top'}}>
-                            <label
-                              style={{
-                                textAlign: "center",
-                                fontSize: "13px",
-                                width: "140px",
-                              }}
-                            >
-                              {getListPesananResult[key].status_pesanan}
-                            </label>
-                          </td>
-                          <td style={{verticalAlign: 'top'}}>
-                            <p
-                              style={{
-                                fontSize: "13px",
-                                width: '130px',
-                              }}
-                            >
-                              <label style={{ fontWeight: 'bold', margin: 0}}>Subtotal Produk : </label>
-                              <br/>Rp{getListPesananResult[key].total_harga_barang.toLocaleString("id-ID")}
-                            </p>
-                            <p
-                              style={{
-                                fontSize: "13px",
-                                width: '130px',
-                              }}
-                            ><label style={{ fontWeight: 'bold', margin: 0}}>Ongkos Kirim : </label>
-                              <br/>Rp{getListPesananResult[key].total_ongkir.toLocaleString("id-ID")}
-                            </p>
-                            <p
-                              style={{
-                                fontSize: "13px",
-                                width: '130px',
-                              }}
-                            ><label style={{ fontWeight: 'bold', margin: 0, fontSize: '14px'}}>Total Harga : </label>
-                              <br/><label style={{ fontWeight: 'bold', margin: 0, color: '#f69d93', fontSize: '14px'}}>Rp{getListPesananResult[key].total_tagihan.toLocaleString("id-ID")}</label>
-                            </p>
-                          </td>
-                          <td>
-                            <div
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "120px",
-                              }}
-                            >
-                              <Button
-                                color="primary"
-                                className="ml-2"
-                                onClick={() => {
-                                  this.toggle();
-                                  this.deskripsi(
-                                    getListPesananResult[key].deskripsi
-                                  );
+                      {Object.keys(getListPesananResult)
+                        .reverse()
+                        .map((key) => (
+                          <tr key={key}>
+                            <td style={{ verticalAlign: "top" }}>
+                              <label
+                                style={{
+                                  fontSize: "13px",
+                                  width: "140px",
                                 }}
                               >
-                                <i className="nc-icon nc-alert-circle-i" />{" "}
-                                Detail
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                                {getListPesananResult[key].order_id}
+                              </label>
+                            </td>
+                            <td style={{ verticalAlign: "top" }}>
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  width: "180px",
+                                }}
+                              >
+                                <label
+                                  style={{ fontWeight: "bold", margin: 0 }}
+                                >
+                                  Nama :{" "}
+                                </label>
+                                <br />
+                                {getListPesananResult[key].user.nama}
+                              </p>
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  width: "180px",
+                                }}
+                              >
+                                <label
+                                  style={{ fontWeight: "bold", margin: 0 }}
+                                >
+                                  Email :{" "}
+                                </label>
+                                <br />
+                                {getListPesananResult[key].user.email}
+                              </p>
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  width: "180px",
+                                }}
+                              >
+                                <label
+                                  style={{ fontWeight: "bold", margin: 0 }}
+                                >
+                                  No. Telepon :{" "}
+                                </label>
+                                <br />
+                                {getListPesananResult[key].user.nomerHp}
+                              </p>
+                            </td>
+                            <td style={{ verticalAlign: "top" }}>
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  width: "180px",
+                                }}
+                              >
+                                <label
+                                  style={{ fontWeight: "bold", margin: 0 }}
+                                >
+                                  Tanggal Pemesanan :{" "}
+                                </label>
+                                <br />
+                                {getListPesananResult[key].tanggal_pemesanan}
+                              </p>
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  width: "180px",
+                                }}
+                              >
+                                <label
+                                  style={{ fontWeight: "bold", margin: 0 }}
+                                >
+                                  Permintaan Pengiriman :{" "}
+                                </label>
+                                <br />
+                                {getListPesananResult[key].tanggal_pengiriman}
+                              </p>
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  width: "180px",
+                                }}
+                              >
+                                <label
+                                  style={{ fontWeight: "bold", margin: 0 }}
+                                >
+                                  Metode Pengiriman :{" "}
+                                </label>
+                                <br />
+                                {getListPesananResult[key].metode_pengiriman}
+                              </p>
+                            </td>
+                            <td>
+                              <div
+                                style={{
+                                  width: "150px",
+                                }}
+                              >
+                                <Item item={getListPesananResult[key].item} />
+                              </div>
+                            </td>
+                            <td style={{ verticalAlign: "top" }}>
+                              <label
+                                style={{
+                                  textAlign: "center",
+                                  fontSize: "13px",
+                                  width: "140px",
+                                }}
+                              >
+                                {getListPesananResult[key].status_pesanan}
+                              </label>
+                            </td>
+                            <td style={{ verticalAlign: "top" }}>
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  width: "130px",
+                                }}
+                              >
+                                <label
+                                  style={{ fontWeight: "bold", margin: 0 }}
+                                >
+                                  Subtotal Produk :{" "}
+                                </label>
+                                <br />
+                                Rp
+                                {getListPesananResult[
+                                  key
+                                ].total_harga_barang.toLocaleString("id-ID")}
+                              </p>
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  width: "130px",
+                                }}
+                              >
+                                <label
+                                  style={{ fontWeight: "bold", margin: 0 }}
+                                >
+                                  Ongkos Kirim :{" "}
+                                </label>
+                                <br />
+                                Rp
+                                {getListPesananResult[
+                                  key
+                                ].total_ongkir.toLocaleString("id-ID")}
+                              </p>
+                              <p
+                                style={{
+                                  fontSize: "13px",
+                                  width: "130px",
+                                }}
+                              >
+                                <label
+                                  style={{
+                                    fontWeight: "bold",
+                                    margin: 0,
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  Total Harga :{" "}
+                                </label>
+                                <br />
+                                <label
+                                  style={{
+                                    fontWeight: "bold",
+                                    margin: 0,
+                                    color: "#f69d93",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  Rp
+                                  {getListPesananResult[
+                                    key
+                                  ].total_tagihan.toLocaleString("id-ID")}
+                                </label>
+                              </p>
+                            </td>
+                            <td>
+                              <div
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "120px",
+                                }}
+                              >
+                                <Button
+                                  color="primary"
+                                  className="ml-2"
+                                  onClick={() => {
+                                    this.toggle();
+                                    this.deskripsi(
+                                      getListPesananResult[key].deskripsi
+                                    );
+                                  }}
+                                >
+                                  <i className="nc-icon nc-alert-circle-i" />{" "}
+                                  Detail
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
-                    
+
                     <tfoot className="text-primary">
                       <tr>
                         <th>Order ID</th>

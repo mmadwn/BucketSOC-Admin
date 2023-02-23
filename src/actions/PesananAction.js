@@ -114,14 +114,13 @@ export const updateStatusMidtrans = (
     const now = new Date().getTime();
     const duration = now - tgl_pemesanan;
 
-    axios({
-      method: "GET",
-      url: URL_MIDTRANS_STATUS + order_id + "/status",
-      timeout: API_TIMEOUT,
-      headers: HEADER_MIDTRANS,
-    })
+    const parameter = {
+      order_id: order_id,
+    };
+
+    axios
+      .post("http://localhost:8000/midtrans-status", parameter)
       .then((response) => {
-        console.log(response);
         if (
           response.data.transaction_status === "settlement" ||
           response.data.transaction_status === "capture"
@@ -133,6 +132,7 @@ export const updateStatusMidtrans = (
               check_midtrans++;
               dispatch(checkItem(item_midtrans, item_biteship));
             })
+            
             .catch((error) => {
               //ERROR
               dispatchError(dispatch, UPDATE_STATUS, error.message);
@@ -193,7 +193,7 @@ export const updateStatusMidtrans = (
         }
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
         // ERROR
         dispatchError(dispatch, UPDATE_STATUS, error.message);
         Swal.fire({

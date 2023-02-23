@@ -345,6 +345,11 @@ class EditProfile extends Component {
                         </FormGroup>
                       </Col>
                     </Row>
+                    <FormGroup>
+                      <Label style={{ color: "red", textAlign: "justify" }}>
+                        Pastikan alamat, latitude, dan longitude sudah sesuai. Karena akan digunakan sebagai titik alamat toko / pengiriman.
+                      </Label>
+                    </FormGroup>
                   </Col>
                 </Row>
                 <form onSubmit={(event) => this.handleSubmit(event)}>
