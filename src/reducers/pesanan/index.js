@@ -1,5 +1,5 @@
 import {
-    GET_LIST_PESANAN, UPDATE_STATUS, GET_DETAIL_PESANAN
+    GET_LIST_PESANAN, UPDATE_STATUS, GET_DETAIL_PESANAN, CONFIRM_PESANAN
   } from "actions/PesananAction";
   
   const initialState = {
@@ -14,6 +14,10 @@ import {
     getDetailPesananLoading: false,
     getDetailPesananResult: false,
     getDetailPesananError: false,
+
+    confirmPesananLoading: false,
+    confirmPesananResult: false,
+    confirmPesananError: false,
   };
   
   export default function (state = initialState, action) {
@@ -34,12 +38,20 @@ import {
           updateStatusError: action.payload.errorMessage,
         };
 
-        case GET_DETAIL_PESANAN:
+      case GET_DETAIL_PESANAN:
         return {
           ...state,
           getDetailPesananLoading: action.payload.loading,
           getDetailPesananResult: action.payload.data,
           getDetailPesananError: action.payload.errorMessage,
+        };
+
+      case CONFIRM_PESANAN:
+        return {
+          ...state,
+          confirmPesananLoading: action.payload.loading,
+          confirmPesananResult: action.payload.data,
+          confirmPesananError: action.payload.errorMessage,
         };
 
       default:

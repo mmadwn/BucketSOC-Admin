@@ -1,4 +1,4 @@
-import { GET_DETAIL_PROFILE, UPDATE_PROFILE } from "actions/ProfileAction";
+import { GET_DETAIL_PROFILE, UPDATE_PROFILE, GET_ADMIN_PROFILE } from "actions/ProfileAction";
 
 const initialState = {
   getDetailProfileLoading: false,
@@ -8,6 +8,10 @@ const initialState = {
   updateProfileLoading: false,
   updateProfileResult: false,
   updateProfileError: false,
+
+  getAdminProfileLoading: false,
+  getAdminProfileResult: false,
+  getAdminProfileError: false,
 };
 
 export default function (state = initialState, action) {
@@ -26,6 +30,14 @@ export default function (state = initialState, action) {
         updateProfileLoading: action.payload.loading,
         updateProfileResult: action.payload.data,
         updateProfileError: action.payload.errorMessage,
+      };
+
+    case GET_ADMIN_PROFILE:
+      return {
+        ...state,
+        getAdminProfileLoading: action.payload.loading,
+        getAdminProfileResult: action.payload.data,
+        getAdminProfileError: action.payload.errorMessage,
       };
 
     default:

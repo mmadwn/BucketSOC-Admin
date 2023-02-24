@@ -20,7 +20,15 @@ export default class Item extends Component {
                   display: "flex",
                 }}
               >
-                <img width="60px" src={item[key].produk.gambar[0]} alt={""} />
+                <img
+                  width="60px"
+                  src={item[key].produk.gambar[0]}
+                  alt={"Image Not Found"}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://i.ibb.co/LxRv167/default-image.jpg";
+                  }}
+                />
               </div>
               <label>
                 <label style={{ fontWeight: "bold", textAlign: "justify" }}>

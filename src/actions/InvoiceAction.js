@@ -1,6 +1,5 @@
 import axios from "axios";
 import Swal from "sweetalert2";
-import { API_TIMEOUT, INVOICE_API_URL, INVOICE_API_HEADER } from "../utils";
 import { dispatchError, dispatchLoading, dispatchSuccess } from "../utils";
 
 export const CREATE_INVOICE = "CREATE_INVOICE";
@@ -10,28 +9,30 @@ export const createInvoice = (data) => {
     //LOADING
     dispatchLoading(dispatch, CREATE_INVOICE);
 
+    const parameter = {
+      data
+    }
+
     axios({
       method: "POST",
-      url: INVOICE_API_URL,
-      timeout: API_TIMEOUT,
-      headers: INVOICE_API_HEADER,
+      url: "http://localhost:8000/invoice",
       responseType: "blob",
-      data: data,
+      data: parameter,
     })
       .then((response) => {
-        // 2. Create blob link to download
-        const url = window.URL.createObjectURL(new Blob([response]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `file`);
-        // 3. Append to html page
-        document.body.appendChild(link);
-        // 4. Force download
-        link.click();
-        // 5. Clean up and remove the link
-        link.parentNode.removeChild(link);
-        //SUKSES
-        dispatchSuccess(dispatch, CREATE_INVOICE, response);
+        // SUCCESS
+        const file = new Blob([response.data], { type: "application/pdf" }); // membuat blob dari respon
+        const fileURL = URL.createObjectURL(file); // membuat URL objek dari blob
+        window.open(fileURL); // membuka tautan URL objek di tab baru
+
+        //JIka ingin download langsung
+        // const filename = "invoice.pdf";
+        // const blob = new Blob([response.data], { type: "application/pdf" }); // membuat blob dari respon
+        // const link = document.createElement("a"); // membuat link download
+        // link.href = window.URL.createObjectURL(blob);
+        // link.download = filename;
+        // link.click();
+        dispatchSuccess(dispatch, CREATE_INVOICE);
       })
       .catch((error) => {
         // ERROR

@@ -14,6 +14,7 @@ import axios from "axios";
 export const GET_LIST_PESANAN = "GET_LIST_PESANAN";
 export const UPDATE_STATUS = "UPDATE_STATUS";
 export const GET_DETAIL_PESANAN = "GET_DETAIL_PESANAN";
+export const CONFIRM_PESANAN = "CONFIRM_PESANAN";
 
 let check_midtrans = 0;
 let check_biteship = 0;
@@ -369,3 +370,64 @@ export const getDetailPesanan = (id) => {
     );
   };
 };
+
+export const confirmOrderWithBiteship = (order_id, dataBiteship) => {
+const parameter = {
+      data: dataBiteship,
+    };
+  return (dispatch) => {
+  //LOADING
+  dispatchLoading(dispatch, CONFIRM_PESANAN);
+  axios
+    .post("http://localhost:8000/biteship-order", parameter)
+    .then((response) => {
+      if (response.status !== 200) {
+        // ERROR
+        dispatchError(dispatch, CONFIRM_PESANAN, response);
+        Swal.fire({
+          title: "Error",
+          text: response.status,
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      } else {
+        const biteship_id = response.data.id
+        update(ref(db, "/pesanan/" + order_id), {
+          biteship_id: biteship_id,
+          status_pesanan: "Diproses",
+        })
+          .then((response) => {
+            //SUKSES
+            dispatchSuccess(
+              dispatch,
+              CONFIRM_PESANAN,
+              response ? response : []
+            );
+          })
+          .catch((error) => {
+            //ERROR
+            dispatchError(dispatch, CONFIRM_PESANAN, error.message);
+            Swal.fire({
+              title: "Error",
+              text: error.message,
+              icon: "error",
+              confirmButtonColor: "#f69d93",
+              confirmButtonText: "OK",
+            });
+          });
+      }
+    })
+    .catch((error) => {
+      // ERROR
+      dispatchError(dispatch, CONFIRM_PESANAN, error.message);
+      Swal.fire({
+        title: "Error",
+        text: error.message,
+        icon: "error",
+        confirmButtonColor: "#f69d93",
+        confirmButtonText: "OK",
+      });
+    });
+}
+}

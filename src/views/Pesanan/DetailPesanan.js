@@ -17,7 +17,12 @@ import {
 import Swal from "sweetalert2";
 import $ from "jquery";
 import { TbFileInvoice } from "react-icons/tb";
+import { BiLinkAlt } from "react-icons/bi";
+import { BsClipboardCheck } from "react-icons/bs";
 import { createInvoice } from "actions/InvoiceAction";
+import { getAdminProfile } from "actions/ProfileAction";
+import { custom_bulan } from "utils";
+import { confirmOrderWithBiteship } from "actions/PesananAction";
 
 class DetailPesanan extends Component {
   constructor(props) {
@@ -42,20 +47,34 @@ class DetailPesanan extends Component {
 
   //Jika proses tambah kategori ke firebse database berhasil
   componentDidUpdate(prevProps) {
-    const { tambahKategoriResult } = this.props;
+    const { dispatch, getDetailPesananResult, confirmPesananResult } = this.props;
 
     if (
-      tambahKategoriResult &&
-      prevProps.tambahKategoriResult !== tambahKategoriResult
+      getDetailPesananResult &&
+      prevProps.getDetailPesananResult !== getDetailPesananResult
     ) {
+      if (
+        getDetailPesananResult.status_pesanan === "Menunggu Konfirmasi Admin" &&
+        getDetailPesananResult.order_id.slice(-1) === "A"
+      ) {
+        dispatch(getAdminProfile());
+      }
+    }
+
+    if (
+      confirmPesananResult &&
+      prevProps.confirmPesananResult !== confirmPesananResult
+    ) {
+      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
       Swal.fire({
         title: "Sukses",
-        text: "Kategori Sukses Ditambahkan!",
+        text: "Pesanan Berhasil Dikonfirmasi!",
         icon: "success",
         confirmButtonColor: "#f69d93",
         confirmButtonText: "OK",
+      }).then(() => {
+        window.location.reload();
       });
-      this.props.history.push("/admin/kategori");
     }
   }
 
@@ -160,11 +179,91 @@ class DetailPesanan extends Component {
     dispatch(createInvoice(data));
   };
 
+  confirmOrder = () => {
+    const { dispatch, getDetailPesananResult, getAdminProfileResult } = this.props;
+    if (getDetailPesananResult.order_id.slice(-1) === "A") {
+      if (getAdminProfileResult) {
+        const dateString = getDetailPesananResult.tanggal_pengiriman;
+        const dateTimeArr = dateString.split(" ");
+
+        const tanggal = dateTimeArr[1];
+        const bulan = custom_bulan.indexOf(dateTimeArr[2]) + 1;
+        const tahun = dateTimeArr[3].toString();
+
+        const formattedDate = `${tahun}-${bulan
+          .toString()
+          .padStart(2, "0")}-${tanggal.toString().padStart(2, "0")}`;
+        const formattedTime = dateTimeArr[4].replace(".", ":");
+
+        let itemList = [];
+        Object.keys(getDetailPesananResult.item).forEach((key) => {
+          itemList.push({
+            name: getDetailPesananResult.item[key].produk.nama,
+            description: getDetailPesananResult.item[key].catatan,
+            value: getDetailPesananResult.item[key].produk.harga,
+            quantity: getDetailPesananResult.item[key].jumlah,
+          });
+        });
+
+        const dataBiteship = {
+          shipper_contact_name: getAdminProfileResult.nama,
+          shipper_contact_phone: getAdminProfileResult.nomerHp,
+          shipper_contact_email: getAdminProfileResult.email,
+          shipper_organization: "Bucket SOC",
+          origin_contact_name: getAdminProfileResult.nama,
+          origin_contact_phone: getAdminProfileResult.nomerHp,
+          origin_contact_email: getAdminProfileResult.email,
+          origin_address: getAdminProfileResult.alamat,
+          origin_note: getAdminProfileResult.detail_alamat,
+          origin_coordinate: {
+            latitude: getAdminProfileResult.latitude,
+            longitude: getAdminProfileResult.longitude,
+          },
+          destination_contact_name: getDetailPesananResult.user.nama,
+          destination_contact_phone: getDetailPesananResult.user.nomerHp,
+          destination_contact_email: getDetailPesananResult.user.email,
+          destination_address: getDetailPesananResult.user.alamat,
+          destination_note: getDetailPesananResult.user.detail_alamat,
+          destination_coordinate: {
+            latitude: getDetailPesananResult.user.latitude,
+            longitude: getDetailPesananResult.user.longitude,
+          },
+          courier_company:
+            getDetailPesananResult.metode_pengiriman ===
+            "GoSend Instant (Pembayaran Online)"
+              ? "gojek"
+              : "grab",
+          courier_type: "instant",
+          courier_insurance: getDetailPesananResult.asuransi
+            ? getDetailPesananResult.total_harga_barang
+            : 0,
+          delivery_type: "later",
+          delivery_date: formattedDate,
+          delivery_time: formattedTime,
+          reference_id: getDetailPesananResult.order_id,
+          items: itemList,
+        };
+        dispatch(confirmOrderWithBiteship(getDetailPesananResult.order_id, dataBiteship));
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: "Gagal mendapatkan data Admin!",
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      }
+    }
+  };
+
   render() {
     const {
       getDetailPesananResult,
       getDetailPesananLoading,
       getDetailPesananError,
+      createInvoiceLoading,
+      getAdminProfileResult,
+      confirmPesananLoading,
     } = this.props;
     //initialize datatable
     $(document).ready(function () {
@@ -196,24 +295,68 @@ class DetailPesanan extends Component {
               <Col>
                 <Card style={{ marginTop: 10 }}>
                   <CardHeader style={{ padding: 15 }}>
-                    <Button
-                      style={{ margin: 7 }}
-                      className="btn btn-primary float-right"
-                    >
-                      <i className="nc-icon nc-basket" /> Lihat Invoice
-                    </Button>
-
-                    <Button
-                      style={{ margin: 7 }}
-                      className="btn btn-primary float-right"
-                      onClick={() => this.invoice()}
-                    >
-                      <TbFileInvoice
-                        size="15px"
-                        style={{ verticalAlign: "sub" }}
-                      />{" "}
-                      Lihat Invoice
-                    </Button>
+                    {getDetailPesananResult.url_midtrans ? (
+                      <Link
+                        style={{ margin: 7 }}
+                        className="btn btn-primary float-right"
+                        to={{ pathname: getDetailPesananResult.url_midtrans }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <BiLinkAlt
+                          size="15px"
+                          style={{ verticalAlign: "sub" }}
+                        />{" "}
+                        Tampilkan URL Pembayaran
+                      </Link>
+                    ) : null}
+                    {createInvoiceLoading ? (
+                      <Button
+                        style={{ margin: 7 }}
+                        className="btn btn-primary float-right"
+                        disabled
+                      >
+                        <Spinner size="sm" color="light" /> Loading
+                      </Button>
+                    ) : (
+                      <Button
+                        style={{ margin: 7 }}
+                        className="btn btn-primary float-right"
+                        onClick={() => this.invoice()}
+                      >
+                        <TbFileInvoice
+                          size="15px"
+                          style={{ verticalAlign: "sub" }}
+                        />{" "}
+                        Lihat Invoice
+                      </Button>
+                    )}
+                    {getDetailPesananResult.status_pesanan ===
+                    "Menunggu Konfirmasi Admin" ? (
+                      <>
+                        {confirmPesananLoading ? (
+                          <Button
+                            style={{ margin: 7 }}
+                            className="btn btn-primary float-right"
+                            disabled
+                          >
+                            <Spinner size="sm" color="light" /> Loading
+                          </Button>
+                        ) : (
+                          <Button
+                            style={{ margin: 7 }}
+                            className="btn btn-primary float-right"
+                            onClick={() => this.confirmOrder()}
+                          >
+                            <BsClipboardCheck
+                              size="15px"
+                              style={{ verticalAlign: "sub" }}
+                            />{" "}
+                            Konfirmasi Pesanan
+                          </Button>
+                        )}
+                      </>
+                    ) : null}
                   </CardHeader>
                 </Card>
               </Col>
@@ -453,7 +596,12 @@ class DetailPesanan extends Component {
                                     getDetailPesananResult.item[key].produk
                                       .gambar[0]
                                   }
-                                  alt={''}
+                                  alt={"Image Not Found"}
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src =
+                                      "https://i.ibb.co/LxRv167/default-image.jpg";
+                                  }}
                                 />
                               </div>
                             </td>
@@ -654,6 +802,18 @@ const mapStateToProps = (state) => ({
   getDetailPesananLoading: state.PesananReducer.getDetailPesananLoading,
   getDetailPesananResult: state.PesananReducer.getDetailPesananResult,
   getDetailPesananError: state.PesananReducer.getDetailPesananError,
+
+  createInvoiceLoading: state.InvoiceReducer.createInvoiceLoading,
+  createInvoiceResult: state.InvoiceReducer.createInvoiceResult,
+  createInvoiceError: state.InvoiceReducer.createInvoiceError,
+
+  getAdminProfileLoading: state.ProfileReducer.getAdminProfileLoading,
+  getAdminProfileResult: state.ProfileReducer.getAdminProfileResult,
+  getAdminProfileError: state.ProfileReducer.getAdminProfileError,
+
+  confirmPesananLoading: state.PesananReducer.confirmPesananLoading,
+  confirmPesananResult: state.PesananReducer.confirmPesananResult,
+  confirmPesananError: state.PesananReducer.confirmPesananError,
 });
 
 export default connect(mapStateToProps, null)(DetailPesanan);
