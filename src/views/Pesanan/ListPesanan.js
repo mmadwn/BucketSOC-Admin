@@ -26,14 +26,6 @@ class ListPesanan extends Component {
     this.state = {
       modal: false,
       modalData: false,
-      order_id: "",
-      tanggal_pemesanan: "",
-      tanggal_pengiriman: "",
-      metode_pengiriman: "",
-      total_harga_barang: "",
-      total_ongkir: "",
-      total_tagihan: "",
-      item: "",
     };
     this.toggle = this.toggle.bind(this);
   }

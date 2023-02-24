@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 import Swal from "sweetalert2";
 import $ from "jquery";
-import { TbFileInvoice } from 'react-icons/tb';
+import { TbFileInvoice } from "react-icons/tb";
 import { createInvoice } from "actions/InvoiceAction";
 
 class DetailPesanan extends Component {
@@ -25,7 +25,7 @@ class DetailPesanan extends Component {
     //Deklarasi state atau variable awal
     this.state = {
       id: this.props.match.params.id,
-      date: new Date().toLocaleString('id-ID'),
+      date: new Date().toLocaleString("id-ID"),
     };
   }
 
@@ -60,99 +60,115 @@ class DetailPesanan extends Component {
   }
 
   invoice = () => {
-    const {date} = this.state;
-    const {dispatch, getDetailPesananResult} = this.props;
-    let status_tagihan = '';
+    const { date } = this.state;
+    const { dispatch, getDetailPesananResult } = this.props;
+    let status_tagihan = "";
     let itemList = [];
-    Object.keys(getDetailPesananResult.item).forEach(key => {
+    Object.keys(getDetailPesananResult.item).forEach((key) => {
       itemList.push({
         name: getDetailPesananResult.item[key].produk.nama,
         quantity: getDetailPesananResult.item[key].jumlah,
         unit_cost: getDetailPesananResult.item[key].produk.harga,
-        description: getDetailPesananResult.item[key].catatan ? 'Catatan: ' + getDetailPesananResult.item[key].catatan : null,
+        description: getDetailPesananResult.item[key].catatan
+          ? "Catatan: " + getDetailPesananResult.item[key].catatan
+          : null,
       });
     });
     if (getDetailPesananResult.url_midtrans) {
-      if (getDetailPesananResult.status_pesanan === 'Menunggu Pembayaran') {
-        status_tagihan = 'BELUM DIBAYAR';
+      if (getDetailPesananResult.status_pesanan === "Menunggu Pembayaran") {
+        status_tagihan = "BELUM DIBAYAR";
       } else if (
-        getDetailPesananResult.status_pesanan === 'Selesai (Pembayaran Gagal)' ||
-        getDetailPesananResult.status_pesanan === 'Selesai (Dibatalkan Pembeli)' ||
-        getDetailPesananResult.status_pesanan === 'Selesai (Dibatalkan Penjual)'
+        getDetailPesananResult.status_pesanan ===
+          "Selesai (Pembayaran Gagal)" ||
+        getDetailPesananResult.status_pesanan ===
+          "Selesai (Dibatalkan Pembeli)" ||
+        getDetailPesananResult.status_pesanan === "Selesai (Dibatalkan Penjual)"
       ) {
-        status_tagihan = 'DIBATALKAN';
+        status_tagihan = "DIBATALKAN";
       } else {
-        status_tagihan = 'LUNAS';
+        status_tagihan = "LUNAS";
       }
     } else {
       if (
-        getDetailPesananResult.status_pesanan === 'Selesai (Dibatalkan Pembeli)' ||
-        getDetailPesananResult.status_pesanan === 'Selesai (Dibatalkan Penjual)'
+        getDetailPesananResult.status_pesanan ===
+          "Selesai (Dibatalkan Pembeli)" ||
+        getDetailPesananResult.status_pesanan === "Selesai (Dibatalkan Penjual)"
       ) {
-        status_tagihan = 'DIBATALKAN';
+        status_tagihan = "DIBATALKAN";
       } else if (
-        getDetailPesananResult.status_pesanan === 'Selesai (Pesanan Telah Diterima)'
+        getDetailPesananResult.status_pesanan ===
+        "Selesai (Pesanan Telah Diterima)"
       ) {
-        status_tagihan = 'LUNAS';
+        status_tagihan = "LUNAS";
       } else {
-        status_tagihan = 'BELUM DIBAYAR';
+        status_tagihan = "BELUM DIBAYAR";
       }
     }
 
     const data = {
-      header: 'Invoice',
-      to_title: 'Pelanggan',
-      ship_to_title: 'Alamat',
-      invoice_number_title: 'ORDER ID #',
-      date_title: 'Tanggal Pemesanan',
-      quantity_header: 'Jumlah',
-      unit_cost_header: 'Harga Satuan',
-      amount_header: 'Total Harga',
-      shipping_title: 'Total Ongkos Kirim',
-      subtotal_title: 'Total Harga Barang',
-      total_title: 'Total Pesanan',
-      balance_title: 'Total Tagihan',
-      notes_title: 'Catatan',
-      terms_title: 'Diperbarui pada',
-      logo: 'https://i.ibb.co/f0rbMfm/Rounded-Logo-Copy.png',
+      header: "Invoice",
+      to_title: "Pelanggan",
+      ship_to_title: "Alamat",
+      invoice_number_title: "ORDER ID #",
+      date_title: "Tanggal Pemesanan",
+      quantity_header: "Jumlah",
+      unit_cost_header: "Harga Satuan",
+      amount_header: "Total Harga",
+      shipping_title: "Total Ongkos Kirim",
+      subtotal_title: "Total Harga Barang",
+      total_title: "Total Pesanan",
+      balance_title: "Total Tagihan",
+      notes_title: "Catatan",
+      terms_title: "Diperbarui pada",
+      logo: "https://i.ibb.co/f0rbMfm/Rounded-Logo-Copy.png",
       number: getDetailPesananResult.order_id,
-      from: 'BUCKET SOC',
-      to: getDetailPesananResult.user.nama + ' (' + getDetailPesananResult.user.nomerHp + ')',
+      from: "BUCKET SOC",
+      to:
+        getDetailPesananResult.user.nama +
+        " (" +
+        getDetailPesananResult.user.nomerHp +
+        ")",
       ship_to:
-      getDetailPesananResult.user.alamat + '. Detail Alamat: ' + getDetailPesananResult.user.detail_alamat,
-      currency: 'IDR',
+        getDetailPesananResult.user.alamat +
+        ". Detail Alamat: " +
+        getDetailPesananResult.user.detail_alamat,
+      currency: "IDR",
       date: getDetailPesananResult.tanggal_pemesanan,
       items: itemList,
       shipping: getDetailPesananResult.total_ongkir,
       notes:
-        'Invoice ini dibuat otomatis oleh sistem. Terimakasih atas pesanan Anda!',
+        "Invoice ini dibuat otomatis oleh sistem. Terimakasih atas pesanan Anda!",
       terms: date,
       custom_fields: [
         {
           name:
-          getDetailPesananResult.order_id.slice(-1) === 'A'
-              ? 'Tanggal Permintaan Pengiriman'
-              : 'Tanggal Permintaan Pengambilan',
+            getDetailPesananResult.order_id.slice(-1) === "A"
+              ? "Tanggal Permintaan Pengiriman"
+              : "Tanggal Permintaan Pengambilan",
           value: getDetailPesananResult.tanggal_pengiriman,
         },
         {
-          name: 'Metode Pengiriman dan Pembayaran',
+          name: "Metode Pengiriman dan Pembayaran",
           value: getDetailPesananResult.metode_pengiriman,
         },
         {
-          name: 'Status Tagihan',
+          name: "Status Tagihan",
           value: status_tagihan,
         },
       ],
     };
     dispatch(createInvoice(data));
-  }
+  };
 
   render() {
-    const { getDetailPesananResult, getDetailPesananLoading, getDetailPesananError } = this.props;
+    const {
+      getDetailPesananResult,
+      getDetailPesananLoading,
+      getDetailPesananError,
+    } = this.props;
     //initialize datatable
     $(document).ready(function () {
-      var table = $("#datatable").DataTable({
+      $("#datatable").DataTable({
         bDestroy: true,
         ordering: false,
         info: false,
@@ -163,10 +179,6 @@ class DetailPesanan extends Component {
           thousands: ".",
           decimal: ",",
         },
-      });
-      $('.dataTables_filter input[type="search"]').css({
-        width: "320",
-        display: "inline-block",
       });
     });
     return (
@@ -182,7 +194,7 @@ class DetailPesanan extends Component {
             </Row>
             <Row>
               <Col>
-                <Card>
+                <Card style={{ marginTop: 10 }}>
                   <CardHeader style={{ padding: 15 }}>
                     <Button
                       style={{ margin: 7 }}
@@ -196,7 +208,11 @@ class DetailPesanan extends Component {
                       className="btn btn-primary float-right"
                       onClick={() => this.invoice()}
                     >
-                      <TbFileInvoice size='15px' style={{verticalAlign: 'sub'}} /> Lihat Invoice
+                      <TbFileInvoice
+                        size="15px"
+                        style={{ verticalAlign: "sub" }}
+                      />{" "}
+                      Lihat Invoice
                     </Button>
                   </CardHeader>
                 </Card>
@@ -290,22 +306,24 @@ class DetailPesanan extends Component {
                           </Col>
                         </Row>
                       </FormGroup>
-                      <FormGroup>
-                        <Row>
-                          <Col md="6">
-                            <Label className="card-subtitle">
-                              Asuransi Pengiriman
-                            </Label>
-                          </Col>
-                          <Col>
-                            <Label>
-                              {getDetailPesananResult.asuransi === true
-                                ? "Ya"
-                                : "Tidak"}
-                            </Label>
-                          </Col>
-                        </Row>
-                      </FormGroup>
+                      {getDetailPesananResult.order_id.slice(-1) === "A" ? (
+                        <FormGroup>
+                          <Row>
+                            <Col md="6">
+                              <Label className="card-subtitle">
+                                Asuransi Pengiriman
+                              </Label>
+                            </Col>
+                            <Col>
+                              <Label>
+                                {getDetailPesananResult.asuransi === true
+                                  ? "Ya"
+                                  : "Tidak"}
+                              </Label>
+                            </Col>
+                          </Row>
+                        </FormGroup>
+                      ) : null}
                     </Col>
                   </CardBody>
                 </Card>
@@ -435,9 +453,7 @@ class DetailPesanan extends Component {
                                     getDetailPesananResult.item[key].produk
                                       .gambar[0]
                                   }
-                                  alt={
-                                    getDetailPesananResult.item[key].produk.nama
-                                  }
+                                  alt={''}
                                 />
                               </div>
                             </td>
@@ -606,7 +622,29 @@ class DetailPesanan extends Component {
           >
             <Spinner color="primary" />
           </div>
-        ) : null}
+        ) : getDetailPesananError ? (
+          <div
+            style={{
+              justifyContent: "center",
+              display: "flex",
+              marginBottom: "100px",
+              marginTop: "70px",
+            }}
+          >
+            <label>{getDetailPesananError}</label>
+          </div>
+        ) : (
+          <div
+            style={{
+              justifyContent: "center",
+              display: "flex",
+              marginBottom: "100px",
+              marginTop: "70px",
+            }}
+          >
+            <label>Data pesanan tidak ditemukan!</label>
+          </div>
+        )}
       </div>
     );
   }

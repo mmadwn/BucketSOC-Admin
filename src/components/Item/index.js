@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Row, Col } from "reactstrap";
 
 export default class Item extends Component {
   render() {
@@ -8,27 +7,45 @@ export default class Item extends Component {
       <div>
         {Object.keys(item).map((key, index) => {
           return (
-            <div key={key} style={{ marginBottom: index !== Object.keys(item).length - 1 ? "20px" : 0 }}>
+            <div
+              key={key}
+              style={{
+                marginBottom:
+                  index !== Object.keys(item).length - 1 ? "20px" : 0,
+              }}
+            >
               <div
                 style={{
-                  width: "60px",
+                  justifyContent: "center",
+                  display: "flex",
                 }}
               >
-                <img
-                  src={item[key].produk.gambar[0]}
-                  alt={item[key].produk.nama}
-                />
+                <img width="60px" src={item[key].produk.gambar[0]} alt={""} />
               </div>
               <label>
-                <label style={{ fontWeight: 'bold', textAlign: 'justify'}}>{item[key].produk.nama}</label>
+                <label style={{ fontWeight: "bold", textAlign: "justify" }}>
+                  {item[key].produk.nama}
+                </label>
                 <br />
-                <label style={{ fontWeight: 'bold', textAlign: 'justify'}}>Harga : </label> Rp{item[key].produk.harga.toLocaleString("id-ID")}
+                <label style={{ fontWeight: "bold", textAlign: "justify" }}>
+                  Harga :{" "}
+                </label>{" "}
+                Rp{item[key].produk.harga.toLocaleString("id-ID")}
                 <br />
-                <label style={{ fontWeight: 'bold', textAlign: 'justify'}}>Jumlah : </label>  {item[key].jumlah}
+                <label style={{ fontWeight: "bold", textAlign: "justify" }}>
+                  Jumlah :{" "}
+                </label>{" "}
+                {item[key].jumlah}
                 <br />
-                <label style={{ fontWeight: 'bold', textAlign: 'justify'}}>Total Harga : </label> Rp
+                <label style={{ fontWeight: "bold", textAlign: "justify" }}>
+                  Total Harga :{" "}
+                </label>{" "}
+                Rp
                 {item[key].total_harga.toLocaleString("id-ID")}
               </label>
+              {index !== Object.keys(item).length - 1 ? (
+                <hr style={{ margin: 0, backgroundColor: "#d9d9d9" }} />
+              ) : null}
             </div>
           );
         })}

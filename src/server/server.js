@@ -28,6 +28,12 @@ app.post("/midtrans-status", (req, res) => {
       res.json(response.data);
     })
     .catch((error) => {
-      console.log(error);
+      res
+        .status(error)
+        .send(
+          new Error(
+            "Failed to check Midtrans status for Order ID " + req.body.order_id
+          )
+        );
     });
 });

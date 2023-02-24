@@ -7,8 +7,6 @@ import {
   dispatchError,
   dispatchLoading,
   dispatchSuccess,
-  HEADER_MIDTRANS,
-  URL_MIDTRANS_STATUS,
 } from "../utils";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -68,11 +66,13 @@ export const updateStatus = () => {
           });
           if (item_midtrans === 0 && item_biteship === 0) {
             //SUKSES
-            dispatchSuccess(dispatch, UPDATE_STATUS, "Cek Status Selesai");
+            dispatchSuccess(dispatch, GET_LIST_PESANAN, data);
+            dispatchSuccess(dispatch, UPDATE_STATUS, false);
           }
         } else {
           //SUKSES
-          dispatchSuccess(dispatch, UPDATE_STATUS, "Cek Status Selesai");
+          dispatchSuccess(dispatch, GET_LIST_PESANAN, data);
+          dispatchSuccess(dispatch, UPDATE_STATUS, false);
         }
       },
       {
