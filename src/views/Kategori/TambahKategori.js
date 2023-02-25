@@ -143,7 +143,7 @@ class TambahKategori extends Component {
                     <Col md={6}>
                       <FormGroup>
                         <label>Logo Kategori</label>
-                        <text style={{ color: "red" }}> *</text>
+                        <label style={{ color: "red" }}> &nbsp;*</label>
                         {image !== DefaultImage ? (
                           <FormGroup>
                             <a href="/" onClick={this.deleteImage}>
@@ -164,7 +164,7 @@ class TambahKategori extends Component {
                     <Col md={6}>
                       <FormGroup>
                         <label>Nama Kategori</label>
-                        <text style={{ color: "red" }}> *</text>
+                        <label style={{ color: "red" }}> &nbsp;*</label>
                         <Input
                           type="text"
                           value={namaKategori}

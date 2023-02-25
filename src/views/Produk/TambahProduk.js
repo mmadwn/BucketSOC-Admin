@@ -242,7 +242,7 @@ class TambahProduk extends Component {
                         <img src={image1} width="200" alt="Gambar 1" />
                         <FormGroup>
                           <label>Gambar 1</label>
-                          <text style={{ color: "red" }}> *</text>
+                          <label style={{ color: "red" }}> &nbsp;*</label>
                           {image1 !== DefaultImage ? (
                             <FormGroup>
                               <a href="/" onClick={this.deleteImage1}>
@@ -286,7 +286,7 @@ class TambahProduk extends Component {
                   <Col md={10}>
                     <FormGroup>
                       <label>Nama Produk</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="text"
                         value={namaProduk}
@@ -296,7 +296,7 @@ class TambahProduk extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Kategori</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="select"
                         name="kategori"
@@ -313,7 +313,7 @@ class TambahProduk extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Harga (Rp.)</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="number"
                         min={0}
@@ -329,7 +329,7 @@ class TambahProduk extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Status</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="select"
                         name="ready"
@@ -342,7 +342,7 @@ class TambahProduk extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Deskripsi Produk</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="textarea"
                         style={{

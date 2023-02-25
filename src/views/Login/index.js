@@ -133,7 +133,7 @@ class Login extends Component {
                         <Label style={{ fontSize: "13px" }} for="email">
                           Email
                         </Label>
-                        <text style={{ color: "red" }}> *</text>
+                        <label style={{ color: "red" }}> &nbsp;*</label>
                         <Input
                           type="email"
                           name="email"
@@ -153,7 +153,7 @@ class Login extends Component {
                         <Label style={{ fontSize: "13px" }} for="password">
                           Password
                         </Label>
-                        <text style={{ color: "red" }}> *</text>
+                        <label style={{ color: "red" }}> &nbsp;*</label>
                         <Input
                           type="password"
                           name="password"

@@ -252,7 +252,7 @@ class EditProfile extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Nama</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="text"
                         value={nama}
@@ -262,7 +262,7 @@ class EditProfile extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Email</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="text"
                         value={email}
@@ -273,7 +273,7 @@ class EditProfile extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Nomor Telepon</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="number"
                         min={0}
@@ -289,7 +289,7 @@ class EditProfile extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Alamat</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="textarea"
                         style={{
@@ -304,7 +304,7 @@ class EditProfile extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Detail Alamat</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="textarea"
                         style={{
@@ -321,7 +321,7 @@ class EditProfile extends Component {
                       <Col>
                         <FormGroup>
                           <label>Latitude</label>
-                          <text style={{ color: "red" }}> *</text>
+                          <label style={{ color: "red" }}> &nbsp;*</label>
                           <Input
                             type="number"
                             value={latitude}
@@ -333,7 +333,7 @@ class EditProfile extends Component {
                       <Col>
                         <FormGroup>
                           <label>Longitude</label>
-                          <text style={{ color: "red" }}> *</text>
+                          <label style={{ color: "red" }}> &nbsp;*</label>
                           <Input
                             min={0}
                             value={longitude}
@@ -345,7 +345,9 @@ class EditProfile extends Component {
                     </Row>
                     <FormGroup>
                       <Label style={{ color: "red", textAlign: "justify" }}>
-                        Pastikan alamat, latitude, dan longitude sudah sesuai. Karena akan digunakan sebagai titik alamat toko / pengiriman.
+                        Pastikan alamat, latitude, dan longitude sudah sesuai.
+                        Karena akan digunakan sebagai titik alamat toko /
+                        pengiriman.
                       </Label>
                     </FormGroup>
                   </Col>

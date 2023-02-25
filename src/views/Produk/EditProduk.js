@@ -132,8 +132,13 @@ class EditProduk extends Component {
     } = this.state;
     event.preventDefault();
     //Cek jika seluruh data sudah diisi kecuali gambar 2 dan ready tidak perlu dicek
-    if (image1 !== DefaultImage && namaProduk && deskripsiProduk && harga && kategori) {
-
+    if (
+      image1 !== DefaultImage &&
+      namaProduk &&
+      deskripsiProduk &&
+      harga &&
+      kategori
+    ) {
       //Jika ingin ganti gambar 1
       if (imageToDB1.name) {
         //Cek format gambar 1 apakah sudah sesuai
@@ -143,9 +148,9 @@ class EditProduk extends Component {
           imageToDB1.name.slice(-5) === ".jpeg"
         ) {
           //Cek apakah gambar 2 ada
-          if(image2 !== DefaultImage) {
+          if (image2 !== DefaultImage) {
             //Cek apakah gambar 2 diganti
-            if(imageToDB2.name) {
+            if (imageToDB2.name) {
               //Cek apakah nama gambar 1 tidak sama dengan nama gambar 2
               if (imageToDB1.name !== imageToDB2.name) {
                 //Cek apakah gambar 2 sudah sesuai format => masuk action
@@ -198,9 +203,9 @@ class EditProduk extends Component {
         //Jika gambar 1 tidak diganti
       } else {
         //Cek Jika gambar 2 ada
-        if(image2 !== DefaultImage) {
+        if (image2 !== DefaultImage) {
           //Jika gambar 2 ingin diganti
-          if(imageToDB2.name) {
+          if (imageToDB2.name) {
             //Cek apakah gambar 2 sudah sesuai format => masuk action
             if (
               imageToDB2.name.slice(-4) === ".png" ||
@@ -315,7 +320,7 @@ class EditProduk extends Component {
                         <img src={image1} width="200" alt="Gambar 1" />
                         <FormGroup>
                           <label>Gambar 1</label>
-                          <text style={{ color: "red" }}> *</text>
+                          <label style={{ color: "red" }}> &nbsp;*</label>
                           {image1 !== DefaultImage ? (
                             <FormGroup>
                               <a href="/" onClick={this.deleteImage1}>
@@ -359,7 +364,7 @@ class EditProduk extends Component {
                   <Col md={10}>
                     <FormGroup>
                       <label>Nama Produk</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="text"
                         value={namaProduk}
@@ -369,7 +374,7 @@ class EditProduk extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Kategori</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="select"
                         name="kategori"
@@ -386,7 +391,7 @@ class EditProduk extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Harga (Rp.)</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="number"
                         min={0}
@@ -402,7 +407,7 @@ class EditProduk extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Status</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="select"
                         name="ready"
@@ -415,7 +420,7 @@ class EditProduk extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Deskripsi Produk</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="textarea"
                         style={{

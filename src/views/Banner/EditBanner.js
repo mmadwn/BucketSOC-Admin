@@ -170,7 +170,7 @@ class EditBanner extends Component {
                     <img src={image} width="200" alt="Banner" />
                     <FormGroup>
                       <label>Gambar Banner</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       {image !== DefaultImage ? (
                         <FormGroup>
                           <a href="/" onClick={this.deleteImage}>
@@ -190,7 +190,7 @@ class EditBanner extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Judul Banner</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="text"
                         value={judulBanner}
@@ -200,7 +200,7 @@ class EditBanner extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Status</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="select"
                         name="active"
@@ -213,7 +213,7 @@ class EditBanner extends Component {
                     </FormGroup>
                     <FormGroup>
                       <label>Deskripsi Banner</label>
-                      <text style={{ color: "red" }}> *</text>
+                      <label style={{ color: "red" }}> &nbsp;*</label>
                       <Input
                         type="textarea"
                         style={{
