@@ -12,6 +12,8 @@ import {
   Row,
   Spinner,
 } from "reactstrap";
+import { AiFillEdit } from "react-icons/ai";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import $ from "jquery"
 
@@ -101,13 +103,13 @@ class ListKategori extends Component {
                 <CardTitle tag="h4">Tabel Data Kategori</CardTitle>
                 <Link
                   to="/admin/kategori/tambah"
-                  className="btn btn-primary float-right"
+                  className="btn btn-primary float-right full-btn"
                 >
                   <i className="nc-icon nc-simple-add" /> Tambah Kategori
                 </Link>
                 <Button
                   style={{ backgroundColor: "#232531" }}
-                  className="btn float-left"
+                  className="btn float-left full-btn"
                 >
                   <i className="nc-icon nc-cloud-download-93" /> Download Data
                 </Button>
@@ -162,7 +164,11 @@ class ListKategori extends Component {
                                   className="btn btn-warning ml-2"
                                   to={"/admin/kategori/edit/" + key}
                                 >
-                                  <i className="nc-icon nc-ruler-pencil" /> Edit
+                                  <AiFillEdit
+                                    size="15px"
+                                    style={{ verticalAlign: "sub" }}
+                                  />{" "}
+                                  Edit
                                 </Link>
                                 <Button
                                   color="danger"
@@ -174,7 +180,11 @@ class ListKategori extends Component {
                                     )
                                   }
                                 >
-                                  <i className="nc-icon nc-basket" /> Hapus
+                                  <RiDeleteBin5Fill
+                                    size="15px"
+                                    style={{ verticalAlign: "sub" }}
+                                  />{" "}
+                                  Hapus
                                 </Button>
                               </div>
                             </td>

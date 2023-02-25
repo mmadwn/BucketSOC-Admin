@@ -16,6 +16,8 @@ import {
   Spinner,
 } from "reactstrap";
 import Swal from "sweetalert2";
+import { AiFillEdit } from "react-icons/ai";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 import $ from "jquery";
 import { getListProduk } from "actions/ProdukAction";
 import { deleteProduk } from "actions/ProdukAction";
@@ -140,13 +142,13 @@ class ListProduk extends Component {
                 <CardTitle tag="h4">Tabel Data Produk</CardTitle>
                 <Link
                   to="/admin/produk/tambah"
-                  className="btn btn-primary float-right"
+                  className="btn btn-primary float-right full-btn"
                 >
                   <i className="nc-icon nc-simple-add" /> Tambah Produk
                 </Link>
                 <Button
                   style={{ backgroundColor: "#232531" }}
-                  className="btn float-left"
+                  className="btn float-left full-btn"
                 >
                   <i className="nc-icon nc-cloud-download-93" /> Download Data
                 </Button>
@@ -165,115 +167,127 @@ class ListProduk extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {Object.keys(getListProdukResult).reverse().map((key) => (
-                        <tr key={key}>
-                          <td>
-                            <div
-                              style={{
-                                width: "80px",
-                              }}
-                            >
-                              <img
-                                src={getListProdukResult[key].gambar[0]}
-                                alt={getListProdukResult[key].nama}
-                              />
-                            </div>
-                          </td>
-                          <td>
-                            <label
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "280px",
-                              }}
-                            >
-                              {getListProdukResult[key].nama}
-                            </label>
-                          </td>
-                          <td>
-                            <label
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "150px",
-                              }}
-                            >
-                              {getListKategoriResult
-                                ? kategoriList.find((x) =>
-                                  x.key === getListProdukResult[key].kategori
-                                ).nama
-                                : null}
-                            </label>
-                          </td>
-                          <td>
-                            <Label
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "90px",
-                              }}
-                            >
-                              {getListProdukResult[key].harga.toLocaleString(
-                                "id-ID"
-                              )}
-                            </Label>
-                          </td>
-                          <td>
-                            <label
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "80px",
-                              }}
-                            >
-                              {getListProdukResult[key].ready === true
-                                ? "Aktif"
-                                : "Tidak Aktif"}
-                            </label>
-                          </td>
-                          <td>
-                            <div
-                              style={{
-                                textAlign: "justify",
-                                fontSize: "14px",
-                                width: "340px",
-                              }}
-                            >
-                              <Button
-                                color="primary"
-                                className="ml-2"
-                                onClick={() => {
-                                  this.toggle();
-                                  this.deskripsi(
-                                    getListProdukResult[key].deskripsi
-                                  );
+                      {Object.keys(getListProdukResult)
+                        .reverse()
+                        .map((key) => (
+                          <tr key={key}>
+                            <td>
+                              <div
+                                style={{
+                                  width: "80px",
                                 }}
                               >
-                                <i className="nc-icon nc-alert-circle-i" />{" "}
-                                Deskripsi
-                              </Button>
-                              <Link
-                                className="btn btn-warning ml-2"
-                                to={"/admin/produk/edit/" + key}
+                                <img
+                                  src={getListProdukResult[key].gambar[0]}
+                                  alt={getListProdukResult[key].nama}
+                                />
+                              </div>
+                            </td>
+                            <td>
+                              <label
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "280px",
+                                }}
                               >
-                                <i className="nc-icon nc-ruler-pencil" /> Edit
-                              </Link>
-                              <Button
-                                color="danger"
-                                className="ml-2"
-                                onClick={() =>
-                                  this.removeData(
-                                    getListProdukResult[key].gambar,
-                                    key
-                                  )
-                                }
+                                {getListProdukResult[key].nama}
+                              </label>
+                            </td>
+                            <td>
+                              <label
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "150px",
+                                }}
                               >
-                                <i className="nc-icon nc-basket" /> Hapus
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                                {getListKategoriResult
+                                  ? kategoriList.find(
+                                      (x) =>
+                                        x.key ===
+                                        getListProdukResult[key].kategori
+                                    ).nama
+                                  : null}
+                              </label>
+                            </td>
+                            <td>
+                              <Label
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "90px",
+                                }}
+                              >
+                                {getListProdukResult[key].harga.toLocaleString(
+                                  "id-ID"
+                                )}
+                              </Label>
+                            </td>
+                            <td>
+                              <label
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "80px",
+                                }}
+                              >
+                                {getListProdukResult[key].ready === true
+                                  ? "Aktif"
+                                  : "Tidak Aktif"}
+                              </label>
+                            </td>
+                            <td>
+                              <div
+                                style={{
+                                  textAlign: "justify",
+                                  fontSize: "14px",
+                                  width: "350px",
+                                }}
+                              >
+                                <Button
+                                  color="primary"
+                                  className="ml-2"
+                                  onClick={() => {
+                                    this.toggle();
+                                    this.deskripsi(
+                                      getListProdukResult[key].deskripsi
+                                    );
+                                  }}
+                                >
+                                  <i className="nc-icon nc-alert-circle-i" />{" "}
+                                  Deskripsi
+                                </Button>
+                                <Link
+                                  className="btn btn-warning ml-2"
+                                  to={"/admin/produk/edit/" + key}
+                                >
+                                  <AiFillEdit
+                                    size="15px"
+                                    style={{ verticalAlign: "sub" }}
+                                  />{" "}
+                                  Edit
+                                </Link>
+                                <Button
+                                  color="danger"
+                                  className="ml-2"
+                                  onClick={() =>
+                                    this.removeData(
+                                      getListProdukResult[key].gambar,
+                                      key
+                                    )
+                                  }
+                                >
+                                  <RiDeleteBin5Fill
+                                    size="15px"
+                                    style={{ verticalAlign: "sub" }}
+                                  />{" "}
+                                  Hapus
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                     <tfoot className="text-primary">
                       <tr>
