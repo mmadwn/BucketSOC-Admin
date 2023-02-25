@@ -238,6 +238,13 @@
   border-radius: 7px;
 }
 
+@media (max-width: 800px) { /*"xxx" the width of window*/
+  .full-btn  {
+    width:100%;
+  }
+}
+
+
 /* table.display {
 margin: 0 auto;
 width: 100%;

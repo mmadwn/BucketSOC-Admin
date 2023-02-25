@@ -29,13 +29,7 @@ app.post("/midtrans-status", (req, res) => {
       res.json(response.data);
     })
     .catch((error) => {
-      res
-        .status(error.message)
-        .send(
-          new Error(
-            "Failed to check Midtrans status for Order ID " + req.body.order_id
-          )
-        );
+      res.status(500).send(error.message);
     });
 });
 
@@ -57,7 +51,7 @@ app.post("/invoice", (req, res) => {
       res.send(pdfBuffer);
     })
     .catch((error) => {
-      res.status(error.message).send(new Error("Failed to make Invoice."));
+      res.status(500).send(error.message);
     });
 });
 
@@ -77,12 +71,6 @@ app.post("/biteship-order", (req, res) => {
       res.json(response.data);
     })
     .catch((error) => {
-      res
-        .status(error)
-        .send(
-          new Error(
-            "Failed to make Biteship order."
-          )
-        );
+      res.status(500).send(error.message);
     });
 });

@@ -262,7 +262,6 @@ class DetailPesanan extends Component {
       getDetailPesananLoading,
       getDetailPesananError,
       createInvoiceLoading,
-      getAdminProfileResult,
       confirmPesananLoading,
     } = this.props;
     //initialize datatable
@@ -297,8 +296,7 @@ class DetailPesanan extends Component {
                   <CardHeader style={{ padding: 15 }}>
                     {getDetailPesananResult.url_midtrans ? (
                       <Link
-                        style={{ margin: 7 }}
-                        className="btn btn-primary float-right"
+                        className="btn btn-primary float-right full-btn"
                         to={{ pathname: getDetailPesananResult.url_midtrans }}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -312,16 +310,14 @@ class DetailPesanan extends Component {
                     ) : null}
                     {createInvoiceLoading ? (
                       <Button
-                        style={{ margin: 7 }}
-                        className="btn btn-primary float-right"
+                        className="btn btn-primary float-right full-btn"
                         disabled
                       >
                         <Spinner size="sm" color="light" /> Loading
                       </Button>
                     ) : (
                       <Button
-                        style={{ margin: 7 }}
-                        className="btn btn-primary float-right"
+                        className="btn btn-primary float-right full-btn"
                         onClick={() => this.invoice()}
                       >
                         <TbFileInvoice
@@ -336,16 +332,15 @@ class DetailPesanan extends Component {
                       <>
                         {confirmPesananLoading ? (
                           <Button
-                            style={{ margin: 7 }}
-                            className="btn btn-primary float-right"
+                            className="btn btn-primary float-right full-btn"
                             disabled
                           >
                             <Spinner size="sm" color="light" /> Loading
                           </Button>
                         ) : (
                           <Button
-                            style={{ margin: 7 }}
-                            className="btn btn-primary float-right"
+                            className="btn btn-primary float-right full-btn"
+                            id="pesanan"
                             onClick={() => this.confirmOrder()}
                           >
                             <BsClipboardCheck
@@ -424,9 +419,16 @@ class DetailPesanan extends Component {
                       <FormGroup>
                         <Row>
                           <Col md="6">
-                            <Label className="card-subtitle">
-                              Tanggal Permintaan Pengiriman
-                            </Label>
+                            {getDetailPesananResult.order_id.slice(-1) ===
+                            "A" ? (
+                              <Label className="card-subtitle">
+                                Tanggal Permintaan Pengiriman
+                              </Label>
+                            ) : (
+                              <Label className="card-subtitle">
+                                Tanggal Permintaan Pengambilan
+                              </Label>
+                            )}
                           </Col>
                           <Col>
                             <Label>
@@ -596,7 +598,7 @@ class DetailPesanan extends Component {
                                     getDetailPesananResult.item[key].produk
                                       .gambar[0]
                                   }
-                                  alt={"Image Not Found"}
+                                  alt={"Not Found"}
                                   onError={(e) => {
                                     e.target.onerror = null;
                                     e.target.src =

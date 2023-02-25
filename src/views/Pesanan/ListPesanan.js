@@ -196,11 +196,22 @@ class ListPesanan extends Component {
                                   width: "180px",
                                 }}
                               >
-                                <label
-                                  style={{ fontWeight: "bold", margin: 0 }}
-                                >
-                                  Permintaan Pengiriman :{" "}
-                                </label>
+                                {getListPesananResult[key].order_id.slice(
+                                  -1
+                                ) === "A" ? (
+                                  <label
+                                    style={{ fontWeight: "bold", margin: 0 }}
+                                  >
+                                    Permintaan Pengiriman :{" "}
+                                  </label>
+                                ) : (
+                                  <label
+                                    style={{ fontWeight: "bold", margin: 0 }}
+                                  >
+                                    Permintaan Pengambilan :{" "}
+                                  </label>
+                                )}
+
                                 <br />
                                 {getListPesananResult[key].tanggal_pengiriman}
                               </p>
@@ -317,7 +328,8 @@ class ListPesanan extends Component {
                                   className="btn btn-primary ml-2"
                                   to={"/admin/pesanan/detail/" + key}
                                 >
-                                  <i className="nc-icon nc-alert-circle-i" /> Detail
+                                  <i className="nc-icon nc-alert-circle-i" />{" "}
+                                  Detail
                                 </Link>
                               </div>
                             </td>
