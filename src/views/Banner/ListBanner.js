@@ -15,6 +15,8 @@ import {
   Row,
   Spinner,
 } from "reactstrap";
+import { RiDeleteBin5Fill } from "react-icons/ri";
+import { AiFillEdit}  from "react-icons/ai"
 import Swal from "sweetalert2";
 import $ from "jquery";
 
@@ -114,7 +116,7 @@ class ListBanner extends Component {
         );
       });
     });
-    
+
     return (
       <div className="content">
         <Row>
@@ -124,13 +126,13 @@ class ListBanner extends Component {
                 <CardTitle tag="h4">Tabel Data Banner</CardTitle>
                 <Link
                   to="/admin/banner/tambah"
-                  className="btn btn-primary float-right"
+                  className="btn btn-primary float-right full-btn"
                 >
                   <i className="nc-icon nc-simple-add" /> Tambah Banner
                 </Link>
                 <Button
                   style={{ backgroundColor: "#232531" }}
-                  className="btn float-left"
+                  className="btn float-left full-btn"
                 >
                   <i className="nc-icon nc-cloud-download-93" /> Download Data
                 </Button>
@@ -192,7 +194,7 @@ class ListBanner extends Component {
                                 style={{
                                   textAlign: "justify",
                                   fontSize: "14px",
-                                  width: "340px",
+                                  width: "350px",
                                 }}
                               >
                                 <Button
@@ -212,7 +214,11 @@ class ListBanner extends Component {
                                   className="btn btn-warning ml-2"
                                   to={"/admin/banner/edit/" + key}
                                 >
-                                  <i className="nc-icon nc-ruler-pencil" /> Edit
+                                  <AiFillEdit
+                                    size="15px"
+                                    style={{ verticalAlign: "sub" }}
+                                  />{" "}
+                                  Edit
                                 </Link>
                                 <Button
                                   color="danger"
@@ -224,7 +230,11 @@ class ListBanner extends Component {
                                     )
                                   }
                                 >
-                                  <i className="nc-icon nc-basket" /> Hapus
+                                  <RiDeleteBin5Fill
+                                    size="15px"
+                                    style={{ verticalAlign: "sub" }}
+                                  />{" "}
+                                  Hapus
                                 </Button>
                               </div>
                             </td>

@@ -51,7 +51,7 @@ class ListUser extends Component {
                 <CardTitle tag="h4">Tabel Data User</CardTitle>
                 <Button
                   style={{ backgroundColor: "#232531" }}
-                  className="btn float-left"
+                  className="btn float-left full-btn"
                 >
                   <i className="nc-icon nc-cloud-download-93" /> Download Data
                 </Button>
