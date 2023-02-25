@@ -107,7 +107,7 @@ class ListPesanan extends Component {
                   <table id="datatable" className="display" width="100%">
                     <thead className="text-primary">
                       <tr>
-                        <th>Order ID</th>
+                        <th>ID Pesanan</th>
                         <th>Info Pelanggan</th>
                         <th>Tanggal & Metode Pengiriman</th>
                         <th>Produk</th>
@@ -339,7 +339,7 @@ class ListPesanan extends Component {
 
                     <tfoot className="text-primary">
                       <tr>
-                        <th>Order ID</th>
+                        <th>ID Pesanan</th>
                         <th>Info Pelanggan</th>
                         <th>Tanggal & Metode Pengiriman</th>
                         <th>Produk</th>

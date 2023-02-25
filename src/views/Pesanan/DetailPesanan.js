@@ -11,6 +11,10 @@ import {
   Col,
   FormGroup,
   Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
   Row,
   Spinner,
 } from "reactstrap";
@@ -26,6 +30,7 @@ import { confirmOrderWithBiteship } from "actions/PesananAction";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
+import { custom_hari } from "utils";
 
 class DetailPesanan extends Component {
   constructor(props) {
@@ -34,9 +39,21 @@ class DetailPesanan extends Component {
     this.state = {
       id: this.props.match.params.id,
       date: new Date().toLocaleString("id-ID"),
+      DateTimeModal: false,
       selectedDate: new Date(),
       selectedTime: new Date(),
+      tanggalBaruDatabase: "",
+      waktuBaruDatabase: "",
+      tanggalBaruBiteship: "",
+      waktuBaruBiteship: "",
     };
+    this.toggle = this.toggle.bind(this);
+  }
+
+  toggle() {
+    this.setState({
+      DateTimeModal: !this.state.DateTimeModal,
+    });
   }
 
   //Dijalankan ketika nama Kategori diisi
@@ -60,8 +77,10 @@ class DetailPesanan extends Component {
       prevProps.getDetailPesananResult !== getDetailPesananResult
     ) {
       if (
-        getDetailPesananResult.status_pesanan === "Menunggu Konfirmasi Admin" &&
-        getDetailPesananResult.order_id.slice(-1) === "A"
+        getDetailPesananResult.order_id.slice(-1) === "A" &&
+        (getDetailPesananResult.status_pesanan ===
+          "Menunggu Konfirmasi Admin" ||
+          getDetailPesananResult.status_pesanan === "Pengiriman Gagal")
       ) {
         dispatch(getAdminProfile());
       }
@@ -185,18 +204,6 @@ class DetailPesanan extends Component {
     dispatch(createInvoice(data));
   };
 
-  handleDateChange = (date) => {
-    this.setState({
-      selectedDate: date,
-    });
-  };
-
-  handleTimeChange = (time) => {
-    this.setState({
-      selectedTime: time,
-    });
-  };
-
   confirmValidation = () => {
     const { getDetailPesananResult } = this.props;
     Swal.fire({
@@ -221,11 +228,62 @@ class DetailPesanan extends Component {
     }).then((result) => {
       if (result.isConfirmed) {
         this.confirmOrder();
+      } else if (result.isDenied) {
+        this.toggle();
       }
     });
-  }
+  };
+
+  handleDateChange = (selectedDate) => {
+    const newDate = new Date(selectedDate);
+    const year = newDate.getFullYear();
+    const month = custom_bulan[newDate.getMonth()];
+    const date = newDate.getDate();
+    const day = custom_hari[newDate.getDay()];
+    const formattedDate = `${day}, ${date} ${month} ${year}`;
+    const formattedDateDatabase = String(formattedDate);
+
+    const dateTimeArr = formattedDateDatabase.split(" ");
+    const tanggal = dateTimeArr[1];
+    const bulan = custom_bulan.indexOf(dateTimeArr[2]) + 1;
+    const tahun = dateTimeArr[3].toString();
+    const formattedDateBiteship = `${tahun}-${bulan
+      .toString()
+      .padStart(2, "0")}-${tanggal.toString().padStart(2, "0")}`;
+
+    this.setState({
+      selectedDate: selectedDate,
+      tanggalBaruDatabase: formattedDateDatabase,
+      tanggalBaruBiteship: formattedDateBiteship,
+    });
+  };
+
+  handleTimeChange = (selectedTime) => {
+    const newTime = new Date(selectedTime);
+    const formattedTimeDatabase = newTime
+      .toLocaleTimeString("id-ID", { hour: "numeric", minute: "numeric" })
+      .replace(":", ".");
+    const formattedTimeBiteship = newTime
+      .toLocaleTimeString("id-ID", {
+        hour: "numeric",
+        minute: "numeric",
+      })
+      .replace(".", ":");
+
+    this.setState({
+      selectedTime: selectedTime,
+      waktuBaruDatabase: formattedTimeDatabase,
+      waktuBaruBiteship: formattedTimeBiteship,
+    });
+  };
 
   confirmOrder = () => {
+    const {
+      tanggalBaruDatabase,
+      waktuBaruDatabase,
+      tanggalBaruBiteship,
+      waktuBaruBiteship,
+    } = this.state;
     const { dispatch, getDetailPesananResult, getAdminProfileResult } =
       this.props;
     if (getDetailPesananResult.order_id.slice(-1) === "A") {
@@ -285,17 +343,38 @@ class DetailPesanan extends Component {
             ? getDetailPesananResult.total_harga_barang
             : 0,
           delivery_type: "later",
-          delivery_date: formattedDate,
-          delivery_time: formattedTime,
-          reference_id: getDetailPesananResult.order_id,
+          delivery_date: tanggalBaruBiteship
+            ? tanggalBaruBiteship
+            : formattedDate,
+          delivery_time: waktuBaruBiteship ? waktuBaruBiteship : formattedTime,
+          metadata: {
+            order_id: getDetailPesananResult.order_id,
+          },
           items: itemList,
         };
-        dispatch(
-          confirmOrderWithBiteship(
-            getDetailPesananResult.order_id,
-            dataBiteship
-          )
-        );
+        if (tanggalBaruBiteship && waktuBaruBiteship) {
+          dispatch(
+            confirmOrderWithBiteship(
+              getDetailPesananResult.order_id,
+              dataBiteship,
+              tanggalBaruDatabase,
+              waktuBaruDatabase
+            )
+          );
+          this.setState({
+            tanggalBaruDatabase: "",
+            waktuBaruDatabase: "",
+            tanggalBaruBiteship: "",
+            waktuBaruBiteship: "",
+          });
+        } else {
+          dispatch(
+            confirmOrderWithBiteship(
+              getDetailPesananResult.order_id,
+              dataBiteship
+            )
+          );
+        }
       } else {
         Swal.fire({
           title: "Error",
@@ -309,6 +388,7 @@ class DetailPesanan extends Component {
   };
 
   render() {
+    const { DateTimeModal } = this.state;
     const {
       getDetailPesananResult,
       getDetailPesananLoading,
@@ -316,6 +396,8 @@ class DetailPesanan extends Component {
       createInvoiceLoading,
       confirmPesananLoading,
     } = this.props;
+    const maxDate = new Date();
+    maxDate.setMonth(maxDate.getMonth() + 6);
     //initialize datatable
     $(document).ready(function () {
       $("#datatable").DataTable({
@@ -346,22 +428,6 @@ class DetailPesanan extends Component {
               <Col>
                 <Card style={{ marginTop: 10 }}>
                   <CardHeader style={{ padding: 15 }}>
-                    <div>
-                      <DatePicker
-                        selected={this.state.selectedDate}
-                        onChange={this.handleDateChange}
-                        dateFormat="dd/MM/yyyy"
-                      />
-                      <DatePicker
-                        selected={this.state.selectedTime}
-                        onChange={this.handleTimeChange}
-                        showTimeSelect
-                        showTimeSelectOnly
-                        timeIntervals={15}
-                        timeCaption="Waktu"
-                        dateFormat="HH:mm"
-                      />
-                    </div>
                     {getDetailPesananResult.url_midtrans ? (
                       <Link
                         className="btn btn-primary float-right full-btn"
@@ -396,7 +462,9 @@ class DetailPesanan extends Component {
                       </Button>
                     )}
                     {getDetailPesananResult.status_pesanan ===
-                    "Menunggu Konfirmasi Admin" ? (
+                      "Menunggu Konfirmasi Admin" ||
+                    getDetailPesananResult.status_pesanan ===
+                      "Pengiriman Gagal" ? (
                       <>
                         {confirmPesananLoading ? (
                           <Button
@@ -415,7 +483,10 @@ class DetailPesanan extends Component {
                               size="15px"
                               style={{ verticalAlign: "sub" }}
                             />{" "}
-                            Konfirmasi Pesanan
+                            {getDetailPesananResult.status_pesanan ===
+                            "Pengiriman Gagal"
+                              ? "Konfirmasi Ulang Pesanan"
+                              : "Konfirmasi Pesanan"}
                           </Button>
                         )}
                       </>
@@ -448,7 +519,7 @@ class DetailPesanan extends Component {
                       <FormGroup>
                         <Row>
                           <Col md="6">
-                            <Label className="card-subtitle">Order ID</Label>
+                            <Label className="card-subtitle">ID Pesanan</Label>
                           </Col>
                           <Col>
                             <Label>{getDetailPesananResult.order_id}</Label>
@@ -532,6 +603,22 @@ class DetailPesanan extends Component {
                                 {getDetailPesananResult.asuransi === true
                                   ? "Ya"
                                   : "Tidak"}
+                              </Label>
+                            </Col>
+                          </Row>
+                        </FormGroup>
+                      ) : null}
+                      {getDetailPesananResult.biteship_id ? (
+                        <FormGroup>
+                          <Row>
+                            <Col md="6">
+                              <Label className="card-subtitle">
+                                ID Pengiriman
+                              </Label>
+                            </Col>
+                            <Col>
+                              <Label style={{textTransform: 'uppercase'}}>
+                                {getDetailPesananResult.biteship_id}
                               </Label>
                             </Col>
                           </Row>
@@ -863,6 +950,54 @@ class DetailPesanan extends Component {
             <label>Data pesanan tidak ditemukan!</label>
           </div>
         )}
+        <Modal centered isOpen={DateTimeModal} toggle={this.toggle}>
+          <ModalHeader toggle={this.toggle} style={{ fontSize: "12px" }}>
+            Pilih Tanggal dan Waktu
+          </ModalHeader>
+          <ModalBody>
+            <div>
+              <Row style={{ justifyContent: "center" }}>
+                <DatePicker
+                  selected={this.state.selectedDate}
+                  onChange={this.handleDateChange}
+                  minDate={new Date()}
+                  maxDate={maxDate}
+                  dateFormat="dd MMMM yyyy"
+                  className="custom-datepicker"
+                />
+                <DatePicker
+                  selected={this.state.selectedTime}
+                  onChange={this.handleTimeChange}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={1}
+                  timeCaption="Waktu"
+                  dateFormat="HH:mm"
+                  timeFormat="HH:mm"
+                  className="custom-timepicker"
+                />
+              </Row>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="primary"
+              style={{ marginRight: "7px" }}
+              onClick={this.toggle}
+            >
+              Kembali
+            </Button>
+            <Button
+              style={{ backgroundColor: "#53ac69" }}
+              onClick={() => {
+                this.toggle();
+                this.confirmOrder();
+              }}
+            >
+              Konfirmasi Pesanan
+            </Button>
+          </ModalFooter>
+        </Modal>
       </div>
     );
   }

@@ -382,63 +382,74 @@ export const getDetailPesanan = (id) => {
   };
 };
 
-export const confirmOrderWithBiteship = (order_id, dataBiteship) => {
-const parameter = {
-      data: dataBiteship,
-    };
+export const confirmOrderWithBiteship = (
+  order_id,
+  dataBiteship,
+  tanggalBaruDatabase,
+  waktuBaruDatabase
+) => {
+  const parameter = {
+    data: dataBiteship,
+  };
   return (dispatch) => {
-  //LOADING
-  dispatchLoading(dispatch, CONFIRM_PESANAN);
-  axios
-    .post("http://localhost:8000/biteship-order", parameter)
-    .then((response) => {
-      if (response.status !== 200) {
+    //LOADING
+    dispatchLoading(dispatch, CONFIRM_PESANAN);
+
+
+    axios
+      .post("http://localhost:8000/biteship-order", parameter)
+      .then((response) => {
+        if (response.status !== 200) {
+          // ERROR
+          dispatchError(dispatch, CONFIRM_PESANAN, response);
+          Swal.fire({
+            title: "Error",
+            text: response.status,
+            icon: "error",
+            confirmButtonColor: "#f69d93",
+            confirmButtonText: "OK",
+          });
+        } else {
+          const biteship_id = response.data.id;
+          const tanggal_pengiriman = tanggalBaruDatabase && waktuBaruDatabase ? tanggalBaruDatabase + ' ' + waktuBaruDatabase : false
+          update(ref(db, "/pesanan/" + order_id), {
+            biteship_id: biteship_id,
+            status_pesanan: "Diproses",
+            ...(tanggal_pengiriman && {
+              tanggal_pengiriman: tanggal_pengiriman,
+            }),
+          })
+            .then((response) => {
+              //SUKSES
+              dispatchSuccess(
+                dispatch,
+                CONFIRM_PESANAN,
+                response ? response : []
+              );
+            })
+            .catch((error) => {
+              //ERROR
+              dispatchError(dispatch, CONFIRM_PESANAN, error.message);
+              Swal.fire({
+                title: "Error",
+                text: error.message,
+                icon: "error",
+                confirmButtonColor: "#f69d93",
+                confirmButtonText: "OK",
+              });
+            });
+        }
+      })
+      .catch((error) => {
         // ERROR
-        dispatchError(dispatch, CONFIRM_PESANAN, response);
+        dispatchError(dispatch, CONFIRM_PESANAN, error.response.data.error);
         Swal.fire({
-          title: "Error",
-          text: response.status,
+          title: "Error " + "[" + error.response.data.code + "]",
+          text: error.response.data.error,
           icon: "error",
           confirmButtonColor: "#f69d93",
           confirmButtonText: "OK",
         });
-      } else {
-        const biteship_id = response.data.id
-        update(ref(db, "/pesanan/" + order_id), {
-          biteship_id: biteship_id,
-          status_pesanan: "Diproses",
-        })
-          .then((response) => {
-            //SUKSES
-            dispatchSuccess(
-              dispatch,
-              CONFIRM_PESANAN,
-              response ? response : []
-            );
-          })
-          .catch((error) => {
-            //ERROR
-            dispatchError(dispatch, CONFIRM_PESANAN, error.message);
-            Swal.fire({
-              title: "Error",
-              text: error.message,
-              icon: "error",
-              confirmButtonColor: "#f69d93",
-              confirmButtonText: "OK",
-            });
-          });
-      }
-    })
-    .catch((error) => {
-      // ERROR
-      dispatchError(dispatch, CONFIRM_PESANAN, error.response.data.error);
-      Swal.fire({
-        title: "Error " + "[" + error.response.data.code + "]",
-        text: error.response.data.error,
-        icon: "error",
-        confirmButtonColor: "#f69d93",
-        confirmButtonText: "OK",
       });
-    });
-}
-}
+  };
+};

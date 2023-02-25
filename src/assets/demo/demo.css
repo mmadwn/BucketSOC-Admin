@@ -245,6 +245,27 @@
   }
 }
 
+.custom-datepicker {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.custom-timepicker {
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 16px;
+  color: #333;
+  margin-left: 16px;
+}
+
+.react-datepicker-wrapper {
+  width: auto !important;
+}
+
 
 /* table.display {
 margin: 0 auto;
