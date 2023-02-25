@@ -71,6 +71,6 @@ app.post("/biteship-order", (req, res) => {
       res.json(response.data);
     })
     .catch((error) => {
-      res.status(500).send(error.message);
+      res.status(400).send(error.response.data);
     });
 });

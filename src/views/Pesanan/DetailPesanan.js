@@ -23,6 +23,9 @@ import { createInvoice } from "actions/InvoiceAction";
 import { getAdminProfile } from "actions/ProfileAction";
 import { custom_bulan } from "utils";
 import { confirmOrderWithBiteship } from "actions/PesananAction";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 class DetailPesanan extends Component {
   constructor(props) {
@@ -31,6 +34,8 @@ class DetailPesanan extends Component {
     this.state = {
       id: this.props.match.params.id,
       date: new Date().toLocaleString("id-ID"),
+      selectedDate: new Date(),
+      selectedTime: new Date(),
     };
   }
 
@@ -47,7 +52,8 @@ class DetailPesanan extends Component {
 
   //Jika proses tambah kategori ke firebse database berhasil
   componentDidUpdate(prevProps) {
-    const { dispatch, getDetailPesananResult, confirmPesananResult } = this.props;
+    const { dispatch, getDetailPesananResult, confirmPesananResult } =
+      this.props;
 
     if (
       getDetailPesananResult &&
@@ -179,8 +185,49 @@ class DetailPesanan extends Component {
     dispatch(createInvoice(data));
   };
 
+  handleDateChange = (date) => {
+    this.setState({
+      selectedDate: date,
+    });
+  };
+
+  handleTimeChange = (time) => {
+    this.setState({
+      selectedTime: time,
+    });
+  };
+
+  confirmValidation = () => {
+    const { getDetailPesananResult } = this.props;
+    Swal.fire({
+      title: "Konfirmasi Pesanan?",
+      text:
+        "Konfirmasi pesanan untuk " +
+        (getDetailPesananResult.order_id.slice(-1) === "A"
+          ? "dikirim"
+          : "diambil") +
+        " pada " +
+        getDetailPesananResult.tanggal_pengiriman,
+      icon: "question",
+      showCancelButton: true,
+      showDenyButton: true,
+      denyButtonText: "Ubah Tanggal & Waktu",
+      confirmButtonColor: "#53ac69",
+      cancelButtonColor: "#f69d93",
+      denyButtonColor: "#fbc658",
+      confirmButtonText: "Ya, Konfirmasi",
+      cancelButtonText: "Kembali",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.confirmOrder();
+      }
+    });
+  }
+
   confirmOrder = () => {
-    const { dispatch, getDetailPesananResult, getAdminProfileResult } = this.props;
+    const { dispatch, getDetailPesananResult, getAdminProfileResult } =
+      this.props;
     if (getDetailPesananResult.order_id.slice(-1) === "A") {
       if (getAdminProfileResult) {
         const dateString = getDetailPesananResult.tanggal_pengiriman;
@@ -243,7 +290,12 @@ class DetailPesanan extends Component {
           reference_id: getDetailPesananResult.order_id,
           items: itemList,
         };
-        dispatch(confirmOrderWithBiteship(getDetailPesananResult.order_id, dataBiteship));
+        dispatch(
+          confirmOrderWithBiteship(
+            getDetailPesananResult.order_id,
+            dataBiteship
+          )
+        );
       } else {
         Swal.fire({
           title: "Error",
@@ -294,6 +346,22 @@ class DetailPesanan extends Component {
               <Col>
                 <Card style={{ marginTop: 10 }}>
                   <CardHeader style={{ padding: 15 }}>
+                    <div>
+                      <DatePicker
+                        selected={this.state.selectedDate}
+                        onChange={this.handleDateChange}
+                        dateFormat="dd/MM/yyyy"
+                      />
+                      <DatePicker
+                        selected={this.state.selectedTime}
+                        onChange={this.handleTimeChange}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        timeCaption="Waktu"
+                        dateFormat="HH:mm"
+                      />
+                    </div>
                     {getDetailPesananResult.url_midtrans ? (
                       <Link
                         className="btn btn-primary float-right full-btn"
@@ -341,7 +409,7 @@ class DetailPesanan extends Component {
                           <Button
                             className="btn btn-primary float-right full-btn"
                             id="pesanan"
-                            onClick={() => this.confirmOrder()}
+                            onClick={() => this.confirmValidation()}
                           >
                             <BsClipboardCheck
                               size="15px"

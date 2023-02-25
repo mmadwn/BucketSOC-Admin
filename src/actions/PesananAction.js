@@ -123,6 +123,17 @@ export const updateStatusMidtrans = (
     axios
       .post("http://localhost:8000/midtrans-status", parameter)
       .then((response) => {
+        if (response.status !== 200) {
+        // ERROR
+        dispatchError(dispatch, UPDATE_STATUS, response);
+        Swal.fire({
+          title: "Error",
+          text: response.status,
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      } else {
         if (
           response.data.transaction_status === "settlement" ||
           response.data.transaction_status === "capture"
@@ -134,7 +145,7 @@ export const updateStatusMidtrans = (
               check_midtrans++;
               dispatch(checkItem(item_midtrans, item_biteship));
             })
-            
+
             .catch((error) => {
               //ERROR
               dispatchError(dispatch, UPDATE_STATUS, error.message);
@@ -193,9 +204,9 @@ export const updateStatusMidtrans = (
           check_midtrans++;
           dispatch(checkItem(item_midtrans, item_biteship));
         }
+      }
       })
       .catch((error) => {
-        console.log(error);
         // ERROR
         dispatchError(dispatch, UPDATE_STATUS, error.message);
         Swal.fire({
@@ -420,10 +431,10 @@ const parameter = {
     })
     .catch((error) => {
       // ERROR
-      dispatchError(dispatch, CONFIRM_PESANAN, error.message);
+      dispatchError(dispatch, CONFIRM_PESANAN, error.response.data.error);
       Swal.fire({
-        title: "Error",
-        text: error.message,
+        title: "Error " + "[" + error.response.data.code + "]",
+        text: error.response.data.error,
         icon: "error",
         confirmButtonColor: "#f69d93",
         confirmButtonText: "OK",
