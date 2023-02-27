@@ -12,15 +12,39 @@ import {
 } from "reactstrap";
 import $ from "jquery";
 import { getListUser } from "actions/UserAction";
+import { CSVLink } from "react-csv";
 
 class ListUser extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      csvData: [],
+      csvHeaders: [
+        { label: "Nama", key: "nama" },
+        { label: "Email", key: "email" },
+        { label: "Nomor Telepon", key: "nomerHp" },
+        { label: "Alamat", key: "alamat" },
+        { label: "Detail Alamat", key: "detail_alamat" },
+      ],
+    };
+  }
+
   componentDidMount() {
     this.props.dispatch(getListUser());
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.getListUserResult !== prevProps.getListUserResult) {
+      this.setState({
+        csvData: Object.values(this.props.getListUserResult),
+      });
+    }
   }
 
   render() {
     const { getListUserError, getListUserLoading, getListUserResult } =
       this.props;
+    const { csvData, csvHeaders } = this.state;
     //initialize datatable
     $(document).ready(function () {
       var table = $("#datatable").DataTable({
@@ -49,12 +73,15 @@ class ListUser extends Component {
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">Tabel Data User</CardTitle>
-                <Button
-                  style={{ backgroundColor: "#232531" }}
+                <CSVLink
+                  data={csvData}
+                  headers={csvHeaders}
+                  filename={"Data User.csv"}
                   className="btn float-left full-btn"
+                  style={{ backgroundColor: "#232531" }}
                 >
                   <i className="nc-icon nc-cloud-download-93" /> Download Data
-                </Button>
+                </CSVLink>
               </CardHeader>
               <CardBody>
                 {getListUserResult ? (
