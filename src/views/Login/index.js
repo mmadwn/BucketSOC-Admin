@@ -27,6 +27,10 @@ class Login extends Component {
 
   componentDidMount() {
     this.props.dispatch(checkLogin(this.props.history));
+    //Jika sudah login, redirect ke dashboard
+    if (window.localStorage.getItem("user")) {
+      this.props.history.push({ pathname: "/admin/dashboard" });
+    }
   }
 
   //Dijalankan ketika nama Kategori diisi

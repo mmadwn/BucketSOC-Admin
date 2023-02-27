@@ -29,9 +29,10 @@ export const loginUser = (email, password) => {
             //LOGIN
             signInWithEmailAndPassword(getAuth(), email, password)
               .then((response) => {
+                console.log(response)
                 // Signed in
                 //Simpan data user ke localstorage dari database
-                window.localStorage.setItem("user", JSON.stringify(Profile[0]));
+                window.localStorage.setItem("user", JSON.stringify(response.user));
                 dispatchSuccess(dispatch, LOGIN_USER, Profile[0]);
               })
               .catch((error) => {
@@ -127,10 +128,30 @@ export const checkLogin = (history) => {
           if (data) {
             //cek apakah statusnya admin
             if (data.status === "admin") {
-              //SUKSES
-              dispatchSuccess(dispatch, CHECK_LOGIN, data);
+              //Cek status login di firebase Auth
+              getAuth().onAuthStateChanged(function (user) {
+                if (user) {
+                  // User is signed in.
+                  //SUKSES
+                  dispatchSuccess(dispatch, CHECK_LOGIN, data);
+                } else {
+                  // No user is signed in.
+                  localStorage.clear();
+                  dispatchError(dispatch, CHECK_LOGIN, "Anda belum login!");
+                  Swal.fire({
+                    title: "Error",
+                    text: "Anda belum login!",
+                    icon: "error",
+                    confirmButtonColor: "#f69d93",
+                    confirmButtonText: "OK",
+                  }).then(() => {
+                    history.push({ pathname: "/login" });
+                  });
+                }
+              });
             } else {
               //ERROR jika bukan admin
+              localStorage.clear();
               dispatchError(dispatch, CHECK_LOGIN, "Anda bukan Admin!");
               Swal.fire({
                 title: "Error",
@@ -144,6 +165,7 @@ export const checkLogin = (history) => {
             }
           } else {
             //ERROR jika akun tidak ditemukan di database
+            localStorage.clear();
             dispatchError(dispatch, CHECK_LOGIN, "Akun tidak terdaftar!");
             Swal.fire({
               title: "Error",
@@ -172,8 +194,8 @@ export const checkLogin = (history) => {
         }
       );
     } else {
-      //ERROR jika
-      dispatchError(dispatch, CHECK_LOGIN, "Anda belum login");
+      //ERROR jika data tidak ditemukan di localStorage
+      dispatchError(dispatch, CHECK_LOGIN, "Anda belum login!");
       history.push({ pathname: "/login" });
     }
   };
@@ -186,7 +208,7 @@ export const logoutUser = (history) => {
     signOut(getAuth())
       .then((res) => {
         // Sign-out successful.
-        window.localStorage.removeItem("user");
+        localStorage.clear();
         dispatchSuccess(dispatch, LOGOUT_USER, res);
         const Toast = Swal.mixin({
           toast: true,

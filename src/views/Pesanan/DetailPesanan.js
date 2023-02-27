@@ -40,8 +40,8 @@ class DetailPesanan extends Component {
       id: this.props.match.params.id,
       date: new Date().toLocaleString("id-ID"),
       DateTimeModal: false,
-      selectedDate: new Date(),
-      selectedTime: new Date(),
+      selectedDate: "",
+      selectedTime: "",
       tanggalBaruDatabase: "",
       waktuBaruDatabase: "",
       tanggalBaruBiteship: "",
@@ -250,7 +250,6 @@ class DetailPesanan extends Component {
     const formattedDateBiteship = `${tahun}-${bulan
       .toString()
       .padStart(2, "0")}-${tanggal.toString().padStart(2, "0")}`;
-
     this.setState({
       selectedDate: selectedDate,
       tanggalBaruDatabase: formattedDateDatabase,
@@ -269,12 +268,27 @@ class DetailPesanan extends Component {
         minute: "numeric",
       })
       .replace(".", ":");
-
     this.setState({
       selectedTime: selectedTime,
       waktuBaruDatabase: formattedTimeDatabase,
       waktuBaruBiteship: formattedTimeBiteship,
     });
+  };
+
+  confirmDateTime = () => {
+    const { selectedDate, selectedTime } = this.state;
+    if (selectedDate && selectedTime) {
+      this.confirmOrder();
+      this.toggle();
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: "Maaf, tanggal & waktu harus diisi!",
+        icon: "error",
+        confirmButtonColor: "#f69d93",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   confirmOrder = () => {
@@ -347,9 +361,7 @@ class DetailPesanan extends Component {
             ? tanggalBaruBiteship
             : formattedDate,
           delivery_time: waktuBaruBiteship ? waktuBaruBiteship : formattedTime,
-          metadata: {
-            order_id: getDetailPesananResult.order_id,
-          },
+          order_note: getDetailPesananResult.order_id,
           items: itemList,
         };
         if (tanggalBaruBiteship && waktuBaruBiteship) {
@@ -362,6 +374,8 @@ class DetailPesanan extends Component {
             )
           );
           this.setState({
+            selectedDate: "",
+            selectedTime: "",
             tanggalBaruDatabase: "",
             waktuBaruDatabase: "",
             tanggalBaruBiteship: "",
@@ -617,7 +631,7 @@ class DetailPesanan extends Component {
                               </Label>
                             </Col>
                             <Col>
-                              <Label style={{textTransform: 'uppercase'}}>
+                              <Label style={{ textTransform: "uppercase" }}>
                                 {getDetailPesananResult.biteship_id}
                               </Label>
                             </Col>
@@ -964,6 +978,7 @@ class DetailPesanan extends Component {
                   maxDate={maxDate}
                   dateFormat="dd MMMM yyyy"
                   className="custom-datepicker"
+                  placeholderText="--Pilih Tanggal--"
                 />
                 <DatePicker
                   selected={this.state.selectedTime}
@@ -975,6 +990,7 @@ class DetailPesanan extends Component {
                   dateFormat="HH:mm"
                   timeFormat="HH:mm"
                   className="custom-timepicker"
+                  placeholderText="--Pilih Waktu--"
                 />
               </Row>
             </div>
@@ -989,10 +1005,7 @@ class DetailPesanan extends Component {
             </Button>
             <Button
               style={{ backgroundColor: "#53ac69" }}
-              onClick={() => {
-                this.toggle();
-                this.confirmOrder();
-              }}
+              onClick={() => this.confirmDateTime()}
             >
               Konfirmasi Pesanan
             </Button>

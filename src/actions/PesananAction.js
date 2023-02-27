@@ -227,12 +227,13 @@ export const updateStatusBiteship = (
   item_biteship
 ) => {
   return (dispatch) => {
-    axios({
-      method: "GET",
-      url: BITESHIP_API_URL + "orders/" + biteship_id,
-      timeout: API_TIMEOUT,
-      headers: BITESHIP_API_HEADER,
-    })
+
+    const parameter = {
+      biteship_id: biteship_id,
+    };
+
+    axios
+      .post("http://localhost:8000/biteship-status", parameter)
       .then((response) => {
         if (response.status !== 200) {
           // ERROR
@@ -321,7 +322,7 @@ export const checkItem = (item_midtrans, item_biteship) => {
   };
 };
 
-//Function untuk baca data Kategori dari Firebase Database
+//Function untuk baca data Pesanan dari Firebase Database
 export const getListPesanan = () => {
   return (dispatch) => {
     //LOADING

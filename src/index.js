@@ -18,15 +18,20 @@ import AdminLayout from "layouts/Admin.js";
 import { Login } from "views";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+let user = window.localStorage.getItem("user");
 
 root.render(
   <Provider store={store}>
-  <BrowserRouter>
-    <Switch>
-      <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-      <Route path="/login" component={Login} exact />
-      <Redirect to="/login" />
-    </Switch>
-  </BrowserRouter>
+    <BrowserRouter>
+      <Switch>
+        <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+        <Route path="/login" component={Login} exact />
+        {user !== null ? (
+          <Redirect to="/admin/dashboard" />
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </Switch>
+    </BrowserRouter>
   </Provider>
 );
