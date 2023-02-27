@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
@@ -34,9 +33,10 @@ class ListUser extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.getListUserResult !== prevProps.getListUserResult) {
+    const { getListUserResult } = this.props;
+    if (getListUserResult !== prevProps.getListUserResult) {
       this.setState({
-        csvData: Object.values(this.props.getListUserResult),
+        csvData: Object.values(getListUserResult),
       });
     }
   }

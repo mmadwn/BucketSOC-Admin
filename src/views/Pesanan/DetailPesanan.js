@@ -22,7 +22,9 @@ import Swal from "sweetalert2";
 import $ from "jquery";
 import { TbFileInvoice } from "react-icons/tb";
 import { BiLinkAlt } from "react-icons/bi";
-import { BsClipboardCheck } from "react-icons/bs";
+import { BsClipboardCheck, BsCalendar2Minus } from "react-icons/bs";
+import { FaShippingFast } from "react-icons/fa";
+import { MdCancel, MdDoneAll } from "react-icons/md";
 import { createInvoice } from "actions/InvoiceAction";
 import { getAdminProfile } from "actions/ProfileAction";
 import { custom_bulan } from "utils";
@@ -31,6 +33,9 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { custom_hari } from "utils";
+import { requestBiteshipPickUp } from "actions/PesananAction";
+import { changeDeliveryDate } from "actions/PesananAction";
+import { finishOrder } from "actions/PesananAction";
 
 class DetailPesanan extends Component {
   constructor(props) {
@@ -69,8 +74,14 @@ class DetailPesanan extends Component {
 
   //Jika proses tambah kategori ke firebse database berhasil
   componentDidUpdate(prevProps) {
-    const { dispatch, getDetailPesananResult, confirmPesananResult } =
-      this.props;
+    const {
+      dispatch,
+      getDetailPesananResult,
+      confirmPesananResult,
+      requestPickUpResult,
+      changeDeliveryDateResult,
+      finishPesananResult,
+    } = this.props;
 
     if (
       getDetailPesananResult &&
@@ -80,7 +91,8 @@ class DetailPesanan extends Component {
         getDetailPesananResult.order_id.slice(-1) === "A" &&
         (getDetailPesananResult.status_pesanan ===
           "Menunggu Konfirmasi Admin" ||
-          getDetailPesananResult.status_pesanan === "Pengiriman Gagal")
+          getDetailPesananResult.status_pesanan === "Pengiriman Gagal" ||
+          getDetailPesananResult.status_pesanan === "Diproses")
       ) {
         dispatch(getAdminProfile());
       }
@@ -94,6 +106,54 @@ class DetailPesanan extends Component {
       Swal.fire({
         title: "Sukses",
         text: "Pesanan Berhasil Dikonfirmasi!",
+        icon: "success",
+        confirmButtonColor: "#f69d93",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.reload();
+      });
+    }
+
+    if (
+      requestPickUpResult &&
+      prevProps.requestPickUpResult !== requestPickUpResult
+    ) {
+      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
+      Swal.fire({
+        title: "Sukses",
+        text: "Request Pick-Up Berhasil!",
+        icon: "success",
+        confirmButtonColor: "#f69d93",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.reload();
+      });
+    }
+
+    if (
+      changeDeliveryDateResult &&
+      prevProps.changeDeliveryDateResult !== changeDeliveryDateResult
+    ) {
+      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
+      Swal.fire({
+        title: "Sukses",
+        text: "Ubah Tanggal & Waktu Berhasil!",
+        icon: "success",
+        confirmButtonColor: "#f69d93",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.reload();
+      });
+    }
+
+    if (
+      finishPesananResult &&
+      prevProps.finishPesananResult !== finishPesananResult
+    ) {
+      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
+      Swal.fire({
+        title: "Sukses",
+        text: "Berhasil Selesaikan Pesanan!",
         icon: "success",
         confirmButtonColor: "#f69d93",
         confirmButtonText: "OK",
@@ -277,8 +337,17 @@ class DetailPesanan extends Component {
 
   confirmDateTime = () => {
     const { selectedDate, selectedTime } = this.state;
+    const { getDetailPesananResult } = this.props;
     if (selectedDate && selectedTime) {
-      this.confirmOrder();
+      if (
+        getDetailPesananResult.status_pesanan === "Menunggu Konfirmasi Admin" ||
+        getDetailPesananResult.status_pesanan === "Pengiriman Gagal"
+      ) {
+        this.confirmOrder();
+      } else if (getDetailPesananResult.status_pesanan === "Diproses") {
+        console.log("A");
+        this.updateDeliveryDate();
+      }
       this.toggle();
     } else {
       Swal.fire({
@@ -401,14 +470,115 @@ class DetailPesanan extends Component {
     }
   };
 
+  // cancelOrder = () => {
+  //   const { dispatch, getDetailPesananResult, getAdminProfileResult } =
+  //     this.props;
+  // }
+
+  finishOrder = () => {
+    const { dispatch, getDetailPesananResult } = this.props;
+     Swal.fire({
+       title: "Konfirmasi Selesaikan Pesanan?",
+       icon: "question",
+       width: "900px",
+       showCancelButton: true,
+       showDenyButton: true,
+       denyButtonText: "Ya, Selesai (Pembeli Mengajukan Komplain)",
+       confirmButtonColor: "#53ac69",
+       cancelButtonColor: "#f69d93",
+       denyButtonColor: "#fbc658",
+       confirmButtonText: "Ya, Selesai (Pesanan Telah Diterima)",
+       cancelButtonText: "Kembali",
+       reverseButtons: true,
+     }).then((result) => {
+       if (result.isConfirmed) {
+        const notes = "Diterima";
+         dispatch(finishOrder(getDetailPesananResult.order_id, notes));
+       } else if (result.isDenied) {
+        const notes = "Komplain";
+         dispatch(finishOrder(getDetailPesananResult.order_id, notes));
+       }
+     });
+  }
+
+  requestPickUp = () => {
+    const { getDetailPesananResult, dispatch } = this.props;
+    Swal.fire({
+      title: "Konfirmasi Request Pick-Up?",
+      text: "Konfirmasi untuk melakukan Pick-Up barang sekarang? ",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#53ac69",
+      cancelButtonColor: "#f69d93",
+      confirmButtonText: "Ya, Pick-Up Sekarang",
+      cancelButtonText: "Kembali",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const newDate = new Date();
+        const year = newDate.getFullYear();
+        const month = custom_bulan[newDate.getMonth()];
+        const date = newDate.getDate();
+        const day = custom_hari[newDate.getDay()];
+        const formattedDate = `${day}, ${date} ${month} ${year}`;
+        const formattedDateDatabase = String(formattedDate);
+        const formattedTimeDatabase = newDate
+          .toLocaleTimeString("id-ID", { hour: "numeric", minute: "numeric" })
+          .replace(":", ".");
+        dispatch(
+          requestBiteshipPickUp(
+            getDetailPesananResult.order_id,
+            getDetailPesananResult.biteship_id,
+            formattedDateDatabase,
+            formattedTimeDatabase
+          )
+        );
+      }
+    });
+  };
+
+  updateDeliveryDate = () => {
+    const {
+      tanggalBaruDatabase,
+      waktuBaruDatabase,
+      tanggalBaruBiteship,
+      waktuBaruBiteship,
+    } = this.state;
+    const { dispatch, getDetailPesananResult } = this.props;
+
+    const tanggalDatabase = tanggalBaruDatabase + " " + waktuBaruDatabase;
+
+    if (getDetailPesananResult.biteship_id) {
+      const dataBiteship = {
+        delivery_date: tanggalBaruBiteship,
+        delivery_time: waktuBaruBiteship,
+      };
+      dispatch(
+        changeDeliveryDate(
+          getDetailPesananResult.order_id,
+          tanggalDatabase,
+          getDetailPesananResult.biteship_id,
+          dataBiteship
+        )
+      );
+    } else {
+      dispatch(
+        changeDeliveryDate(getDetailPesananResult.order_id, tanggalDatabase)
+      );
+    }
+  };
+
   render() {
-    const { DateTimeModal } = this.state;
+    const { DateTimeModal, id } = this.state;
     const {
       getDetailPesananResult,
       getDetailPesananLoading,
       getDetailPesananError,
       createInvoiceLoading,
       confirmPesananLoading,
+      requestPickUpLoading,
+      changeDeliveryDateLoading,
+      finishPesananLoading,
     } = this.props;
     const maxDate = new Date();
     maxDate.setMonth(maxDate.getMonth() + 6);
@@ -442,6 +612,30 @@ class DetailPesanan extends Component {
               <Col>
                 <Card style={{ marginTop: 10 }}>
                   <CardHeader style={{ padding: 15 }}>
+                    {getDetailPesananResult.status_pesanan === "Terkirim" ? (
+                      <>
+                        {finishPesananLoading ? (
+                          <Button
+                            className="btn btn-primary float-left full-btn"
+                            disabled
+                          >
+                            <Spinner size="sm" color="light" /> Loading
+                          </Button>
+                        ) : (
+                          <Button
+                            className="btn btn-primary float-right full-btn"
+                            id="pesanan"
+                            onClick={() => this.finishOrder()}
+                          >
+                            <MdDoneAll
+                              size="15px"
+                              style={{ verticalAlign: "sub" }}
+                            />{" "}
+                            Selesaikan Pesanan
+                          </Button>
+                        )}
+                      </>
+                    ) : null}
                     {getDetailPesananResult.url_midtrans ? (
                       <Link
                         className="btn btn-primary float-right full-btn"
@@ -501,6 +695,84 @@ class DetailPesanan extends Component {
                             "Pengiriman Gagal"
                               ? "Konfirmasi Ulang Pesanan"
                               : "Konfirmasi Pesanan"}
+                          </Button>
+                        )}
+                      </>
+                    ) : null}
+                    {getDetailPesananResult.status_pesanan === "Diproses" &&
+                    getDetailPesananResult.biteship_id ? (
+                      <>
+                        {requestPickUpLoading ? (
+                          <Button
+                            className="btn btn-primary float-right full-btn"
+                            disabled
+                          >
+                            <Spinner size="sm" color="light" /> Loading
+                          </Button>
+                        ) : (
+                          <Button
+                            className="btn btn-primary float-right full-btn"
+                            id="pesanan"
+                            onClick={() => this.requestPickUp()}
+                          >
+                            <FaShippingFast
+                              size="15px"
+                              style={{ verticalAlign: "sub" }}
+                            />{" "}
+                            Request Pick-Up
+                          </Button>
+                        )}
+                      </>
+                    ) : null}
+                    {getDetailPesananResult.status_pesanan === "Diproses" ? (
+                      <>
+                        {changeDeliveryDateLoading ? (
+                          <Button
+                            className="btn btn-primary float-right full-btn"
+                            disabled
+                          >
+                            <Spinner size="sm" color="light" /> Loading
+                          </Button>
+                        ) : (
+                          <Button
+                            className="btn btn-primary float-right full-btn"
+                            id="pesanan"
+                            onClick={() => this.toggle()}
+                          >
+                            <BsCalendar2Minus
+                              size="15px"
+                              style={{ verticalAlign: "sub" }}
+                            />{" "}
+                            {getDetailPesananResult.order_id.slice(-1) === "A"
+                              ? "Ubah Tanggal & Waktu Pengiriman"
+                              : "Ubah Tanggal & Waktu Pengambilan"}
+                          </Button>
+                        )}
+                      </>
+                    ) : null}
+                    {getDetailPesananResult.status_pesanan ===
+                      "Menunggu Pembayaran" ||
+                    getDetailPesananResult.status_pesanan ===
+                      "Menunggu Konfirmasi Admin" ? (
+                      <>
+                        {confirmPesananLoading ? (
+                          <Button
+                            className="btn btn-danger float-left full-btn"
+                            disabled
+                          >
+                            <Spinner size="sm" color="light" /> Loading
+                          </Button>
+                        ) : (
+                          <Button
+                            className="btn btn-danger float-left full-btn"
+                            id="pesanan"
+                            onClick={() => this.confirmValidation()}
+                          >
+                            <MdCancel
+                              size="15px"
+                              style={{ verticalAlign: "sub" }}
+                            />{" "}
+                            Batalkan Pesanan
                           </Button>
                         )}
                       </>
@@ -572,16 +844,11 @@ class DetailPesanan extends Component {
                       <FormGroup>
                         <Row>
                           <Col md="6">
-                            {getDetailPesananResult.order_id.slice(-1) ===
-                            "A" ? (
-                              <Label className="card-subtitle">
-                                Tanggal Permintaan Pengiriman
-                              </Label>
-                            ) : (
-                              <Label className="card-subtitle">
-                                Tanggal Permintaan Pengambilan
-                              </Label>
-                            )}
+                            <Label className="card-subtitle">
+                              {getDetailPesananResult.order_id.slice(-1) === "A"
+                                ? "Tanggal Permintaan Pengiriman"
+                                : "Tanggal Permintaan Pengambilan"}
+                            </Label>
                           </Col>
                           <Col>
                             <Label>
@@ -966,7 +1233,9 @@ class DetailPesanan extends Component {
         )}
         <Modal centered isOpen={DateTimeModal} toggle={this.toggle}>
           <ModalHeader toggle={this.toggle} style={{ fontSize: "12px" }}>
-            Pilih Tanggal dan Waktu
+            {id.slice(-1) === "A"
+              ? "Ubah Tanggal & Waktu Pengiriman"
+              : "Ubah Tanggal & Waktu Pengambilan"}
           </ModalHeader>
           <ModalBody>
             <div>
@@ -1032,6 +1301,18 @@ const mapStateToProps = (state) => ({
   confirmPesananLoading: state.PesananReducer.confirmPesananLoading,
   confirmPesananResult: state.PesananReducer.confirmPesananResult,
   confirmPesananError: state.PesananReducer.confirmPesananError,
+
+  requestPickUpLoading: state.PesananReducer.requestPickUpLoading,
+  requestPickUpResult: state.PesananReducer.requestPickUpResult,
+  requestPickUpError: state.PesananReducer.requestPickUpError,
+
+  changeDeliveryDateLoading: state.PesananReducer.changeDeliveryDateLoading,
+  changeDeliveryDateResult: state.PesananReducer.changeDeliveryDateResult,
+  changeDeliveryDateError: state.PesananReducer.changeDeliveryDateError,
+
+  finishPesananLoading: state.PesananReducer.finishPesananLoading,
+  finishPesananResult: state.PesananReducer.finishPesananResult,
+  finishPesananError: state.PesananReducer.finishPesananError,
 });
 
 export default connect(mapStateToProps, null)(DetailPesanan);

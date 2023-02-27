@@ -15,6 +15,9 @@ export const GET_LIST_PESANAN = "GET_LIST_PESANAN";
 export const UPDATE_STATUS = "UPDATE_STATUS";
 export const GET_DETAIL_PESANAN = "GET_DETAIL_PESANAN";
 export const CONFIRM_PESANAN = "CONFIRM_PESANAN";
+export const REQUEST_PICK_UP = "REQUEST_PICK_UP";
+export const CHANGE_DELIVERY_DATE = "CHANGE_DELIVERY_DATE";
+export const FINISH_PESANAN = "FINISH_PESANAN";
 
 let check_midtrans = 0;
 let check_biteship = 0;
@@ -124,87 +127,90 @@ export const updateStatusMidtrans = (
       .post("http://localhost:8000/midtrans-status", parameter)
       .then((response) => {
         if (response.status !== 200) {
-        // ERROR
-        dispatchError(dispatch, UPDATE_STATUS, response);
-        Swal.fire({
-          title: "Error",
-          text: response.status,
-          icon: "error",
-          confirmButtonColor: "#f69d93",
-          confirmButtonText: "OK",
-        });
-      } else {
-        if (
-          response.data.transaction_status === "settlement" ||
-          response.data.transaction_status === "capture"
-        ) {
-          update(ref(db, "/pesanan/" + order_id), {
-            status_pesanan: "Menunggu Konfirmasi Admin",
-          })
-            .then((response) => {
-              check_midtrans++;
-              dispatch(checkItem(item_midtrans, item_biteship));
-            })
-
-            .catch((error) => {
-              //ERROR
-              dispatchError(dispatch, UPDATE_STATUS, error.message);
-              Swal.fire({
-                title: "Error",
-                text: error.message + " [1] order id : " + order_id,
-                icon: "error",
-                confirmButtonColor: "#f69d93",
-                confirmButtonText: "OK",
-              });
-            });
-        } else if (
-          response.data.transaction_status === "deny" ||
-          response.data.transaction_status === "cancel" ||
-          response.data.transaction_status === "expire" ||
-          response.data.transaction_status === "failure"
-        ) {
-          update(ref(db, "/pesanan/" + order_id), {
-            status_pesanan: "Selesai (Pembayaran Gagal)",
-          })
-            .then((response) => {
-              check_midtrans++;
-              dispatch(checkItem(item_midtrans, item_biteship));
-            })
-            .catch((error) => {
-              //ERROR
-              dispatchError(dispatch, UPDATE_STATUS, error.message);
-              Swal.fire({
-                title: "Error",
-                text: error.message + " [2] order id : " + order_id,
-                icon: "error",
-                confirmButtonColor: "#f69d93",
-                confirmButtonText: "OK",
-              });
-            });
-        } else if (response.data.status_code === "404" && duration > 86400000) {
-          update(ref(db, "/pesanan/" + order_id), {
-            status_pesanan: "Selesai (Pembayaran Gagal)",
-          })
-            .then((response) => {
-              check_midtrans++;
-              dispatch(checkItem(item_midtrans, item_biteship));
-            })
-            .catch((error) => {
-              //ERROR
-              dispatchError(dispatch, UPDATE_STATUS, error.message);
-              Swal.fire({
-                title: "Error",
-                text: error.message + " [3] order id : " + order_id,
-                icon: "error",
-                confirmButtonColor: "#f69d93",
-                confirmButtonText: "OK",
-              });
-            });
+          // ERROR
+          dispatchError(dispatch, UPDATE_STATUS, response);
+          Swal.fire({
+            title: "Error",
+            text: response.status,
+            icon: "error",
+            confirmButtonColor: "#f69d93",
+            confirmButtonText: "OK",
+          });
         } else {
-          check_midtrans++;
-          dispatch(checkItem(item_midtrans, item_biteship));
+          if (
+            response.data.transaction_status === "settlement" ||
+            response.data.transaction_status === "capture"
+          ) {
+            update(ref(db, "/pesanan/" + order_id), {
+              status_pesanan: "Menunggu Konfirmasi Admin",
+            })
+              .then((response) => {
+                check_midtrans++;
+                dispatch(checkItem(item_midtrans, item_biteship));
+              })
+
+              .catch((error) => {
+                //ERROR
+                dispatchError(dispatch, UPDATE_STATUS, error.message);
+                Swal.fire({
+                  title: "Error",
+                  text: error.message + " [1] order id : " + order_id,
+                  icon: "error",
+                  confirmButtonColor: "#f69d93",
+                  confirmButtonText: "OK",
+                });
+              });
+          } else if (
+            response.data.transaction_status === "deny" ||
+            response.data.transaction_status === "cancel" ||
+            response.data.transaction_status === "expire" ||
+            response.data.transaction_status === "failure"
+          ) {
+            update(ref(db, "/pesanan/" + order_id), {
+              status_pesanan: "Selesai (Pembayaran Gagal)",
+            })
+              .then((response) => {
+                check_midtrans++;
+                dispatch(checkItem(item_midtrans, item_biteship));
+              })
+              .catch((error) => {
+                //ERROR
+                dispatchError(dispatch, UPDATE_STATUS, error.message);
+                Swal.fire({
+                  title: "Error",
+                  text: error.message + " [2] order id : " + order_id,
+                  icon: "error",
+                  confirmButtonColor: "#f69d93",
+                  confirmButtonText: "OK",
+                });
+              });
+          } else if (
+            response.data.status_code === "404" &&
+            duration > 86400000
+          ) {
+            update(ref(db, "/pesanan/" + order_id), {
+              status_pesanan: "Selesai (Pembayaran Gagal)",
+            })
+              .then((response) => {
+                check_midtrans++;
+                dispatch(checkItem(item_midtrans, item_biteship));
+              })
+              .catch((error) => {
+                //ERROR
+                dispatchError(dispatch, UPDATE_STATUS, error.message);
+                Swal.fire({
+                  title: "Error",
+                  text: error.message + " [3] order id : " + order_id,
+                  icon: "error",
+                  confirmButtonColor: "#f69d93",
+                  confirmButtonText: "OK",
+                });
+              });
+          } else {
+            check_midtrans++;
+            dispatch(checkItem(item_midtrans, item_biteship));
+          }
         }
-      }
       })
       .catch((error) => {
         // ERROR
@@ -227,7 +233,6 @@ export const updateStatusBiteship = (
   item_biteship
 ) => {
   return (dispatch) => {
-
     const parameter = {
       biteship_id: biteship_id,
     };
@@ -396,7 +401,6 @@ export const confirmOrderWithBiteship = (
     //LOADING
     dispatchLoading(dispatch, CONFIRM_PESANAN);
 
-
     axios
       .post("http://localhost:8000/biteship-order", parameter)
       .then((response) => {
@@ -412,7 +416,10 @@ export const confirmOrderWithBiteship = (
           });
         } else {
           const biteship_id = response.data.id;
-          const tanggal_pengiriman = tanggalBaruDatabase && waktuBaruDatabase ? tanggalBaruDatabase + ' ' + waktuBaruDatabase : false
+          const tanggal_pengiriman =
+            tanggalBaruDatabase && waktuBaruDatabase
+              ? tanggalBaruDatabase + " " + waktuBaruDatabase
+              : false;
           update(ref(db, "/pesanan/" + order_id), {
             biteship_id: biteship_id,
             status_pesanan: "Diproses",
@@ -447,6 +454,195 @@ export const confirmOrderWithBiteship = (
         Swal.fire({
           title: "Error " + "[" + error.response.data.code + "]",
           text: error.response.data.error,
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      });
+  };
+};
+
+export const requestBiteshipPickUp = (
+  order_id,
+  biteship_id,
+  tanggal_pengiriman,
+  waktu_pengiriman
+) => {
+  return (dispatch) => {
+    //LOADING
+    dispatchLoading(dispatch, REQUEST_PICK_UP);
+
+    const parameter = {
+      biteship_id: biteship_id,
+    };
+
+    axios
+      .post("http://localhost:8000/biteship-pickup", parameter)
+      .then((response) => {
+        if (response.status !== 200) {
+          // ERROR
+          dispatchError(dispatch, REQUEST_PICK_UP, response);
+          Swal.fire({
+            title: "Error",
+            text: response.status,
+            icon: "error",
+            confirmButtonColor: "#f69d93",
+            confirmButtonText: "OK",
+          });
+        } else {
+          update(ref(db, "/pesanan/" + order_id), {
+            status_pesanan: "Sedang Dikirim",
+            tanggal_pengiriman: tanggal_pengiriman + " " + waktu_pengiriman,
+          })
+            .then((response) => {
+              //SUKSES
+              dispatchSuccess(
+                dispatch,
+                REQUEST_PICK_UP,
+                response ? response : []
+              );
+            })
+            .catch((error) => {
+              //ERROR
+              dispatchError(dispatch, REQUEST_PICK_UP, error.message);
+              Swal.fire({
+                title: "Error",
+                text: error.message,
+                icon: "error",
+                confirmButtonColor: "#f69d93",
+                confirmButtonText: "OK",
+              });
+            });
+        }
+      })
+      .catch((error) => {
+        // ERROR
+        dispatchError(dispatch, REQUEST_PICK_UP, error.response.data.error);
+        Swal.fire({
+          title: "Error " + "[" + error.response.data.code + "]",
+          text: error.response.data.error,
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      });
+  };
+};
+
+export const changeDeliveryDate = (
+  order_id,
+  tanggalDatabase,
+  biteship_id,
+  dataBiteship
+) => {
+  return (dispatch) => {
+    //LOADING
+    dispatchLoading(dispatch, CHANGE_DELIVERY_DATE);
+
+    if (biteship_id !== undefined) {
+      const parameter = {
+        biteship_id: biteship_id,
+        data: dataBiteship,
+      };
+
+      axios
+        .post("http://localhost:8000/biteship-update", parameter)
+        .then((response) => {
+          if (response.status !== 200) {
+            // ERROR
+            dispatchError(dispatch, CHANGE_DELIVERY_DATE, response);
+            Swal.fire({
+              title: "Error",
+              text: response.status,
+              icon: "error",
+              confirmButtonColor: "#f69d93",
+              confirmButtonText: "OK",
+            });
+          } else {
+            update(ref(db, "/pesanan/" + order_id), {
+              tanggal_pengiriman: tanggalDatabase,
+            })
+              .then((response) => {
+                //SUKSES
+                dispatchSuccess(
+                  dispatch,
+                  CHANGE_DELIVERY_DATE,
+                  response ? response : []
+                );
+              })
+              .catch((error) => {
+                //ERROR
+                dispatchError(dispatch, CHANGE_DELIVERY_DATE, error.message);
+                Swal.fire({
+                  title: "Error",
+                  text: error.message,
+                  icon: "error",
+                  confirmButtonColor: "#f69d93",
+                  confirmButtonText: "OK",
+                });
+              });
+          }
+        })
+        .catch((error) => {
+          // ERROR
+          dispatchError(
+            dispatch,
+            CHANGE_DELIVERY_DATE,
+            error.response.data.error
+          );
+          Swal.fire({
+            title: "Error " + "[" + error.response.data.code + "]",
+            text: error.response.data.error,
+            icon: "error",
+            confirmButtonColor: "#f69d93",
+            confirmButtonText: "OK",
+          });
+        });
+    } else {
+      update(ref(db, "/pesanan/" + order_id), {
+        tanggal_pengiriman: tanggalDatabase,
+      })
+        .then((response) => {
+          //SUKSES
+          dispatchSuccess(
+            dispatch,
+            CHANGE_DELIVERY_DATE,
+            response ? response : []
+          );
+        })
+        .catch((error) => {
+          //ERROR
+          dispatchError(dispatch, CHANGE_DELIVERY_DATE, error.message);
+          Swal.fire({
+            title: "Error",
+            text: error.message,
+            icon: "error",
+            confirmButtonColor: "#f69d93",
+            confirmButtonText: "OK",
+          });
+        });
+    }
+  };
+};
+
+export const finishOrder = (order_id, notes) => {
+  return (dispatch) => {
+    //LOADING
+    dispatchLoading(dispatch, FINISH_PESANAN);
+
+    update(ref(db, "/pesanan/" + order_id), {
+      status_pesanan: notes === "Diterima" ? "Selesai (Pesanan Telah Diterima)" : "Selesai (Pembeli Mengajukan Komplain)",
+    })
+      .then((response) => {
+        //SUKSES
+        dispatchSuccess(dispatch, FINISH_PESANAN, response ? response : []);
+      })
+      .catch((error) => {
+        //ERROR
+        dispatchError(dispatch, FINISH_PESANAN, error.message);
+        Swal.fire({
+          title: "Error",
+          text: error.message,
           icon: "error",
           confirmButtonColor: "#f69d93",
           confirmButtonText: "OK",

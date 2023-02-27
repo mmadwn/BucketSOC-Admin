@@ -29,10 +29,12 @@ export const loginUser = (email, password) => {
             //LOGIN
             signInWithEmailAndPassword(getAuth(), email, password)
               .then((response) => {
-                console.log(response)
                 // Signed in
                 //Simpan data user ke localstorage dari database
-                window.localStorage.setItem("user", JSON.stringify(response.user));
+                window.localStorage.setItem(
+                  "user",
+                  JSON.stringify(response.user)
+                );
                 dispatchSuccess(dispatch, LOGIN_USER, Profile[0]);
               })
               .catch((error) => {

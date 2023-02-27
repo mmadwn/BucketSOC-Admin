@@ -112,3 +112,34 @@ app.post("/biteship-status", (req, res) => {
       res.status(500).send(error.response.data);
     });
 });
+
+app.post("/biteship-update", (req, res) => {
+  axios({
+    method: "POST",
+    url: BITESHIP_API_URL + "orders/" + req.body.biteship_id,
+    timeout: API_TIMEOUT,
+    headers: BITESHIP_API_HEADER,
+    data: req.body.data,
+  })
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch((error) => {
+      res.status(500).send(error.response.data);
+    });
+});
+
+app.post("/biteship-pickup", (req, res) => {
+  axios({
+    method: "POST",
+    url: BITESHIP_API_URL + "orders/" + req.body.biteship_id + "/confirm",
+    timeout: API_TIMEOUT,
+    headers: BITESHIP_API_HEADER,
+  })
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch((error) => {
+      res.status(500).send(error.response.data);
+    });
+});
