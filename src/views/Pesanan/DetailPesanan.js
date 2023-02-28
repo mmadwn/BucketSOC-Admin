@@ -788,7 +788,6 @@ class DetailPesanan extends Component {
                         {cancelPesananLoading ? (
                           <Button
                             className="btn btn-danger float-left full-btn"
-                            disabled
                           >
                             <Spinner size="sm" color="light" /> Loading
                           </Button>

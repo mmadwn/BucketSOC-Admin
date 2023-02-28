@@ -1,10 +1,6 @@
 import { db } from "config/FIREBASE";
 import { onValue, ref, update } from "firebase/database";
-import {
-  dispatchError,
-  dispatchLoading,
-  dispatchSuccess,
-} from "../utils";
+import { dispatchError, dispatchLoading, dispatchSuccess } from "../utils";
 import Swal from "sweetalert2";
 import axios from "axios";
 
@@ -672,102 +668,9 @@ export const cancelPesanan = (pesanan) => {
                     .then((response) => {
                       //Jika pembatalan pesanan berhasil
                       if (response.data.transaction_status === "cancel") {
-                        update(
-                          ref(db, "/pesanan/" + pesanan.order_id),
-                          {
-                            status_pesanan: "Selesai (Dibatalkan Penjual)",
-                          }
-                        )
-                          .then((response) => {
-                            //SUKSES
-                            dispatchSuccess(
-                              dispatch,
-                              CANCEL_PESANAN,
-                              response ? response : []
-                            );
-                          })
-                          .catch((error) => {
-                            //ERROR
-                            dispatchError(
-                              dispatch,
-                              CANCEL_PESANAN,
-                              error.message
-                            );
-                            Swal.fire({
-                              title: "Error",
-                              text: error.message,
-                              icon: "error",
-                              confirmButtonColor: "#f69d93",
-                              confirmButtonText: "OK",
-                            });;
-                          });
-                      } else {
-                        dispatchError(
-                          dispatch,
-                          CANCEL_PESANAN,
-                          "Pembatalan Gagal"
-                        );
-                       Swal.fire({
-                         title: "Error",
-                         text: "Tidak dapat membatalkan pesanan ini!",
-                         icon: "error",
-                         confirmButtonColor: "#f69d93",
-                         confirmButtonText: "OK",
-                       });
-                      }
-                    })
-                    .catch((error) => {
-                      // ERROR
-                      dispatchError(dispatch, CANCEL_PESANAN, error.message);
-                      Swal.fire({
-                        title: "Error",
-                        text: error.message,
-                        icon: "error",
-                        confirmButtonColor: "#f69d93",
-                        confirmButtonText: "OK",
-                      });
-                    });
-                  //Jika pembayaran tidak ditemukan (pembeli belum memilih channel pembayaran)
-                } else if (response.data.status_code === "404") {
-                  update(ref(db, "/pesanan/" + pesanan.order_id), {
-                    status_pesanan: "Selesai (Dibatalkan Penjual)",
-                  })
-                    .then((response) => {
-                      //SUKSES
-                      dispatchSuccess(
-                        dispatch,
-                        CANCEL_PESANAN,
-                        response ? response : []
-                      );
-                    })
-                    .catch((error) => {
-                      //ERROR
-                      dispatchError(dispatch, CANCEL_PESANAN, error.message);
-                     Swal.fire({
-                       title: "Error",
-                       text: error.message,
-                       icon: "error",
-                       confirmButtonColor: "#f69d93",
-                       confirmButtonText: "OK",
-                     });
-                    });
-                  //Jika pembayaran telah berhasil dilakukan tetapi admin belum mengonfirmasi pesanan
-                } else if (
-                  response.data.transaction_status === "settlement" ||
-                  response.data.transaction_status === "capture"
-                ) {
-                  //Mencoba untuk melakukan refund
-                  axios
-                    .post("http://localhost:8000/midtrans-refund", parameter)
-                    .then((response) => {
-                      //Jika refund berhasil
-                      if (response.data.transaction_status === "refund") {
-                        update(
-                          ref(db, "/pesanan/" + pesanan.order_id),
-                          {
-                            status_pesanan: "Selesai (Dibatalkan Penjual)",
-                          }
-                        )
+                        update(ref(db, "/pesanan/" + pesanan.order_id), {
+                          status_pesanan: "Selesai (Dibatalkan Penjual)",
+                        })
                           .then((response) => {
                             //SUKSES
                             dispatchSuccess(
@@ -799,7 +702,7 @@ export const cancelPesanan = (pesanan) => {
                         );
                         Swal.fire({
                           title: "Error",
-                          text: 'Tidak dapat melakukan refund pesanan ini!',
+                          text: "Tidak dapat membatalkan pesanan ini!",
                           icon: "error",
                           confirmButtonColor: "#f69d93",
                           confirmButtonText: "OK",
@@ -815,6 +718,133 @@ export const cancelPesanan = (pesanan) => {
                         icon: "error",
                         confirmButtonColor: "#f69d93",
                         confirmButtonText: "OK",
+                      });
+                    });
+                  //Jika pembayaran tidak ditemukan (pembeli belum memilih channel pembayaran)
+                } else if (response.data.status_code === "404") {
+                  update(ref(db, "/pesanan/" + pesanan.order_id), {
+                    status_pesanan: "Selesai (Dibatalkan Penjual)",
+                  })
+                    .then((response) => {
+                      //SUKSES
+                      dispatchSuccess(
+                        dispatch,
+                        CANCEL_PESANAN,
+                        response ? response : []
+                      );
+                    })
+                    .catch((error) => {
+                      //ERROR
+                      dispatchError(dispatch, CANCEL_PESANAN, error.message);
+                      Swal.fire({
+                        title: "Error",
+                        text: error.message,
+                        icon: "error",
+                        confirmButtonColor: "#f69d93",
+                        confirmButtonText: "OK",
+                      });
+                    });
+                  //Jika pembayaran telah berhasil dilakukan tetapi admin belum mengonfirmasi pesanan
+                } else if (
+                  response.data.transaction_status === "settlement" ||
+                  response.data.transaction_status === "capture"
+                ) {
+                  //Mencoba untuk melakukan refund
+                  axios
+                    .post("http://localhost:8000/midtrans-refund", parameter)
+                    .then((response) => {
+                      //Jika refund berhasil
+                      if (response.data.transaction_status === "refund") {
+                        update(ref(db, "/pesanan/" + pesanan.order_id), {
+                          status_pesanan: "Selesai (Dibatalkan Penjual)",
+                        })
+                          .then((response) => {
+                            //SUKSES
+                            dispatchSuccess(
+                              dispatch,
+                              CANCEL_PESANAN,
+                              response ? response : []
+                            );
+                          })
+                          .catch((error) => {
+                            //ERROR
+                            dispatchError(
+                              dispatch,
+                              CANCEL_PESANAN,
+                              error.message
+                            );
+                            Swal.fire({
+                              title: "Error",
+                              text: error.message,
+                              icon: "error",
+                              confirmButtonColor: "#f69d93",
+                              confirmButtonText: "OK",
+                            });
+                          });
+                      } else {
+                        dispatchError(
+                          dispatch,
+                          CANCEL_PESANAN,
+                          "Pembatalan Gagal"
+                        );
+                        Swal.fire({
+                          title: "Error",
+                          text: "Tidak dapat membatalkan pesanan ini!",
+                          icon: "error",
+                          confirmButtonColor: "#f69d93",
+                          confirmButtonText: "OK",
+                        });
+                      }
+                    })
+                    .catch((error) => {
+                      // ERROR
+                      dispatchError(
+                        dispatch,
+                        CANCEL_PESANAN,
+                        "Pembatalan Gagal"
+                      );
+                      Swal.fire({
+                        title: "Error",
+                        text: "Tidak dapat melakukan pengembalian dana karena pembeli tidak membayar menggunakan QRIS. Apakah ingin tetap membatalkan pesanan dengan pengembalian dana secara manual?",
+                        icon: "question",
+                        width: '800px',
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#f69d93",
+                        confirmButtonText:
+                          "Ya, Tetap batalkan pesanan dengan pengembalian dana secara manual",
+                        cancelButtonText: "Kembali",
+                        reverseButtons: true,
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          dispatchLoading(dispatch, CANCEL_PESANAN);
+                          update(ref(db, "/pesanan/" + pesanan.order_id), {
+                            status_pesanan: "Selesai (Dibatalkan Penjual)",
+                          })
+                            .then((response) => {
+                              //SUKSES
+                              dispatchSuccess(
+                                dispatch,
+                                CANCEL_PESANAN,
+                                response ? response : []
+                              );
+                            })
+                            .catch((error) => {
+                              //ERROR
+                              dispatchError(
+                                dispatch,
+                                CANCEL_PESANAN,
+                                error.message
+                              );
+                              Swal.fire({
+                                title: "Error",
+                                text: error.message,
+                                icon: "error",
+                                confirmButtonColor: "#f69d93",
+                                confirmButtonText: "OK",
+                              });
+                            });
+                        }
                       });
                     });
                 }
