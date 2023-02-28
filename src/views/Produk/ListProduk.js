@@ -22,6 +22,7 @@ import $ from "jquery";
 import { getListProduk } from "actions/ProdukAction";
 import { deleteProduk } from "actions/ProdukAction";
 import { getListKategori } from "actions/KategoriAction";
+import { CSVLink } from "react-csv";
 
 class ListProduk extends Component {
   constructor(props) {
@@ -30,6 +31,16 @@ class ListProduk extends Component {
     this.state = {
       modal: false,
       modalData: false,
+      csvData: [],
+      csvHeaders: [
+        { label: "Gambar 1", key: "gambar[0]" },
+        { label: "Gambar 2", key: "gambar[1]" },
+        { label: "Nama Produk", key: "nama" },
+        { label: "Kategori", key: "kategori" },
+        { label: "Harga", key: "harga" },
+        { label: "Status", key: "ready" },
+        { label: "Deskripsi Produk", key: "deskripsi" },
+      ],
     };
     this.toggle = this.toggle.bind(this);
   }
@@ -66,7 +77,26 @@ class ListProduk extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { deleteProdukResult } = this.props;
+    const { deleteProdukResult, getListProdukResult,getListKategoriResult } = this.props;
+    if (getListProdukResult !== prevProps.getListProdukResult) {
+      // {Object.keys(getListProdukResult)
+      //                   .reverse()
+      //                   .map((key) => (
+      // let kategoriList = [];
+      // Object.keys(getListKategoriResult).forEach((key) => {
+      // kategoriList.push({
+      //   key: key,
+      //   nama: getListKategoriResult[key].nama,
+      // });
+      // getListKategoriResult
+      //   ? kategoriList.find((x) => x.key === getListProdukResult[key].kategori)
+      //       .nama
+      //   : null;))
+      this.setState({
+        
+        csvData: Object.values(getListProdukResult),
+      });
+    }
 
     if (
       deleteProdukResult &&
@@ -97,9 +127,15 @@ class ListProduk extends Component {
   }
 
   render() {
-    const { modal, modalData } = this.state;
-    const { getListProdukError, getListProdukLoading, getListProdukResult, getListKategoriResult } =
-      this.props;
+    const { modal, modalData, csvData, csvHeaders } = this.state;
+    const {
+      getListProdukError,
+      getListProdukLoading,
+      getListProdukResult,
+      getListKategoriResult,
+    } = this.props;
+
+    const nowDate = new Date().toLocaleString("id-ID");
     let kategoriList = [];
     Object.keys(getListKategoriResult).forEach((key) => {
       kategoriList.push({
@@ -111,14 +147,14 @@ class ListProduk extends Component {
     //initialize datatable
     $(document).ready(function () {
       var table = $("#datatable").DataTable({
-          bDestroy: true,
-          pagingType: "full_numbers",
-          scrollX: true,
-          language: {
-            thousands: ".",
-            decimal: ",",
-          },
-        });
+        bDestroy: true,
+        pagingType: "full_numbers",
+        scrollX: true,
+        language: {
+          thousands: ".",
+          decimal: ",",
+        },
+      });
       $('.dataTables_filter input[type="search"]').css({
         width: "320",
         display: "inline-block",
@@ -146,12 +182,15 @@ class ListProduk extends Component {
                 >
                   <i className="nc-icon nc-simple-add" /> Tambah Produk
                 </Link>
-                <Button
-                  style={{ backgroundColor: "#232531" }}
+                <CSVLink
+                  data={csvData}
+                  headers={csvHeaders}
+                  filename={"Data Produk " + nowDate + ".csv"}
                   className="btn float-left full-btn"
+                  style={{ backgroundColor: "#232531" }}
                 >
                   <i className="nc-icon nc-cloud-download-93" /> Download Data
-                </Button>
+                </CSVLink>
               </CardHeader>
               <CardBody>
                 {getListProdukResult ? (

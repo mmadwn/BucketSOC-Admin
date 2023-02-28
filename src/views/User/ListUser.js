@@ -77,7 +77,7 @@ class ListUser extends Component {
                 <CSVLink
                   data={csvData}
                   headers={csvHeaders}
-                  filename={"Data User " + nowDate + ".csv"}
+                  filename={"Data Banner " + nowDate + ".csv"}
                   className="btn float-left full-btn"
                   style={{ backgroundColor: "#232531" }}
                 >

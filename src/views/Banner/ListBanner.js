@@ -16,9 +16,10 @@ import {
   Spinner,
 } from "reactstrap";
 import { RiDeleteBin5Fill } from "react-icons/ri";
-import { AiFillEdit}  from "react-icons/ai"
+import { AiFillEdit } from "react-icons/ai";
 import Swal from "sweetalert2";
 import $ from "jquery";
+import { CSVLink } from "react-csv";
 
 class ListBanner extends Component {
   constructor(props) {
@@ -27,6 +28,13 @@ class ListBanner extends Component {
     this.state = {
       modal: false,
       modalData: false,
+      csvData: [],
+      csvHeaders: [
+        { label: "Gambar", key: "gambar" },
+        { label: "Judul Banner", key: "title" },
+        { label: "Status", key: "active" },
+        { label: "Deskripsi", key: "deskripsi" },
+      ],
     };
     this.toggle = this.toggle.bind(this);
   }
@@ -62,7 +70,12 @@ class ListBanner extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { deleteBannerResult } = this.props;
+    const { deleteBannerResult, getListBannerResult } = this.props;
+
+    if (getListBannerResult !== prevProps.getListBannerResult)
+      this.setState({
+        csvData: Object.values(getListBannerResult),
+      });
 
     if (
       deleteBannerResult &&
@@ -93,9 +106,11 @@ class ListBanner extends Component {
   }
 
   render() {
-    const { modal, modalData } = this.state;
+    const { modal, modalData, csvData, csvHeaders } = this.state;
     const { getListBannerError, getListBannerLoading, getListBannerResult } =
       this.props;
+    const nowDate = new Date().toLocaleString("id-ID");
+
     //initialize datatable
     $(document).ready(function () {
       var table = $("#datatable").DataTable({
@@ -130,12 +145,15 @@ class ListBanner extends Component {
                 >
                   <i className="nc-icon nc-simple-add" /> Tambah Banner
                 </Link>
-                <Button
-                  style={{ backgroundColor: "#232531" }}
+                <CSVLink
+                  data={csvData}
+                  headers={csvHeaders}
+                  filename={"Data Banner " + nowDate + ".csv"}
                   className="btn float-left full-btn"
+                  style={{ backgroundColor: "#232531" }}
                 >
                   <i className="nc-icon nc-cloud-download-93" /> Download Data
-                </Button>
+                </CSVLink>
               </CardHeader>
               <CardBody>
                 {getListBannerResult ? (
