@@ -22,8 +22,9 @@ import Swal from "sweetalert2";
 import $ from "jquery";
 import { TbFileInvoice } from "react-icons/tb";
 import { BiLinkAlt } from "react-icons/bi";
-import { BsClipboardCheck, BsCalendar2Minus } from "react-icons/bs";
+import { BsClipboardCheck } from "react-icons/bs";
 import { FaShippingFast } from "react-icons/fa";
+import { IoCalendar } from "react-icons/io5";
 import { MdCancel, MdDoneAll } from "react-icons/md";
 import { createInvoice } from "actions/InvoiceAction";
 import { getAdminProfile } from "actions/ProfileAction";
@@ -89,10 +90,8 @@ class DetailPesanan extends Component {
     ) {
       if (
         getDetailPesananResult.order_id.slice(-1) === "A" &&
-        (getDetailPesananResult.status_pesanan ===
-          "Menunggu Konfirmasi Admin" ||
-          getDetailPesananResult.status_pesanan === "Pengiriman Gagal" ||
-          getDetailPesananResult.status_pesanan === "Diproses")
+        (getDetailPesananResult.status_pesanan === "Menunggu Konfirmasi Admin" ||
+          getDetailPesananResult.status_pesanan === "Pengiriman Gagal")
       ) {
         dispatch(getAdminProfile());
       }
@@ -274,7 +273,11 @@ class DetailPesanan extends Component {
           ? "dikirim"
           : "diambil") +
         " pada " +
-        getDetailPesananResult.tanggal_pengiriman,
+        getDetailPesananResult.tanggal_pengiriman +
+        "? Setelah ini pesanan tidak dapat dibatalkan tetapi tanggal & waktu " +
+        (getDetailPesananResult.order_id.slice(-1) === "A"
+          ? "pengiriman"
+          : "pengambilan") + " masih dapat diubah!",
       icon: "question",
       showCancelButton: true,
       showDenyButton: true,
@@ -345,7 +348,6 @@ class DetailPesanan extends Component {
       ) {
         this.confirmOrder();
       } else if (getDetailPesananResult.status_pesanan === "Diproses") {
-        console.log("A");
         this.updateDeliveryDate();
       }
       this.toggle();
@@ -442,14 +444,6 @@ class DetailPesanan extends Component {
               waktuBaruDatabase
             )
           );
-          this.setState({
-            selectedDate: "",
-            selectedTime: "",
-            tanggalBaruDatabase: "",
-            waktuBaruDatabase: "",
-            tanggalBaruBiteship: "",
-            waktuBaruBiteship: "",
-          });
         } else {
           dispatch(
             confirmOrderWithBiteship(
@@ -477,31 +471,31 @@ class DetailPesanan extends Component {
 
   finishOrder = () => {
     const { dispatch, getDetailPesananResult } = this.props;
-     Swal.fire({
-       title: "Konfirmasi Selesaikan Pesanan?",
-       icon: "question",
-       width: "900px",
-       showCancelButton: true,
-       showDenyButton: true,
-       denyButtonText: "Ya, Selesai (Pembeli Mengajukan Komplain)",
-       confirmButtonColor: "#53ac69",
-       cancelButtonColor: "#f69d93",
-       denyButtonColor: "#fbc658",
-       confirmButtonText: "Ya, Selesai (Pesanan Telah Diterima)",
-       cancelButtonText: "Kembali",
-       reverseButtons: true,
-     }).then((result) => {
-       if (result.isConfirmed) {
+    Swal.fire({
+      title: "Konfirmasi Selesaikan Pesanan?",
+      icon: "question",
+      width: "900px",
+      showCancelButton: true,
+      showDenyButton: true,
+      denyButtonText: "Ya, Selesai (Pembeli Mengajukan Komplain)",
+      confirmButtonColor: "#53ac69",
+      cancelButtonColor: "#f69d93",
+      denyButtonColor: "#fbc658",
+      confirmButtonText: "Ya, Selesai (Pesanan Telah Diterima)",
+      cancelButtonText: "Kembali",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
         const notes = "Diterima";
-         dispatch(finishOrder(getDetailPesananResult.order_id, notes));
-       } else if (result.isDenied) {
+        dispatch(finishOrder(getDetailPesananResult.order_id, notes));
+      } else if (result.isDenied) {
         const notes = "Komplain";
-         dispatch(finishOrder(getDetailPesananResult.order_id, notes));
-       }
-     });
-  }
+        dispatch(finishOrder(getDetailPesananResult.order_id, notes));
+      }
+    });
+  };
 
-  requestPickUp = () => {
+  requestPickUp = async () => {
     const { getDetailPesananResult, dispatch } = this.props;
     Swal.fire({
       title: "Konfirmasi Request Pick-Up?",
@@ -513,24 +507,25 @@ class DetailPesanan extends Component {
       confirmButtonText: "Ya, Pick-Up Sekarang",
       cancelButtonText: "Kembali",
       reverseButtons: true,
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        const newDate = new Date();
-        const year = newDate.getFullYear();
-        const month = custom_bulan[newDate.getMonth()];
-        const date = newDate.getDate();
-        const day = custom_hari[newDate.getDay()];
-        const formattedDate = `${day}, ${date} ${month} ${year}`;
-        const formattedDateDatabase = String(formattedDate);
-        const formattedTimeDatabase = newDate
-          .toLocaleTimeString("id-ID", { hour: "numeric", minute: "numeric" })
-          .replace(":", ".");
+        const now = new Date();
+        await this.handleDateChange(now);
+        await this.handleTimeChange(now);
+        const {
+          tanggalBaruDatabase,
+          waktuBaruDatabase,
+          tanggalBaruBiteship,
+          waktuBaruBiteship,
+        } = this.state;
         dispatch(
           requestBiteshipPickUp(
             getDetailPesananResult.order_id,
             getDetailPesananResult.biteship_id,
-            formattedDateDatabase,
-            formattedTimeDatabase
+            tanggalBaruDatabase,
+            waktuBaruDatabase,
+            tanggalBaruBiteship,
+            waktuBaruBiteship
           )
         );
       }
@@ -739,7 +734,7 @@ class DetailPesanan extends Component {
                             id="pesanan"
                             onClick={() => this.toggle()}
                           >
-                            <BsCalendar2Minus
+                            <IoCalendar
                               size="15px"
                               style={{ verticalAlign: "sub" }}
                             />{" "}

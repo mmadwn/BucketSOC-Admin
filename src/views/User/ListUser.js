@@ -45,6 +45,7 @@ class ListUser extends Component {
     const { getListUserError, getListUserLoading, getListUserResult } =
       this.props;
     const { csvData, csvHeaders } = this.state;
+    const nowDate = new Date().toLocaleString('id-ID')
     //initialize datatable
     $(document).ready(function () {
       var table = $("#datatable").DataTable({
@@ -76,7 +77,7 @@ class ListUser extends Component {
                 <CSVLink
                   data={csvData}
                   headers={csvHeaders}
-                  filename={"Data User.csv"}
+                  filename={"Data User " + nowDate + ".csv"}
                   className="btn float-left full-btn"
                   style={{ backgroundColor: "#232531" }}
                 >

@@ -132,12 +132,27 @@ app.post("/biteship-update", (req, res) => {
 app.post("/biteship-pickup", (req, res) => {
   axios({
     method: "POST",
-    url: BITESHIP_API_URL + "orders/" + req.body.biteship_id + "/confirm",
+    url: BITESHIP_API_URL + "orders/" + req.body.biteship_id,
     timeout: API_TIMEOUT,
     headers: BITESHIP_API_HEADER,
+    data: {
+      delivery_date: req.body.tanggal_biteship,
+      delivery_time: req.body.waktu_biteship,
+    },
   })
     .then((response) => {
-      res.json(response.data);
+      axios({
+        method: "POST",
+        url: BITESHIP_API_URL + "orders/" + req.body.biteship_id + "/confirm",
+        timeout: API_TIMEOUT,
+        headers: BITESHIP_API_HEADER,
+      })
+        .then((response) => {
+          res.json(response.data);
+        })
+        .catch((error) => {
+          res.status(500).send(error.response.data);
+        });
     })
     .catch((error) => {
       res.status(500).send(error.response.data);

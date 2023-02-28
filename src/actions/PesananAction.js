@@ -466,7 +466,9 @@ export const requestBiteshipPickUp = (
   order_id,
   biteship_id,
   tanggal_pengiriman,
-  waktu_pengiriman
+  waktu_pengiriman,
+  tanggal_biteship,
+  waktu_biteship,
 ) => {
   return (dispatch) => {
     //LOADING
@@ -474,6 +476,8 @@ export const requestBiteshipPickUp = (
 
     const parameter = {
       biteship_id: biteship_id,
+      tanggal_biteship: tanggal_biteship,
+      waktu_biteship: waktu_biteship,
     };
 
     axios
