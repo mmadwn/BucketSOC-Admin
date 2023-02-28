@@ -62,6 +62,39 @@ app.post("/midtrans-status", (req, res) => {
     });
 });
 
+app.post("/midtrans-cancel", (req, res) => {
+ axios({
+   method: "POST",
+   url: MIDTRANS_API_STATUS_URL + req.body.order_id + "/cancel",
+   timeout: API_TIMEOUT,
+   headers: MIDTRANS_API_HEADER,
+ })
+   .then((response) => {
+     res.json(response.data);
+   })
+   .catch((error) => {
+     res.status(500).send(error.message);
+   });
+});
+
+app.post("/midtrans-refund", (req, res) => {
+  axios({
+    method: "POST",
+    url: MIDTRANS_API_STATUS_URL + req.body.order_id + "/refund/online/direct",
+    timeout: API_TIMEOUT,
+    headers: MIDTRANS_API_HEADER,
+    data: {
+      reason: "Selesai (Dibatalkan Penjual)",
+    },
+  })
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch((error) => {
+      res.status(500).send(error.message);
+    });
+});
+
 app.post("/invoice", (req, res) => {
   axios({
     method: "POST",

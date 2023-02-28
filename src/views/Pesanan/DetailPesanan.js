@@ -37,6 +37,7 @@ import { custom_hari } from "utils";
 import { requestBiteshipPickUp } from "actions/PesananAction";
 import { changeDeliveryDate } from "actions/PesananAction";
 import { finishOrder } from "actions/PesananAction";
+import { cancelPesanan } from "actions/PesananAction";
 
 class DetailPesanan extends Component {
   constructor(props) {
@@ -83,7 +84,6 @@ class DetailPesanan extends Component {
       changeDeliveryDateResult,
       finishPesananResult,
       cancelPesananResult,
-      pesananSelesaiResult,
     } = this.props;
 
     if (
@@ -92,7 +92,8 @@ class DetailPesanan extends Component {
     ) {
       if (
         getDetailPesananResult.order_id.slice(-1) === "A" &&
-        (getDetailPesananResult.status_pesanan === "Menunggu Konfirmasi Admin" ||
+        (getDetailPesananResult.status_pesanan ===
+          "Menunggu Konfirmasi Admin" ||
           getDetailPesananResult.status_pesanan === "Pengiriman Gagal")
       ) {
         dispatch(getAdminProfile());
@@ -170,7 +171,7 @@ class DetailPesanan extends Component {
       //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
       Swal.fire({
         title: "Sukses",
-        text: "Berhasil Batalkan Pesanan",
+        text: "Pembatalan Pesanan Berhasil!",
         icon: "success",
         confirmButtonColor: "#f69d93",
         confirmButtonText: "OK",
@@ -295,7 +296,8 @@ class DetailPesanan extends Component {
         "? Setelah ini pesanan tidak dapat dibatalkan tetapi tanggal & waktu " +
         (getDetailPesananResult.order_id.slice(-1) === "A"
           ? "pengiriman"
-          : "pengambilan") + " masih dapat diubah!",
+          : "pengambilan") +
+        " masih dapat diubah!",
       icon: "question",
       showCancelButton: true,
       showDenyButton: true,
@@ -482,10 +484,24 @@ class DetailPesanan extends Component {
     }
   };
 
-  // cancelOrder = () => {
-  //   const { dispatch, getDetailPesananResult, getAdminProfileResult } =
-  //     this.props;
-  // }
+  cancelOrder = () => {
+    const { dispatch, getDetailPesananResult } = this.props;
+    Swal.fire({
+      title: "Konfirmasi Pembatalan Pesanan?",
+      text: "Apakah Anda ingin membatalkan pesanan ini? ",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#f69d93",
+      confirmButtonText: "Ya, Batalkan",
+      cancelButtonText: "Kembali",
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        dispatch(cancelPesanan(getDetailPesananResult));
+      }
+    });
+  };
 
   finishOrder = () => {
     const { dispatch, getDetailPesananResult } = this.props;
@@ -592,6 +608,7 @@ class DetailPesanan extends Component {
       requestPickUpLoading,
       changeDeliveryDateLoading,
       finishPesananLoading,
+      cancelPesananLoading,
     } = this.props;
     const maxDate = new Date();
     maxDate.setMonth(maxDate.getMonth() + 6);
@@ -768,7 +785,7 @@ class DetailPesanan extends Component {
                     getDetailPesananResult.status_pesanan ===
                       "Menunggu Konfirmasi Admin" ? (
                       <>
-                        {confirmPesananLoading ? (
+                        {cancelPesananLoading ? (
                           <Button
                             className="btn btn-danger float-left full-btn"
                             disabled
@@ -779,7 +796,7 @@ class DetailPesanan extends Component {
                           <Button
                             className="btn btn-danger float-left full-btn"
                             id="pesanan"
-                            onClick={() => this.confirmValidation()}
+                            onClick={() => this.cancelOrder()}
                           >
                             <MdCancel
                               size="15px"
@@ -1326,6 +1343,10 @@ const mapStateToProps = (state) => ({
   finishPesananLoading: state.PesananReducer.finishPesananLoading,
   finishPesananResult: state.PesananReducer.finishPesananResult,
   finishPesananError: state.PesananReducer.finishPesananError,
+
+  cancelPesananLoading: state.PesananReducer.cancelPesananLoading,
+  cancelPesananResult: state.PesananReducer.cancelPesananResult,
+  cancelPesananError: state.PesananReducer.cancelPesananError,
 });
 
 export default connect(mapStateToProps, null)(DetailPesanan);

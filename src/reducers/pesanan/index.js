@@ -6,6 +6,7 @@ import {
   REQUEST_PICK_UP,
   CHANGE_DELIVERY_DATE,
   FINISH_PESANAN,
+  CANCEL_PESANAN,
 } from "actions/PesananAction";
 
 const initialState = {
@@ -36,6 +37,10 @@ const initialState = {
   finishPesananLoading: false,
   finishPesananResult: false,
   finishPesananError: false,
+
+  cancelPesananLoading: false,
+  cancelPesananResult: false,
+  cancelPesananError: false,
 };
 
 export default function (state = initialState, action) {
@@ -94,6 +99,14 @@ export default function (state = initialState, action) {
         finishPesananLoading: action.payload.loading,
         finishPesananResult: action.payload.data,
         finishPesananError: action.payload.errorMessage,
+      };
+
+    case CANCEL_PESANAN:
+      return {
+        ...state,
+        cancelPesananLoading: action.payload.loading,
+        cancelPesananResult: action.payload.data,
+        cancelPesananError: action.payload.errorMessage,
       };
 
     default:
