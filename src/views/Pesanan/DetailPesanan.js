@@ -82,6 +82,8 @@ class DetailPesanan extends Component {
       requestPickUpResult,
       changeDeliveryDateResult,
       finishPesananResult,
+      cancelPesananResult,
+      pesananSelesaiResult,
     } = this.props;
 
     if (
@@ -153,6 +155,22 @@ class DetailPesanan extends Component {
       Swal.fire({
         title: "Sukses",
         text: "Berhasil Selesaikan Pesanan!",
+        icon: "success",
+        confirmButtonColor: "#f69d93",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.reload();
+      });
+    }
+
+    if (
+      cancelPesananResult &&
+      prevProps.cancelPesananResult !== cancelPesananResult
+    ) {
+      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
+      Swal.fire({
+        title: "Sukses",
+        text: "Berhasil Batalkan Pesanan",
         icon: "success",
         confirmButtonColor: "#f69d93",
         confirmButtonText: "OK",
