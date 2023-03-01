@@ -25,7 +25,7 @@ export const GET_DETAIL_PRODUK = "GET_DETAIL_PRODUK";
 export const UPDATE_PRODUK = "UPDATE_PRODUK";
 export const DELETE_PRODUK = "DELETE_PRODUK";
 
-//Function untuk baca data Kategori dari Firebase Database
+//Function untuk baca data Produk dari Firebase Database
 export const getListProduk = () => {
   return (dispatch) => {
     //LOADING
@@ -86,7 +86,7 @@ export const getDetailProduk = (id) => {
   };
 };
 
-//Function untuk tambah data Kategori ke Firebase Database dan Firebase Storage
+//Function untuk tambah data Produk ke Firebase Database dan Firebase Storage
 export const tambahProduk = (data) => {
   return (dispatch) => {
     //LOADING
