@@ -52,7 +52,7 @@ class DetailPesanan extends Component {
       date: new Date().toLocaleString("id-ID"),
       DateTimeModal: false,
       ShippingModal: false,
-      tracking: "",
+      tracking: false,
       selectedDate: "",
       selectedTime: "",
       tanggalBaruDatabase: "",
@@ -219,7 +219,6 @@ class DetailPesanan extends Component {
       this.setState({
         tracking: lacakPengirimanResult,
       });
-      console.log(lacakPengirimanResult);
     }
   }
 
@@ -709,7 +708,6 @@ class DetailPesanan extends Component {
       finishPesananLoading,
       cancelPesananLoading,
       siapDiambilLoading,
-      lacakPengirimanLoading,
     } = this.props;
     const maxDate = new Date();
     maxDate.setMonth(maxDate.getMonth() + 6);
@@ -1642,7 +1640,18 @@ class DetailPesanan extends Component {
                   );
                 })}
               </div>
-            ) : null}
+            ) : (
+              <div
+                style={{
+                  justifyContent: "center",
+                  display: "flex",
+                  marginBottom: "100px",
+                  marginTop: "70px",
+                }}
+              >
+                <Spinner color="primary" />
+              </div>
+            )}
           </ModalBody>
         </Modal>
       </div>
