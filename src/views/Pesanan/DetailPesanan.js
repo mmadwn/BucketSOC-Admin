@@ -24,20 +24,24 @@ import { TbFileInvoice } from "react-icons/tb";
 import { BiLinkAlt } from "react-icons/bi";
 import { BsClipboardCheck } from "react-icons/bs";
 import { FaShippingFast } from "react-icons/fa";
+import { FiBox } from "react-icons/fi";
 import { IoCalendar } from "react-icons/io5";
+import { IoMdBarcode } from "react-icons/io";
 import { MdCancel, MdDoneAll } from "react-icons/md";
 import { createInvoice } from "actions/InvoiceAction";
 import { getAdminProfile } from "actions/ProfileAction";
 import { custom_bulan } from "utils";
 import { confirmOrderWithBiteship } from "actions/PesananAction";
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
 import { custom_hari } from "utils";
 import { requestBiteshipPickUp } from "actions/PesananAction";
 import { changeDeliveryDate } from "actions/PesananAction";
 import { finishOrder } from "actions/PesananAction";
 import { cancelPesanan } from "actions/PesananAction";
+import { confirmOrderNoBiteship } from "actions/PesananAction";
+import { siapDiambil } from "actions/PesananAction";
+import { lacakPengiriman } from "actions/PesananAction";
 
 class DetailPesanan extends Component {
   constructor(props) {
@@ -47,6 +51,8 @@ class DetailPesanan extends Component {
       id: this.props.match.params.id,
       date: new Date().toLocaleString("id-ID"),
       DateTimeModal: false,
+      ShippingModal: false,
+      tracking: "",
       selectedDate: "",
       selectedTime: "",
       tanggalBaruDatabase: "",
@@ -55,11 +61,18 @@ class DetailPesanan extends Component {
       waktuBaruBiteship: "",
     };
     this.toggle = this.toggle.bind(this);
+    this.toggleShipping = this.toggleShipping.bind(this);
   }
 
   toggle() {
     this.setState({
       DateTimeModal: !this.state.DateTimeModal,
+    });
+  }
+
+  toggleShipping() {
+    this.setState({
+      ShippingModal: !this.state.ShippingModal,
     });
   }
 
@@ -84,6 +97,8 @@ class DetailPesanan extends Component {
       changeDeliveryDateResult,
       finishPesananResult,
       cancelPesananResult,
+      siapDiambilResult,
+      lacakPengirimanResult,
     } = this.props;
 
     if (
@@ -178,6 +193,33 @@ class DetailPesanan extends Component {
       }).then(() => {
         window.location.reload();
       });
+    }
+
+    if (
+      siapDiambilResult &&
+      prevProps.siapDiambilResult !== siapDiambilResult
+    ) {
+      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
+      Swal.fire({
+        title: "Sukses",
+        text: "Pesanan Siap Diambil!",
+        icon: "success",
+        confirmButtonColor: "#f69d93",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.reload();
+      });
+    }
+
+    if (
+      lacakPengirimanResult &&
+      prevProps.lacakPengirimanResult !== lacakPengirimanResult
+    ) {
+      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
+      this.setState({
+        tracking: lacakPengirimanResult,
+      });
+      console.log(lacakPengirimanResult);
     }
   }
 
@@ -481,6 +523,21 @@ class DetailPesanan extends Component {
           confirmButtonText: "OK",
         });
       }
+    } else if (
+      getDetailPesananResult.order_id.slice(-1) === "B" ||
+      getDetailPesananResult.order_id.slice(-1) === "C"
+    ) {
+      if (tanggalBaruDatabase && waktuBaruDatabase) {
+        dispatch(
+          confirmOrderNoBiteship(
+            getDetailPesananResult.order_id,
+            tanggalBaruDatabase,
+            waktuBaruDatabase
+          )
+        );
+      } else {
+        dispatch(confirmOrderNoBiteship(getDetailPesananResult.order_id));
+      }
     }
   };
 
@@ -505,28 +562,46 @@ class DetailPesanan extends Component {
 
   finishOrder = () => {
     const { dispatch, getDetailPesananResult } = this.props;
-    Swal.fire({
-      title: "Konfirmasi Selesaikan Pesanan?",
-      icon: "question",
-      width: "900px",
-      showCancelButton: true,
-      showDenyButton: true,
-      denyButtonText: "Ya, Selesai (Pembeli Mengajukan Komplain)",
-      confirmButtonColor: "#53ac69",
-      cancelButtonColor: "#f69d93",
-      denyButtonColor: "#fbc658",
-      confirmButtonText: "Ya, Selesai (Pesanan Telah Diterima)",
-      cancelButtonText: "Kembali",
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const notes = "Diterima";
-        dispatch(finishOrder(getDetailPesananResult.order_id, notes));
-      } else if (result.isDenied) {
-        const notes = "Komplain";
-        dispatch(finishOrder(getDetailPesananResult.order_id, notes));
-      }
-    });
+    if (getDetailPesananResult.biteship_id) {
+      Swal.fire({
+        title: "Konfirmasi Selesaikan Pesanan?",
+        icon: "question",
+        width: "900px",
+        showCancelButton: true,
+        showDenyButton: true,
+        denyButtonText: "Ya, Selesai (Pembeli Mengajukan Komplain)",
+        confirmButtonColor: "#53ac69",
+        cancelButtonColor: "#f69d93",
+        denyButtonColor: "#fbc658",
+        confirmButtonText: "Ya, Selesai (Pesanan Telah Diterima)",
+        cancelButtonText: "Kembali",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const notes = "Diterima";
+          dispatch(finishOrder(getDetailPesananResult.order_id, notes));
+        } else if (result.isDenied) {
+          const notes = "Komplain";
+          dispatch(finishOrder(getDetailPesananResult.order_id, notes));
+        }
+      });
+    } else {
+      Swal.fire({
+        title: "Konfirmasi Selesaikan Pesanan?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#53ac69",
+        cancelButtonColor: "#f69d93",
+        confirmButtonText: "Ya, Selesai (Pesanan Telah Diterima)",
+        cancelButtonText: "Kembali",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const notes = "Diterima";
+          dispatch(finishOrder(getDetailPesananResult.order_id, notes));
+        }
+      });
+    }
   };
 
   requestPickUp = async () => {
@@ -597,8 +672,32 @@ class DetailPesanan extends Component {
     }
   };
 
+  siapDiambil = () => {
+    const { getDetailPesananResult, dispatch } = this.props;
+    Swal.fire({
+      title: "Konfirmasi Pesanan Siap Diambil?",
+      text: "Apakah Pesanan Sudah Siap Diambil Oleh Pembeli?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#53ac69",
+      cancelButtonColor: "#f69d93",
+      confirmButtonText: "Ya, Pesanan Siap Diambil",
+      cancelButtonText: "Kembali",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(siapDiambil(getDetailPesananResult.order_id));
+      }
+    });
+  };
+
+  lacakPengiriman = (biteship_id) => {
+    const { dispatch } = this.props;
+    dispatch(lacakPengiriman(biteship_id));
+  };
+
   render() {
-    const { DateTimeModal, id } = this.state;
+    const { DateTimeModal, ShippingModal, id, tracking } = this.state;
     const {
       getDetailPesananResult,
       getDetailPesananLoading,
@@ -609,6 +708,8 @@ class DetailPesanan extends Component {
       changeDeliveryDateLoading,
       finishPesananLoading,
       cancelPesananLoading,
+      siapDiambilLoading,
+      lacakPengirimanLoading,
     } = this.props;
     const maxDate = new Date();
     maxDate.setMonth(maxDate.getMonth() + 6);
@@ -642,11 +743,12 @@ class DetailPesanan extends Component {
               <Col>
                 <Card style={{ marginTop: 10 }}>
                   <CardHeader style={{ padding: 15 }}>
-                    {getDetailPesananResult.status_pesanan === "Terkirim" ? (
+                    {getDetailPesananResult.status_pesanan === "Terkirim" ||
+                    getDetailPesananResult.status_pesanan === "Siap Diambil" ? (
                       <>
                         {finishPesananLoading ? (
                           <Button
-                            className="btn btn-primary float-left full-btn"
+                            className="btn btn-primary float-right full-btn"
                             disabled
                           >
                             <Spinner size="sm" color="light" /> Loading
@@ -754,6 +856,61 @@ class DetailPesanan extends Component {
                         )}
                       </>
                     ) : null}
+                    {getDetailPesananResult.status_pesanan !== "Diproses" &&
+                    getDetailPesananResult.biteship_id ? (
+                      <>
+                        {requestPickUpLoading ? (
+                          <Button
+                            className="btn btn-primary float-right full-btn"
+                            disabled
+                          >
+                            <Spinner size="sm" color="light" /> Loading
+                          </Button>
+                        ) : (
+                          <Button
+                            className="btn btn-primary float-right full-btn"
+                            id="pesanan"
+                            onClick={() => {
+                              this.toggleShipping();
+                              this.lacakPengiriman(
+                                getDetailPesananResult.biteship_id
+                              );
+                            }}
+                          >
+                            <IoMdBarcode
+                              size="15px"
+                              style={{ verticalAlign: "sub" }}
+                            />{" "}
+                            Lacak Pengiriman
+                          </Button>
+                        )}
+                      </>
+                    ) : null}
+                    {getDetailPesananResult.status_pesanan === "Diproses" &&
+                    !getDetailPesananResult.biteship_id ? (
+                      <>
+                        {siapDiambilLoading ? (
+                          <Button
+                            className="btn btn-primary float-right full-btn"
+                            disabled
+                          >
+                            <Spinner size="sm" color="light" /> Loading
+                          </Button>
+                        ) : (
+                          <Button
+                            className="btn btn-primary float-right full-btn"
+                            id="pesanan"
+                            onClick={() => this.siapDiambil()}
+                          >
+                            <FiBox
+                              size="15px"
+                              style={{ verticalAlign: "sub", color: "white" }}
+                            />{" "}
+                            Siap Diambil
+                          </Button>
+                        )}
+                      </>
+                    ) : null}
                     {getDetailPesananResult.status_pesanan === "Diproses" ? (
                       <>
                         {changeDeliveryDateLoading ? (
@@ -786,9 +943,7 @@ class DetailPesanan extends Component {
                       "Menunggu Konfirmasi Admin" ? (
                       <>
                         {cancelPesananLoading ? (
-                          <Button
-                            className="btn btn-danger float-left full-btn"
-                          >
+                          <Button className="btn btn-danger float-left full-btn">
                             <Spinner size="sm" color="light" /> Loading
                           </Button>
                         ) : (
@@ -1260,7 +1415,12 @@ class DetailPesanan extends Component {
             <label>Data pesanan tidak ditemukan!</label>
           </div>
         )}
-        <Modal centered isOpen={DateTimeModal} toggle={this.toggle}>
+        <Modal
+          centered
+          style={{ width: "1000px" }}
+          isOpen={DateTimeModal}
+          toggle={this.toggle}
+        >
           <ModalHeader toggle={this.toggle} style={{ fontSize: "12px" }}>
             {id.slice(-1) === "A"
               ? "Ubah Tanggal & Waktu Pengiriman"
@@ -1309,6 +1469,182 @@ class DetailPesanan extends Component {
             </Button>
           </ModalFooter>
         </Modal>
+        <Modal centered isOpen={ShippingModal} toggle={this.toggleShipping}>
+          <ModalHeader
+            toggle={this.toggleShipping}
+            style={{ fontSize: "12px" }}
+          >
+            Lacak Pengiriman
+          </ModalHeader>
+          <ModalBody
+            style={{
+              maxHeight: "calc(100vh - 210px)",
+              overflowY: "auto",
+            }}
+          >
+            {tracking ? (
+              <div>
+                <div>
+                  <FormGroup>
+                    <Row>
+                      <Col md="4">
+                        <Label className="card-subtitle">
+                          Status Pengiriman
+                        </Label>
+                      </Col>
+                      <Col>
+                        <Label
+                          style={{
+                            fontSize: "12px",
+                            marginBottom: 0,
+                            textTransform: "capitalize",
+                          }}
+                          className="status"
+                        >
+                          {tracking.status}
+                        </Label>
+                      </Col>
+                    </Row>
+                  </FormGroup>
+                  <FormGroup>
+                    <Row>
+                      <Col md="4">
+                        <Label className="card-subtitle">ID Pengiriman</Label>
+                      </Col>
+                      <Col>
+                        <Label
+                          style={{
+                            marginBottom: 0,
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {tracking.id}
+                        </Label>
+                      </Col>
+                    </Row>
+                  </FormGroup>
+                  <FormGroup>
+                    <Row>
+                      <Col md="4">
+                        <Label className="card-subtitle">Layanan Kurir</Label>
+                      </Col>
+                      <Col>
+                        <Label style={{ marginBottom: 0 }}>
+                          {tracking.courier.company === "grab"
+                            ? "GrabExpress Instant"
+                            : "GoSend Instant"}
+                        </Label>
+                      </Col>
+                    </Row>
+                  </FormGroup>
+                </div>
+                <hr />
+                <div>
+                  <FormGroup>
+                    <Row>
+                      <Col md="4">
+                        <Label className="card-subtitle">Nomor Resi</Label>
+                      </Col>
+                      <Col>
+                        <Label style={{ marginBottom: 0 }}>
+                          {tracking.courier.waybill_id}
+                        </Label>
+                      </Col>
+                    </Row>
+                  </FormGroup>
+                  <FormGroup>
+                    <Row>
+                      <Col md="4">
+                        <Label className="card-subtitle">Nama Driver</Label>
+                      </Col>
+                      <Col>
+                        <Label style={{ marginBottom: 0 }}>
+                          {tracking.courier.name}
+                        </Label>
+                      </Col>
+                    </Row>
+                  </FormGroup>
+                  <FormGroup>
+                    <Row>
+                      <Col md="4">
+                        <Label className="card-subtitle">Nomor Telepon</Label>
+                      </Col>
+                      <Col>
+                        <Label style={{ marginBottom: 0 }}>
+                          {tracking.courier.phone}
+                        </Label>
+                      </Col>
+                    </Row>
+                  </FormGroup>
+                  {tracking.courier.link ? (
+                    <FormGroup>
+                      <Link
+                        to={{ pathname: tracking.courier.link }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Label
+                          style={{ color: "#f69d93", fontSize: "14px" }}
+                          className="card-subtitle"
+                        >
+                          Live Tracking
+                        </Label>
+                      </Link>
+                    </FormGroup>
+                  ) : null}
+                </div>
+                <hr />
+                {tracking.courier.history.reverse().map((list, index) => {
+                  return (
+                    <div key={index}>
+                      <div style={{ flexDirection: "row" }}>
+                        <Label
+                          style={{
+                            fontSize: "15px",
+                            fontWeight: "bold",
+                            color: "#f69d93",
+                            width: "50%",
+                            textTransform: "capitalize",
+                            marginBottom: 0,
+                          }}
+                        >
+                          {list.status}
+                        </Label>
+                        <Label
+                          style={{
+                            fontSize: "13px",
+                            textAlign: "right",
+                            width: "50%",
+                            marginBottom: 0,
+                          }}
+                        >
+                          {list.updated_at.substring(8, 10) +
+                            "-" +
+                            list.updated_at.substring(5, 7) +
+                            "-" +
+                            list.updated_at.substring(0, 4) +
+                            " " +
+                            list.updated_at.substring(11, 13) +
+                            "." +
+                            list.updated_at.substring(14, 16)}
+                        </Label>
+                      </div>
+                      <Label
+                        style={{
+                          fontSize: "14px",
+                          textAlign: "justify",
+                          marginBottom: 15,
+                        }}
+                      >
+                        {list.note}
+                      </Label>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : null}
+          </ModalBody>
+        </Modal>
       </div>
     );
   }
@@ -1346,6 +1682,14 @@ const mapStateToProps = (state) => ({
   cancelPesananLoading: state.PesananReducer.cancelPesananLoading,
   cancelPesananResult: state.PesananReducer.cancelPesananResult,
   cancelPesananError: state.PesananReducer.cancelPesananError,
+
+  siapDiambilLoading: state.PesananReducer.siapDiambilLoading,
+  siapDiambilResult: state.PesananReducer.siapDiambilResult,
+  siapDiambilError: state.PesananReducer.siapDiambilError,
+
+  lacakPengirimanLoading: state.PesananReducer.lacakPengirimanLoading,
+  lacakPengirimanResult: state.PesananReducer.lacakPengirimanResult,
+  lacakPengirimanError: state.PesananReducer.lacakPengirimanError,
 });
 
 export default connect(mapStateToProps, null)(DetailPesanan);

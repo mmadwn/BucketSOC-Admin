@@ -12,6 +12,8 @@ export const REQUEST_PICK_UP = "REQUEST_PICK_UP";
 export const CHANGE_DELIVERY_DATE = "CHANGE_DELIVERY_DATE";
 export const FINISH_PESANAN = "FINISH_PESANAN";
 export const CANCEL_PESANAN = "CANCEL_PESAN";
+export const SIAP_DIAMBIL = "SIAP_DIAMBIL";
+export const LACAK_PENGIRIMAN = "LACAK_PENGIRIMAN";
 
 let check_midtrans = 0;
 let check_biteship = 0;
@@ -441,6 +443,43 @@ export const confirmOrderWithBiteship = (
   };
 };
 
+export const confirmOrderNoBiteship = (
+  order_id,
+  tanggalBaruDatabase,
+  waktuBaruDatabase
+) => {
+  return (dispatch) => {
+    //LOADING
+    dispatchLoading(dispatch, CONFIRM_PESANAN);
+
+    const tanggal_pengiriman =
+      tanggalBaruDatabase && waktuBaruDatabase
+        ? tanggalBaruDatabase + " " + waktuBaruDatabase
+        : false;
+    update(ref(db, "/pesanan/" + order_id), {
+      status_pesanan: "Diproses",
+      ...(tanggal_pengiriman && {
+        tanggal_pengiriman: tanggal_pengiriman,
+      }),
+    })
+      .then((response) => {
+        //SUKSES
+        dispatchSuccess(dispatch, CONFIRM_PESANAN, response ? response : []);
+      })
+      .catch((error) => {
+        //ERROR
+        dispatchError(dispatch, CONFIRM_PESANAN, error.message);
+        Swal.fire({
+          title: "Error",
+          text: error.message,
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      });
+  };
+};
+
 export const requestBiteshipPickUp = (
   order_id,
   biteship_id,
@@ -805,7 +844,7 @@ export const cancelPesanan = (pesanan) => {
                       );
                       Swal.fire({
                         title: "Error",
-                        text: "Tidak dapat melakukan pengembalian dana karena pembeli tidak membayar menggunakan QRIS. Apakah ingin tetap membatalkan pesanan dengan pengembalian dana secara manual?",
+                        text: "Tidak dapat melakukan pengembalian dana karena pembeli tidak membayar menggunakan QRIS atau E-Wallet. Apakah ingin tetap membatalkan pesanan dengan pengembalian dana secara manual?",
                         icon: "question",
                         width: '800px',
                         showCancelButton: true,
@@ -913,5 +952,72 @@ export const cancelPesanan = (pesanan) => {
         });
       }
     );
+  };
+};
+
+export const siapDiambil = (order_id) => {
+  return (dispatch) => {
+    //LOADING
+    dispatchLoading(dispatch, SIAP_DIAMBIL);
+
+    update(ref(db, "/pesanan/" + order_id), {
+      status_pesanan: "Siap Diambil"
+    })
+      .then((response) => {
+        //SUKSES
+        dispatchSuccess(dispatch, SIAP_DIAMBIL, response ? response : []);
+      })
+      .catch((error) => {
+        //ERROR
+        dispatchError(dispatch, SIAP_DIAMBIL, error.message);
+        Swal.fire({
+          title: "Error",
+          text: error.message,
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      });
+  };
+};
+
+export const lacakPengiriman = (biteship_id) => {
+  return (dispatch) => {
+    //LOADING
+    dispatchLoading(dispatch, LACAK_PENGIRIMAN);
+
+    const parameter = {
+      biteship_id: biteship_id,
+    }
+
+     axios
+       .post("http://localhost:8000/biteship-status", parameter)
+       .then((response) => {
+         if (response.status !== 200) {
+           // ERROR
+           dispatchError(dispatch, LACAK_PENGIRIMAN, "Error " + response.status);
+           Swal.fire({
+             title: "Error",
+             text: "Error " + biteship_id,
+             icon: "error",
+             confirmButtonColor: "#f69d93",
+             confirmButtonText: "OK",
+           });
+         } else {
+           //SUKSES
+           dispatchSuccess(dispatch, LACAK_PENGIRIMAN, response.data);
+         }
+       })
+       .catch((error) => {
+         // ERROR
+         dispatchError(dispatch, LACAK_PENGIRIMAN, error.response.data.error);
+         Swal.fire({
+           title: "Error " + "[" + error.response.data.code + "]",
+           text: error.response.data.error,
+           icon: "error",
+           confirmButtonColor: "#f69d93",
+           confirmButtonText: "OK",
+         });
+       });
   };
 };

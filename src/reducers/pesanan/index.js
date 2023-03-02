@@ -7,6 +7,8 @@ import {
   CHANGE_DELIVERY_DATE,
   FINISH_PESANAN,
   CANCEL_PESANAN,
+  SIAP_DIAMBIL,
+  LACAK_PENGIRIMAN,
 } from "actions/PesananAction";
 
 const initialState = {
@@ -41,6 +43,14 @@ const initialState = {
   cancelPesananLoading: false,
   cancelPesananResult: false,
   cancelPesananError: false,
+
+  siapDiambilLoading: false,
+  siapDiambilResult: false,
+  siapDiambilError: false,
+
+  lacakPengirimanLoading: false,
+  lacakPengirimanResult: false,
+  lacakPengirimanError: false,
 };
 
 export default function (state = initialState, action) {
@@ -107,6 +117,22 @@ export default function (state = initialState, action) {
         cancelPesananLoading: action.payload.loading,
         cancelPesananResult: action.payload.data,
         cancelPesananError: action.payload.errorMessage,
+      };
+
+    case SIAP_DIAMBIL:
+      return {
+        ...state,
+        siapDiambilLoading: action.payload.loading,
+        siapDiambilResult: action.payload.data,
+        siapDiambilError: action.payload.errorMessage,
+      };
+
+    case LACAK_PENGIRIMAN:
+      return {
+        ...state,
+        lacakPengirimanLoading: action.payload.loading,
+        lacakPengirimanResult: action.payload.data,
+        lacakPengirimanError: action.payload.errorMessage,
       };
 
     default:

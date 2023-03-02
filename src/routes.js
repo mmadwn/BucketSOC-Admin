@@ -127,7 +127,7 @@ var routes = [
     icon: "nc-icon nc-diamond",
     component: Icons,
     layout: "/admin",
-    sidebar: true,
+    sidebar: false,
   },
 
 ];

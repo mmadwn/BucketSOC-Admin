@@ -33,10 +33,10 @@ class ListKategori extends Component {
     this.props.dispatch(getListKategori());
   }
 
-  removeData = (image, id) => {
+  removeData = (image, name, id) => {
     Swal.fire({
-      title: "Ingin Menghapus Data?",
-      text: "Anda tidak akan dapat mengembalikan ini!",
+      title: "Ingin Menghapus Kategori " + name + "?",
+      text: "Produk yang tertaut akan kehilangan kategori. Anda tidak akan dapat mengembalikan ini!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -197,6 +197,7 @@ class ListKategori extends Component {
                                   onClick={() =>
                                     this.removeData(
                                       getListKategoriResult[key].gambar,
+                                      getListKategoriResult[key].nama,
                                       key
                                     )
                                   }

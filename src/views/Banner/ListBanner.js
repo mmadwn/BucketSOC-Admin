@@ -43,9 +43,9 @@ class ListBanner extends Component {
     this.props.dispatch(getListBanner());
   }
 
-  removeData = (image, id) => {
+  removeData = (image, title, id) => {
     Swal.fire({
-      title: "Ingin Menghapus Data?",
+      title: "Ingin Menghapus Banner " + title + "?",
       text: "Anda tidak akan dapat mengembalikan ini!",
       icon: "warning",
       showCancelButton: true,
@@ -244,6 +244,7 @@ class ListBanner extends Component {
                                   onClick={() =>
                                     this.removeData(
                                       getListBannerResult[key].gambar,
+                                      getListBannerResult[key].title,
                                       key
                                     )
                                   }

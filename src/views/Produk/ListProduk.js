@@ -50,9 +50,9 @@ class ListProduk extends Component {
     this.props.dispatch(getListKategori());
   }
 
-  removeData = (image, id) => {
+  removeData = (image, name, id) => {
     Swal.fire({
-      title: "Ingin Menghapus Data?",
+      title: "Ingin Menghapus Produk " + name + "?",
       text: "Anda tidak akan dapat mengembalikan ini!",
       icon: "warning",
       showCancelButton: true,
@@ -77,23 +77,12 @@ class ListProduk extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { deleteProdukResult, getListProdukResult,getListKategoriResult } = this.props;
-    if (getListProdukResult !== prevProps.getListProdukResult) {
-      // {Object.keys(getListProdukResult)
-      //                   .reverse()
-      //                   .map((key) => (
-      // let kategoriList = [];
-      // Object.keys(getListKategoriResult).forEach((key) => {
-      // kategoriList.push({
-      //   key: key,
-      //   nama: getListKategoriResult[key].nama,
-      // });
-      // getListKategoriResult
-      //   ? kategoriList.find((x) => x.key === getListProdukResult[key].kategori)
-      //       .nama
-      //   : null;))
+    const { deleteProdukResult, getListProdukResult } = this.props;
+    if (
+      getListProdukResult &&
+      prevProps.getListProdukResult !== getListProdukResult
+    ) {
       this.setState({
-        
         csvData: Object.values(getListProdukResult),
       });
     }
@@ -246,7 +235,13 @@ class ListProduk extends Component {
                                       (x) =>
                                         x.key ===
                                         getListProdukResult[key].kategori
-                                    ).nama
+                                    )
+                                    ? kategoriList.find(
+                                        (x) =>
+                                          x.key ===
+                                          getListProdukResult[key].kategori
+                                      ).nama
+                                    : "Tidak Ada Kategori"
                                   : null}
                               </label>
                             </td>
@@ -313,6 +308,7 @@ class ListProduk extends Component {
                                   onClick={() =>
                                     this.removeData(
                                       getListProdukResult[key].gambar,
+                                      getListProdukResult[key].nama,
                                       key
                                     )
                                   }
