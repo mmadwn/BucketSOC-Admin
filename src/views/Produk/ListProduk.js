@@ -381,7 +381,12 @@ class ListProduk extends Component {
             />{" "}
             Deskripsi Produk
           </ModalHeader>
-          <ModalBody>
+          <ModalBody
+            style={{
+              maxHeight: "calc(100vh - 210px)",
+              overflowY: "auto",
+            }}
+          >
             <textarea
               value={modalData}
               disabled

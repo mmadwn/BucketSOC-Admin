@@ -315,7 +315,12 @@ class ListBanner extends Component {
             />{" "}
             Deskripsi Banner
           </ModalHeader>
-          <ModalBody>
+          <ModalBody
+            style={{
+              maxHeight: "calc(100vh - 210px)",
+              overflowY: "auto",
+            }}
+          >
             <textarea
               value={modalData}
               disabled

@@ -1576,66 +1576,112 @@ class DetailPesanan extends Component {
                   </FormGroup>
                   {tracking.courier.link ? (
                     <FormGroup>
-                      <Link
-                        to={{ pathname: tracking.courier.link }}
+                      <a
+                        href={tracking.courier.link}
                         target="_blank"
-                        rel="noopener noreferrer"
+                        rel="noreferrer"
+                        style={{
+                          color: "#f69d93",
+                          fontSize: "15px",
+                          textDecorationLine: "underline",
+                        }}
+                        className="card-subtitle"
                       >
-                        <Label
-                          style={{ color: "#f69d93", fontSize: "14px" }}
-                          className="card-subtitle"
-                        >
-                          Live Tracking
-                        </Label>
-                      </Link>
+                        Live Tracking
+                      </a>
                     </FormGroup>
                   ) : null}
                 </div>
                 <hr />
                 {tracking.courier.history.reverse().map((list, index) => {
                   return (
-                    <div key={index}>
-                      <div style={{ flexDirection: "row" }}>
-                        <Label
-                          style={{
-                            fontSize: "15px",
-                            fontWeight: "bold",
-                            color: "#f69d93",
-                            width: "50%",
-                            textTransform: "capitalize",
-                            marginBottom: 0,
-                          }}
-                        >
-                          {list.status}
-                        </Label>
-                        <Label
-                          style={{
-                            fontSize: "13px",
-                            textAlign: "right",
-                            width: "50%",
-                            marginBottom: 0,
-                          }}
-                        >
-                          {list.updated_at.substring(8, 10) +
-                            "-" +
-                            list.updated_at.substring(5, 7) +
-                            "-" +
-                            list.updated_at.substring(0, 4) +
-                            " " +
-                            list.updated_at.substring(11, 13) +
-                            "." +
-                            list.updated_at.substring(14, 16)}
-                        </Label>
-                      </div>
-                      <Label
+                    <div
+                      key={index}
+                      style={{
+                        flexDirection: "row",
+                        display: "flex",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      <div
                         style={{
-                          fontSize: "14px",
-                          textAlign: "justify",
-                          marginBottom: 15,
+                          width: "14px",
+                          marginRight: "10px",
+                          display: "flex",
+                          justifyContent: "center",
                         }}
                       >
-                        {list.note}
-                      </Label>
+                        <div
+                          style={{
+                            backgroundColor: "#f69d93",
+                            width: "1.5px",
+                            height:
+                              (index === 0 &&
+                                tracking.courier.history.length !== 1) ||
+                              (index === tracking.courier.history.length - 1 &&
+                                tracking.courier.history.length !== 1)
+                                ? 28
+                                : index === 0 &&
+                                  tracking.courier.history.length === 1
+                                ? 0
+                                : 80,
+                            position: "absolute",
+                            marginTop: index === 0 ? 27 : 0,
+                          }}
+                        />
+                        <div
+                          style={{
+                            backgroundColor: "#f69d93",
+                            borderRadius: "1000px",
+                            width: "14px",
+                            height: "13px",
+                            alignSelf: "center",
+                          }}
+                        />
+                      </div>
+                      <div style={{ width: "100%" }}>
+                        <div style={{ flexDirection: "row" }}>
+                          <Label
+                            style={{
+                              fontSize: "15px",
+                              fontWeight: "bold",
+                              color: "#f69d93",
+                              width: "50%",
+                              textTransform: "capitalize",
+                              marginBottom: 0,
+                            }}
+                          >
+                            {list.status}
+                          </Label>
+                          <Label
+                            style={{
+                              fontSize: "13px",
+                              textAlign: "right",
+                              width: "50%",
+                              marginBottom: 0,
+                            }}
+                          >
+                            {list.updated_at.substring(8, 10) +
+                              "-" +
+                              list.updated_at.substring(5, 7) +
+                              "-" +
+                              list.updated_at.substring(0, 4) +
+                              " " +
+                              list.updated_at.substring(11, 13) +
+                              "." +
+                              list.updated_at.substring(14, 16)}
+                          </Label>
+                        </div>
+                        <Label
+                          style={{
+                            fontSize: "14px",
+                            textAlign: "justify",
+                            marginBottom: "0px",
+                          }}
+                        >
+                          {list.note}
+                        </Label>
+                      </div>
                     </div>
                   );
                 })}

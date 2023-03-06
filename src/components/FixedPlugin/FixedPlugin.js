@@ -18,8 +18,6 @@
 */
 import React from "react";
 
-import { Button } from "reactstrap";
-
 function FixedPlugin(props) {
   const [classes, setClasses] = React.useState("dropdown");
   const handleClick = () => {
@@ -35,7 +33,7 @@ function FixedPlugin(props) {
         <div onClick={handleClick}>
           <i className="fa fa-cog fa-2x" />
         </div>
-        <ul className="dropdown-menu show">
+        <ul className="dropdown-menu show" style={{top: '-20px !important'}}>
           <li className="header-title">SIDEBAR BACKGROUND</li>
           <li className="adjustments-line">
             <div className="badge-colors text-center">
@@ -62,17 +60,6 @@ function FixedPlugin(props) {
                 }}
               />
             </div>
-          </li>
-          <li className="button-container">
-            <Button
-              href="https://www.creative-tim.com/product/paper-dashboard-react/#/documentation/tutorial?ref=pdr-fixed-plugin"
-              color="default"
-              block
-              className="btn-round"
-              outline
-            >
-              <i className="nc-icon nc-paper" /> Documentation
-            </Button>
           </li>
         </ul>
       </div>

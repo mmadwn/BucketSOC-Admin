@@ -99,6 +99,15 @@ class EditProfile extends Component {
     });
   };
 
+  convertPhoneNumber(phoneNumber) {
+  // cek apakah nomor telepon diawali dengan "08"
+  if (phoneNumber.startsWith('08')) {
+    // ganti "08" dengan "628"
+    phoneNumber = '628' + phoneNumber.substr(2);
+  }
+  return phoneNumber;
+}
+
   //Dijalankan ketika tombol submit di klik
   handleSubmit = (event) => {
     const {
@@ -115,10 +124,10 @@ class EditProfile extends Component {
     } = this.state;
     const data = {
       uid: uid,
-      avatar: imageToDB ? imageToDB : imageLama ? imageLama : '',
+      avatar: imageToDB ? imageToDB : imageLama ? imageLama : "",
       nama: nama,
       email: email,
-      nomerHp: nomerHp,
+      nomerHp: this.convertPhoneNumber(nomerHp),
       alamat: alamat,
       detail_alamat: detail_alamat,
       latitude: Number(latitude),
