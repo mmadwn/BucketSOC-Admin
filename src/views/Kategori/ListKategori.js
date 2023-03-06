@@ -30,6 +30,7 @@ class ListKategori extends Component {
     };
   }
   componentDidMount() {
+    document.title = "Data Kategori - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getListKategori());
   }
 

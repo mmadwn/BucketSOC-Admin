@@ -86,6 +86,7 @@ class DetailPesanan extends Component {
 
   componentDidMount() {
     const {dispatch} = this.props;
+    document.title = "Detail Pesanan " + this.props.match.params.id + " - Sistem Informasi Admin Bucket SOC";
     dispatch(updateStatusDetailPesanan(this.props.match.params.id));
   }
 

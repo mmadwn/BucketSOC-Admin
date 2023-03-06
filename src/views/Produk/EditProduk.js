@@ -42,6 +42,7 @@ class EditProduk extends Component {
   }
 
   componentDidMount() {
+    document.title = "Edit Produk - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getListKategori());
     this.props.dispatch(getDetailProduk(this.props.match.params.id));
   }

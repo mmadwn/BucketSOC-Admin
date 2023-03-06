@@ -40,6 +40,7 @@ class ListBanner extends Component {
   }
 
   componentDidMount() {
+    document.title = "Data Banner - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getListBanner());
   }
 

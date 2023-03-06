@@ -32,6 +32,7 @@ class EditKategori extends Component {
   }
 
   componentDidMount() {
+    document.title = "Edit Kategori - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getDetailKategori(this.props.match.params.id));
   }
 

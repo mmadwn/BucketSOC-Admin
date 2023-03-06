@@ -39,6 +39,7 @@ class EditProfile extends Component {
   }
 
   componentDidMount() {
+    document.title = "Edit Profile - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getDetailProfile(this.props.match.params.id));
   }
 
@@ -352,13 +353,15 @@ class EditProfile extends Component {
                         </FormGroup>
                       </Col>
                     </Row>
-                    <FormGroup>
-                      <Label style={{ color: "red", textAlign: "justify" }}>
-                        Pastikan alamat, latitude, dan longitude sudah sesuai.
-                        Karena akan digunakan sebagai titik alamat toko /
-                        pengiriman.
-                      </Label>
-                    </FormGroup>
+                    {email === "soc.bucket@gmail.com" ? (
+                      <FormGroup>
+                        <Label style={{ color: "red", textAlign: "justify" }}>
+                          Pastikan alamat, latitude, dan longitude sudah sesuai.
+                          Karena akan digunakan sebagai titik alamat toko /
+                          pengiriman.
+                        </Label>
+                      </FormGroup>
+                    ) : null}
                   </Col>
                 </Row>
                 <form onSubmit={(event) => this.handleSubmit(event)}>

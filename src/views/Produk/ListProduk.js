@@ -46,6 +46,7 @@ class ListProduk extends Component {
   }
 
   componentDidMount() {
+    document.title = "Data Produk - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getListProduk());
     this.props.dispatch(getListKategori());
   }

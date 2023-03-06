@@ -34,6 +34,7 @@ class EditBanner extends Component {
   }
 
   componentDidMount() {
+    document.title = "Edit Banner - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getDetailBanner(this.props.match.params.id));
   }
 

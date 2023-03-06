@@ -31,6 +31,7 @@ class ListPesanan extends Component {
   }
 
   componentDidMount() {
+    document.title = "Data Pesanan - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(updateStatus());
   }
 

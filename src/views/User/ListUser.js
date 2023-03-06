@@ -29,6 +29,7 @@ class ListUser extends Component {
   }
 
   componentDidMount() {
+    document.title = "Data User - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getListUser());
   }
 

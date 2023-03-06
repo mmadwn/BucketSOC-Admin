@@ -30,6 +30,10 @@ class TambahKategori extends Component {
     };
   }
 
+  componentDidMount() {
+    document.title = "Tambah Kategori - Sistem Informasi Admin Bucket SOC";
+  }
+
   //Dijalankan ketika nama Kategori diisi
   handleChange = (event) => {
     this.setState({

@@ -38,6 +38,7 @@ class TambahProduk extends Component {
   }
 
   componentDidMount() {
+    document.title = "Tambah Produk - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getListKategori());
   }
 

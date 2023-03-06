@@ -26,6 +26,7 @@ class Login extends Component {
   }
 
   componentDidMount() {
+    document.title = "Login - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(checkLogin(this.props.history));
     //Jika sudah login, redirect ke dashboard
     if (window.localStorage.getItem("user")) {

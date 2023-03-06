@@ -32,6 +32,10 @@ class TambahBanner extends Component {
     };
   }
 
+  componentDidMount() {
+    document.title = "Tambah Banner - Sistem Informasi Admin Bucket SOC";
+  }
+
   handleChange = (event) => {
     let updatedValue = event.target.value;
     if (updatedValue === "true" || updatedValue === "false") {

@@ -34,6 +34,7 @@ function Dashboard() {
   const [totalUsers, setTotalUsers] = useState(0);
   
   useEffect(() => {
+    document.title = "Dashboard - Sistem Informasi Admin Bucket SOC";
     const unsubscribePesanan = onValue(
       ref(db, "/pesanan/"),
       (snapshot) => {
