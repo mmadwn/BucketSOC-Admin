@@ -22,6 +22,7 @@ export default class Item extends Component {
               >
                 <img
                   width="60px"
+                  height="60px"
                   src={item[key].produk.gambar[0]}
                   alt={"Not Found"}
                   onError={(e) => {

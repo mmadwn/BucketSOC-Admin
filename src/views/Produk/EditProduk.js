@@ -317,7 +317,12 @@ class EditProduk extends Component {
                   <Col md={5}>
                     <Row>
                       <Col>
-                        <img src={image1} width="200" alt="Gambar 1" />
+                        <img
+                          src={image1}
+                          width="200"
+                          height="200"
+                          alt="Gambar 1"
+                        />
                         <FormGroup>
                           <label>Gambar 1</label>
                           <label style={{ color: "red" }}> &nbsp;*</label>
@@ -336,7 +341,12 @@ class EditProduk extends Component {
                         </FormGroup>
                       </Col>
                       <Col>
-                        <img src={image2} width="200" alt="Gambar 2" />
+                        <img
+                          src={image2}
+                          width="200"
+                          height="200"
+                          alt="Gambar 2"
+                        />
                         <FormGroup>
                           <label>Gambar 2</label>
                           {image2 !== DefaultImage ? (

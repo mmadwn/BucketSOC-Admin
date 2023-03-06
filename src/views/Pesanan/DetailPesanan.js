@@ -1216,6 +1216,8 @@ class DetailPesanan extends Component {
                                     getDetailPesananResult.item[key].produk
                                       .gambar[0]
                                   }
+                                  width="60px"
+                                  height="60px"
                                   alt={"Not Found"}
                                   onError={(e) => {
                                     e.target.onerror = null;
