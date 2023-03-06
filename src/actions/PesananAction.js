@@ -7,6 +7,7 @@ import axios from "axios";
 export const GET_LIST_PESANAN = "GET_LIST_PESANAN";
 export const UPDATE_STATUS = "UPDATE_STATUS";
 export const GET_DETAIL_PESANAN = "GET_DETAIL_PESANAN";
+export const UPDATE_STATUS_DETAIL = "UPDATE_STATUS_DETAIL";
 export const CONFIRM_PESANAN = "CONFIRM_PESANAN";
 export const REQUEST_PICK_UP = "REQUEST_PICK_UP";
 export const CHANGE_DELIVERY_DATE = "CHANGE_DELIVERY_DATE";
@@ -338,6 +339,258 @@ export const getListPesanan = () => {
     );
   };
 };
+
+export const updateStatusDetailPesanan = (order_id) => {
+  return (dispatch) => {
+    //LOADING
+    dispatchLoading(dispatch, GET_DETAIL_PESANAN);
+    dispatchLoading(dispatch, UPDATE_STATUS_DETAIL);
+
+    return onValue(
+      ref(db, "/pesanan/" + order_id),
+      (snapshot) => {
+        const data = snapshot.val();
+        if (data.status_pesanan === "Menunggu Pembayaran") {
+          const tgl_pemesanan = new Date(
+            order_id.substring(1, 5) +
+              "-" +
+              order_id.substring(5, 7) +
+              "-" +
+              order_id.substring(7, 9) +
+              "T" +
+              order_id.substring(10, 12) +
+              ":" +
+              order_id.substring(12, 14) +
+              ":" +
+              order_id.substring(14, 16)
+          ).getTime();
+          const now = new Date().getTime();
+          const duration = now - tgl_pemesanan;
+
+          const parameter = {
+            order_id: order_id,
+          };
+
+          axios
+            .post("http://localhost:8000/midtrans-status", parameter)
+            .then((response) => {
+              if (
+                response.data.transaction_status === "settlement" ||
+                response.data.transaction_status === "capture"
+              ) {
+                update(ref(db, "/pesanan/" + order_id), {
+                  status_pesanan: "Menunggu Konfirmasi Admin",
+                })
+                  .then((response) => {
+                    //SUKSES
+                    dispatchSuccess(
+                      dispatch,
+                      UPDATE_STATUS_DETAIL,
+                      "Cek Status Selesai"
+                    );
+                  })
+
+                  .catch((error) => {
+                    //ERROR
+                    dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                    Swal.fire({
+                      title: "Error",
+                      text: error.message + " [1] order id : " + order_id,
+                      icon: "error",
+                      confirmButtonColor: "#f69d93",
+                      confirmButtonText: "OK",
+                    });
+                  });
+              } else if (
+                response.data.transaction_status === "deny" ||
+                response.data.transaction_status === "cancel" ||
+                response.data.transaction_status === "expire" ||
+                response.data.transaction_status === "failure"
+              ) {
+                update(ref(db, "/pesanan/" + order_id), {
+                  status_pesanan: "Selesai (Pembayaran Gagal)",
+                })
+                  .then((response) => {
+                    //SUKSES
+                    dispatchSuccess(
+                      dispatch,
+                      UPDATE_STATUS_DETAIL,
+                      "Cek Status Selesai"
+                    );
+                  })
+                  .catch((error) => {
+                    //ERROR
+                    dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                    Swal.fire({
+                      title: "Error",
+                      text: error.message + " [2] order id : " + order_id,
+                      icon: "error",
+                      confirmButtonColor: "#f69d93",
+                      confirmButtonText: "OK",
+                    });
+                  });
+              } else if (
+                response.data.status_code === "404" &&
+                duration > 86400000
+              ) {
+                update(ref(db, "/pesanan/" + order_id), {
+                  status_pesanan: "Selesai (Pembayaran Gagal)",
+                })
+                  .then((response) => {
+                    //SUKSES
+                    dispatchSuccess(
+                      dispatch,
+                      UPDATE_STATUS_DETAIL,
+                      "Cek Status Selesai"
+                    );
+                  })
+                  .catch((error) => {
+                    //ERROR
+                    dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                    Swal.fire({
+                      title: "Error",
+                      text: error.message + " [3] order id : " + order_id,
+                      icon: "error",
+                      confirmButtonColor: "#f69d93",
+                      confirmButtonText: "OK",
+                    });
+                  });
+              } else {
+                //SUKSES
+                dispatchSuccess(dispatch, UPDATE_STATUS_DETAIL, false);
+                dispatchSuccess(dispatch, GET_DETAIL_PESANAN, data);
+              }
+            })
+            .catch((error) => {
+              // ERROR
+              dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+              Swal.fire({
+                title: "Error",
+                text: error.message + " [4] order id : " + order_id,
+                icon: "error",
+                confirmButtonColor: "#f69d93",
+                confirmButtonText: "OK",
+              });
+            });
+        } else if (data.status_pesanan === "Sedang Dikirim") {
+           const parameter = {
+             biteship_id: data.biteship_id,
+           };
+
+           axios
+             .post("http://localhost:8000/biteship-status", parameter)
+             .then((response) => {
+               if (response.status !== 200) {
+                 // ERROR
+                 dispatchError(
+                   dispatch,
+                   UPDATE_STATUS_DETAIL,
+                   "Error " + response.status
+                 );
+                 Swal.fire({
+                   title: "Error",
+                   text:
+                     "Error " + response.status + " [5] order id : " + order_id,
+                   icon: "error",
+                   confirmButtonColor: "#f69d93",
+                   confirmButtonText: "OK",
+                 });
+               } else {
+                 //SUKSES
+                 if (response.data.status === "delivered") {
+                   update(ref(db, "/pesanan/" + order_id), {
+                     status_pesanan: "Terkirim",
+                   })
+                     .then((response) => {
+                       //SUKSES
+                       dispatchSuccess(
+                         dispatch,
+                         UPDATE_STATUS_DETAIL,
+                         "Cek Status Selesai"
+                       );
+                     })
+                     .catch((error) => {
+                       //ERROR
+                       dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                       Swal.fire({
+                         title: "Error",
+                         text: error.message + " [6] order id : " + order_id,
+                         icon: "error",
+                         confirmButtonColor: "#f69d93",
+                         confirmButtonText: "OK",
+                       });
+                     });
+                 } else if (
+                   response.data.status === "rejected" ||
+                   response.data.status === "cancelled" ||
+                   response.data.status === "courier_not_found" ||
+                   response.data.status === "returned" ||
+                   response.data.status === "disposed"
+                 ) {
+                   update(ref(db, "/pesanan/" + order_id), {
+                     status_pesanan: "Pengiriman Gagal",
+                   })
+                     .then((response) => {
+                       //SUKSES
+                       dispatchSuccess(
+                         dispatch,
+                         UPDATE_STATUS_DETAIL,
+                         "Cek Status Selesai"
+                       );
+                     })
+                     .catch((error) => {
+                       //ERROR
+                       dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                       Swal.fire({
+                         title: "Error",
+                         text: error.message + " [7] order id : " + order_id,
+                         icon: "error",
+                         confirmButtonColor: "#f69d93",
+                         confirmButtonText: "OK",
+                       });
+                     });
+                 } else {
+                   //SUKSES
+                   dispatchSuccess(dispatch, UPDATE_STATUS_DETAIL, false);
+                   dispatchSuccess(dispatch, GET_DETAIL_PESANAN, data);
+                 }
+               }
+             })
+             .catch((error) => {
+               // ERROR
+               dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+               Swal.fire({
+                 title: "Error",
+                 text: error.message + " [8] order id : " + order_id,
+                 icon: "error",
+                 confirmButtonColor: "#f69d93",
+                 confirmButtonText: "OK",
+               });
+             });
+        } else {
+          //SUKSES
+          dispatchSuccess(dispatch, UPDATE_STATUS_DETAIL, false);
+          dispatchSuccess(dispatch, GET_DETAIL_PESANAN, data);
+        }
+      },
+      {
+        onlyOnce: true,
+      },
+      (error) => {
+        //ERROR
+        dispatchLoading(dispatch, UPDATE_STATUS_DETAIL);
+        Swal.fire({
+          title: "Error",
+          text: error.message,
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      }
+    );
+
+  }
+}
 
 export const getDetailPesanan = (id) => {
   return (dispatch) => {
