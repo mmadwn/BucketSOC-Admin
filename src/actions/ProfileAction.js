@@ -1,4 +1,5 @@
 import { db } from "config/FIREBASE";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import {
   equalTo,
   onValue,
@@ -12,6 +13,7 @@ import { dispatchError, dispatchLoading, dispatchSuccess } from "../utils";
 
 export const GET_DETAIL_PROFILE = "GET_DETAIL_PROFILE";
 export const UPDATE_PROFILE = "UPDATE_PROFILE";
+export const RESET_PASSWORD = "RESET PASSWORD";
 export const GET_ADMIN_PROFILE = "GET_ADMIN_PROFILE";
 
 export const getDetailProfile = (uid) => {
@@ -72,6 +74,31 @@ export const updateProfile = (data) => {
       });
   };
 };
+
+export const resetPassword = (email) => {
+  return (dispatch) => {
+    //LOADING
+    dispatchLoading(dispatch, RESET_PASSWORD);
+
+    sendPasswordResetEmail(getAuth(), email)
+      .then((response) => {
+        //SUKSES
+        dispatchSuccess(dispatch, RESET_PASSWORD, response ? response : []);
+      })
+      .catch((error) => {
+        //ERROR
+        dispatchError(dispatch, RESET_PASSWORD, error.message);
+        Swal.fire({
+          title: "Error",
+          text: error.message,
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        });
+      });
+  };
+};
+
 
 export const getAdminProfile = () => {
   return (dispatch) => {

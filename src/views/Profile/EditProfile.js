@@ -18,6 +18,7 @@ import DefaultImage from "../../assets/img/default-image.jpg";
 import Swal from "sweetalert2";
 import { getDetailProfile } from "actions/ProfileAction";
 import { updateProfile } from "actions/ProfileAction";
+import { resetPassword } from "actions/ProfileAction";
 
 class EditProfile extends Component {
   constructor(props) {
@@ -42,6 +43,28 @@ class EditProfile extends Component {
     document.title = "Edit Profile - Sistem Informasi Admin Bucket SOC";
     this.props.dispatch(getDetailProfile(this.props.match.params.id));
   }
+
+  resetPassword = () => {
+    const { email } = this.state;
+    const { dispatch } = this.props;
+    if (email) {
+      Swal.fire({
+        title: "Konfirmasi Reset Password?",
+        text: "Apakah Anda ingin melakukan reset password? ",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#fbc658",
+        cancelButtonColor: "#f69d93",
+        confirmButtonText: "Ya, Reset Password Akun Saya",
+        cancelButtonText: "Kembali",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          dispatch(resetPassword(email));
+        }
+      });
+    }
+  };
 
   //Dijalankan ketika nama Banner diisi
   handleChange = (event) => {
@@ -101,13 +124,13 @@ class EditProfile extends Component {
   };
 
   convertPhoneNumber(phoneNumber) {
-  // cek apakah nomor telepon diawali dengan "08"
-  if (phoneNumber.startsWith('08')) {
-    // ganti "08" dengan "628"
-    phoneNumber = '628' + phoneNumber.substr(2);
+    // cek apakah nomor telepon diawali dengan "08"
+    if (phoneNumber.startsWith("08")) {
+      // ganti "08" dengan "628"
+      phoneNumber = "628" + phoneNumber.substr(2);
+    }
+    return phoneNumber;
   }
-  return phoneNumber;
-}
 
   //Dijalankan ketika tombol submit di klik
   handleSubmit = (event) => {
@@ -135,7 +158,15 @@ class EditProfile extends Component {
       longitude: Number(longitude),
     };
     event.preventDefault();
-    if (nama && email && nomerHp && alamat && detail_alamat && latitude && longitude) {
+    if (
+      nama &&
+      email &&
+      nomerHp &&
+      alamat &&
+      detail_alamat &&
+      latitude &&
+      longitude
+    ) {
       if (imageToDB) {
         let imagePath = imageToDB.replace("data:image/", "");
         const indexOfEndPath = imagePath.indexOf(";");
@@ -171,7 +202,8 @@ class EditProfile extends Component {
 
   //Jika proses tambah banner ke firebse database berhasil
   componentDidUpdate(prevProps) {
-    const { updateProfileResult, getDetailProfileResult } = this.props;
+    const { updateProfileResult, getDetailProfileResult, resetPasswordResult } =
+      this.props;
 
     if (
       updateProfileResult &&
@@ -186,6 +218,20 @@ class EditProfile extends Component {
         confirmButtonText: "OK",
       });
       this.props.history.push("/admin/dashboard");
+    }
+
+    if (
+      resetPasswordResult &&
+      prevProps.resetPasswordResult !== resetPasswordResult
+    ) {
+      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
+      Swal.fire({
+        title: "Sukses",
+        text: "Tautan reset password telah dikirimkan ke Email Anda!",
+        icon: "success",
+        confirmButtonColor: "#f69d93",
+        confirmButtonText: "OK",
+      });
     }
 
     if (
@@ -221,7 +267,7 @@ class EditProfile extends Component {
       latitude,
       longitude,
     } = this.state;
-    const { updateProfileLoading } = this.props;
+    const { updateProfileLoading, resetPasswordLoading } = this.props;
     return (
       <div className="content">
         <Row>
@@ -273,13 +319,7 @@ class EditProfile extends Component {
                     <FormGroup>
                       <label>Email</label>
                       <label style={{ color: "red" }}> &nbsp;*</label>
-                      <Input
-                        type="text"
-                        value={email}
-                        disabled
-                        name="email"
-                        onChange={(event) => this.handleChange(event)}
-                      />
+                      <Input type="text" value={email} disabled name="email" />
                     </FormGroup>
                     <FormGroup>
                       <label>Nomor Telepon</label>
@@ -362,6 +402,56 @@ class EditProfile extends Component {
                         </Label>
                       </FormGroup>
                     ) : null}
+                    <Row>
+                      <Col>
+                        <FormGroup style={{ width: "170%" }}>
+                          <label>Password</label>
+                          <label style={{ color: "red" }}> &nbsp;*</label>
+                          <Input
+                            type="password"
+                            value="********************"
+                            disabled
+                            name="password"
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col
+                        style={{
+                          display: "flex",
+                          justifyContent: "end",
+                          alignItems: "center",
+                        }}
+                      >
+                        <FormGroup
+                          style={{
+                            display: "flex",
+                            justifyContent: "end",
+                            marginBottom: "0px",
+                            marginTop: "15px",
+                          }}
+                        >
+                          {resetPasswordLoading ? (
+                            <Button
+                              color="warning"
+                              type="submit"
+                              disabled
+                              style={{ height: "40px", color: 'white' }}
+                            >
+                              <Spinner size="sm" color="light" /> Loading
+                            </Button>
+                          ) : (
+                            <Button
+                              color="warning"
+                              type="submit"
+                              style={{ height: "40px" }}
+                              onClick={() => this.resetPassword()}
+                            >
+                              Reset Password
+                            </Button>
+                          )}
+                        </FormGroup>
+                      </Col>
+                    </Row>
                   </Col>
                 </Row>
                 <form onSubmit={(event) => this.handleSubmit(event)}>
@@ -396,6 +486,10 @@ const mapStateToProps = (state) => ({
   updateProfileLoading: state.ProfileReducer.updateProfileLoading,
   updateProfileResult: state.ProfileReducer.updateProfileResult,
   updateProfileError: state.ProfileReducer.updateProfileError,
+
+  resetPasswordLoading: state.ProfileReducer.resetPasswordLoading,
+  resetPasswordResult: state.ProfileReducer.resetPasswordResult,
+  resetPasswordError: state.ProfileReducer.resetPasswordError,
 });
 
 export default connect(mapStateToProps, null)(EditProfile);

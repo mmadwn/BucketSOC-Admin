@@ -1,4 +1,4 @@
-import { GET_DETAIL_PROFILE, UPDATE_PROFILE, GET_ADMIN_PROFILE } from "actions/ProfileAction";
+import { GET_DETAIL_PROFILE, UPDATE_PROFILE, RESET_PASSWORD, GET_ADMIN_PROFILE } from "actions/ProfileAction";
 
 const initialState = {
   getDetailProfileLoading: false,
@@ -8,6 +8,10 @@ const initialState = {
   updateProfileLoading: false,
   updateProfileResult: false,
   updateProfileError: false,
+
+  resetPasswordLoading: false,
+  resetPasswordResult: false,
+  resetPasswordError: false,
 
   getAdminProfileLoading: false,
   getAdminProfileResult: false,
@@ -30,6 +34,14 @@ export default function (state = initialState, action) {
         updateProfileLoading: action.payload.loading,
         updateProfileResult: action.payload.data,
         updateProfileError: action.payload.errorMessage,
+      };
+
+    case RESET_PASSWORD:
+      return {
+        ...state,
+        resetPasswordLoading: action.payload.loading,
+        resetPasswordResult: action.payload.data,
+        resetPasswordError: action.payload.errorMessage,
       };
 
     case GET_ADMIN_PROFILE:
