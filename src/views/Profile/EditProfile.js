@@ -385,7 +385,7 @@ class EditProfile extends Component {
                           <label>Longitude</label>
                           <label style={{ color: "red" }}> &nbsp;*</label>
                           <Input
-                            min={0}
+                            type="number"
                             value={longitude}
                             name="longitude"
                             onChange={(event) => this.handleChange(event)}
@@ -435,7 +435,7 @@ class EditProfile extends Component {
                               color="warning"
                               type="submit"
                               disabled
-                              style={{ height: "40px", color: 'white' }}
+                              style={{ height: "40px", color: "white" }}
                             >
                               <Spinner size="sm" color="light" /> Loading
                             </Button>
