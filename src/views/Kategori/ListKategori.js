@@ -15,7 +15,7 @@ import {
 import { AiFillEdit } from "react-icons/ai";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import Swal from "sweetalert2";
-import $ from "jquery"
+import $ from "jquery";
 import { CSVLink } from "react-csv";
 
 class ListKategori extends Component {
@@ -64,7 +64,7 @@ class ListKategori extends Component {
     const { deleteKategoriResult, getListKategoriResult } = this.props;
     if (getListKategoriResult !== prevProps.getListKategoriResult) {
       this.setState({
-        csvData: Object.values(getListKategoriResult)
+        csvData: Object.values(getListKategoriResult),
       });
     }
 
@@ -91,7 +91,7 @@ class ListKategori extends Component {
       getListKategoriResult,
     } = this.props;
     const { csvData, csvHeaders } = this.state;
-    const nowDate = new Date().toLocaleString('id-ID')
+    const nowDate = new Date().toLocaleString("id-ID");
     //initialize datatable
     $(document).ready(function () {
       var table = $("#datatable").DataTable({

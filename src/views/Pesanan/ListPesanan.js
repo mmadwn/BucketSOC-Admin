@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
@@ -18,6 +17,7 @@ import $ from "jquery";
 import { getListPesanan } from "actions/PesananAction";
 import Item from "components/Item";
 import { updateStatus } from "actions/PesananAction";
+import { CSVLink } from "react-csv";
 
 class ListPesanan extends Component {
   constructor(props) {
@@ -26,6 +26,8 @@ class ListPesanan extends Component {
     this.state = {
       modal: false,
       modalData: false,
+      csvData: [],
+      csvHeaders: [],
     };
     this.toggle = this.toggle.bind(this);
   }
@@ -36,13 +38,150 @@ class ListPesanan extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { updateStatusResult } = this.props;
+    const { updateStatusResult, getListPesananResult } = this.props;
     if (
       updateStatusResult &&
       prevProps.updateStatusResult !== updateStatusResult
     ) {
       //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
       this.props.dispatch(getListPesanan());
+    }
+
+    if (
+      getListPesananResult &&
+      prevProps.getListPesananResult !== getListPesananResult
+    ) {
+      const csvHeaders = [
+        { label: "ID Pesanan", key: "order_id" },
+        { label: "Status Pesanan", key: "status_pesanan" },
+        { label: "Total Harga", key: "total_tagihan" },
+        { label: "Subtotal Produk", key: "total_harga_barang" },
+        { label: "Ongkos Kirim", key: "total_ongkir" },
+        { label: "Tanggal Pemesanan", key: "tanggal_pemesanan" },
+        {
+          label: "Tanggal Permintaan Pengiriman / Pengambilan",
+          key: "tanggal_pengiriman",
+        },
+        { label: "Metode Pengiriman", key: "metode_pengiriman" },
+        { label: "Asuransi Pengiriman", key: "asuransi" },
+        { label: "ID Pengiriman", key: "biteship_id" },
+        { label: "URL Pembayaran", key: "url_midtrans" },
+        { label: "Nama Pelanggan", key: "nama" },
+        { label: "Email Pelanggan", key: "email" },
+        { label: "No. Telepon Pelanggan", key: "nomerHp" },
+        { label: "Alamat", key: "alamat" },
+        { label: "Detail Alamat", key: "detail_alamat" },
+        { label: "Latitude", key: "latitude" },
+        { label: "Longitude", key: "longitude" },
+      ];
+
+      let maxProduk = 0;
+      Object.keys(getListPesananResult).forEach((orderKey) => {
+        const pesanan = getListPesananResult[orderKey];
+        if (pesanan.item && Object.keys(pesanan.item).length > maxProduk) {
+          maxProduk = Object.keys(pesanan.item).length;
+        }
+      });
+
+      for (let i = 0; i < maxProduk; i++) {
+        csvHeaders.push({
+          label: `Nama Produk ${i + 1}`,
+          key: `item[${i}].produk.nama`,
+        });
+        csvHeaders.push({
+          label: `Harga Produk ${i + 1}`,
+          key: `item[${i}].produk.harga`,
+        });
+        csvHeaders.push({
+          label: `Kuantitas Produk ${i + 1}`,
+          key: `item[${i}].jumlah`,
+        });
+        csvHeaders.push({
+          label: `Total Harga Produk ${i + 1}`,
+          key: `item[${i}].total_harga`,
+        });
+        csvHeaders.push({
+          label: `Catatan Produk ${i + 1}`,
+          key: `item[${i}].catatan`,
+        });
+      }
+
+      const csvData = Object.values(getListPesananResult).reverse().map((pesanan) => {
+        const namaProduk = [];
+        const hargaProduk = [];
+        const kuantitasProduk = [];
+        const totalHargaProduk = [];
+        const catatanProduk = [];
+        if (pesanan.item) {
+          Object.keys(pesanan.item).forEach((key) => {
+            namaProduk.push(pesanan.item[key].produk.nama);
+            hargaProduk.push(pesanan.item[key].produk.harga);
+            kuantitasProduk.push(pesanan.item[key].jumlah);
+            totalHargaProduk.push(pesanan.item[key].total_harga);
+            catatanProduk.push(pesanan.item[key].catatan);
+          });
+        }
+        return {
+          order_id: pesanan.order_id,
+          status_pesanan: pesanan.status_pesanan,
+          total_tagihan: pesanan.total_tagihan,
+          total_harga_barang: pesanan.total_harga_barang,
+          total_ongkir: pesanan.total_ongkir,
+          tanggal_pemesanan: pesanan.tanggal_pemesanan,
+          tanggal_pengiriman: pesanan.tanggal_pengiriman,
+          metode_pengiriman: pesanan.metode_pengiriman,
+          asuransi: pesanan.asuransi ? 'Ya' : 'Tidak',
+          biteship_id: pesanan.biteship_id,
+          url_midtrans: pesanan.url_midtrans,
+          nama: pesanan.user.nama,
+          email: pesanan.user.email,
+          nomerHp: pesanan.user.nomerHp,
+          alamat: pesanan.user.alamat,
+          detail_alamat: pesanan.user.detail_alamat,
+          latitude: pesanan.user.latitude,
+          longitude: pesanan.user.longitude,
+          ...namaProduk.reduce(
+            (acc, curr, index) => ({
+              ...acc,
+              [`item[${index}].produk.nama`]: curr,
+            }),
+            {}
+          ),
+          ...hargaProduk.reduce(
+            (acc, curr, index) => ({
+              ...acc,
+              [`item[${index}].produk.harga`]: curr,
+            }),
+            {}
+          ),
+          ...kuantitasProduk.reduce(
+            (acc, curr, index) => ({
+              ...acc,
+              [`item[${index}].jumlah`]: curr,
+            }),
+            {}
+          ),
+          ...totalHargaProduk.reduce(
+            (acc, curr, index) => ({
+              ...acc,
+              [`item[${index}].total_harga`]: curr,
+            }),
+            {}
+          ),
+          ...catatanProduk.reduce(
+            (acc, curr, index) => ({
+              ...acc,
+              [`item[${index}].catatan`]: curr,
+            }),
+            {}
+          ),
+        };
+      });
+
+      this.setState({
+        csvData: csvData,
+        csvHeaders: csvHeaders,
+      });
     }
   }
 
@@ -59,9 +198,10 @@ class ListPesanan extends Component {
   }
 
   render() {
-    const { modal, modalData } = this.state;
+    const { modal, modalData, csvData, csvHeaders } = this.state;
     const { getListPesananResult, getListPesananLoading, getListPesananError } =
       this.props;
+    const nowDate = new Date().toLocaleString("id-ID");
 
     //initialize datatable
     $(document).ready(function () {
@@ -96,12 +236,15 @@ class ListPesanan extends Component {
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">Tabel Data Pesanan</CardTitle>
-                <Button
-                  style={{ backgroundColor: "#232531" }}
+                <CSVLink
+                  data={csvData}
+                  headers={csvHeaders}
+                  filename={"Data Pesanan " + nowDate + ".csv"}
                   className="btn float-left full-btn"
+                  style={{ backgroundColor: "#232531" }}
                 >
                   <i className="nc-icon nc-cloud-download-93" /> Download Data
-                </Button>
+                </CSVLink>
               </CardHeader>
               <CardBody>
                 {getListPesananResult ? (

@@ -31,7 +31,7 @@ class ListProduk extends Component {
     this.state = {
       modal: false,
       modalData: false,
-      csvData: [],
+      produkData: [],
       csvHeaders: [
         { label: "Gambar 1", key: "gambar[0]" },
         { label: "Gambar 2", key: "gambar[1]" },
@@ -78,13 +78,14 @@ class ListProduk extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { deleteProdukResult, getListProdukResult } = this.props;
+    const { deleteProdukResult, getListProdukResult } =
+      this.props;
     if (
       getListProdukResult &&
       prevProps.getListProdukResult !== getListProdukResult
     ) {
       this.setState({
-        csvData: Object.values(getListProdukResult),
+        produkData: Object.values(getListProdukResult),
       });
     }
 
@@ -104,6 +105,11 @@ class ListProduk extends Component {
     }
   }
 
+  getKategoriNameById = (kategoriId, kategoriList) => {
+    const kategori = kategoriList.find((x) => x.key === kategoriId);
+    return kategori ? kategori.nama : "Tidak Ada Kategori";
+  };
+
   toggle() {
     this.setState({
       modal: !this.state.modal,
@@ -117,7 +123,7 @@ class ListProduk extends Component {
   }
 
   render() {
-    const { modal, modalData, csvData, csvHeaders } = this.state;
+    const { modal, modalData, produkData, csvHeaders } = this.state;
     const {
       getListProdukError,
       getListProdukLoading,
@@ -133,6 +139,16 @@ class ListProduk extends Component {
         nama: getListKategoriResult[key].nama,
       });
     });
+
+    let csvData = [];
+    if (getListKategoriResult && getListProdukResult) {
+      produkData.forEach((produk) => {
+        csvData.push({
+          ...produk,
+          kategori: this.getKategoriNameById(produk.kategori, kategoriList),
+        });
+      });
+    }
 
     //initialize datatable
     $(document).ready(function () {
@@ -209,8 +225,8 @@ class ListProduk extends Component {
                                 <img
                                   src={getListProdukResult[key].gambar[0]}
                                   alt={getListProdukResult[key].nama}
-                                  width='80px'
-                                  height='80px'
+                                  width="80px"
+                                  height="80px"
                                 />
                               </div>
                             </td>

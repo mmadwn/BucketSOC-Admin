@@ -1,4 +1,3 @@
-import { checkLogin } from "actions/AuthAction";
 import { loginUser } from "actions/AuthAction";
 import React, { Component } from "react";
 import { connect } from "react-redux";
@@ -27,7 +26,6 @@ class Login extends Component {
 
   componentDidMount() {
     document.title = "Login - Sistem Informasi Admin Bucket SOC";
-    this.props.dispatch(checkLogin(this.props.history));
     //Jika sudah login, redirect ke dashboard
     if (window.localStorage.getItem("user")) {
       this.props.history.push({ pathname: "/admin/dashboard" });
@@ -59,11 +57,7 @@ class Login extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { loginResult, checkLoginResult } = this.props;
-
-    if (checkLoginResult && prevProps.checkLoginResult !== checkLoginResult) {
-      this.props.history.push("/admin/dashboard");
-    }
+    const { loginResult } = this.props;
 
     if (loginResult && prevProps.loginResult !== loginResult) {
       this.props.history.push("/admin/dashboard");
@@ -226,10 +220,6 @@ const mapStateToProps = (state) => ({
   loginLoading: state.AuthReducer.loginLoading,
   loginResult: state.AuthReducer.loginResult,
   loginError: state.AuthReducer.loginError,
-
-  checkLoginLoading: state.AuthReducer.checkLoginLoading,
-  checkLoginResult: state.AuthReducer.checkLoginResult,
-  checkLoginError: state.AuthReducer.checkLoginError,
 });
 
 export default connect(mapStateToProps, null)(Login);

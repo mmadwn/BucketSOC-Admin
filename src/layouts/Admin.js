@@ -29,7 +29,6 @@ import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 import routes from "routes.js";
 import { connect } from "react-redux";
 import { checkLogin } from "actions/AuthAction";
-import { getAuth, signOut } from "firebase/auth";
 
 var ps;
 
@@ -52,21 +51,6 @@ function Dashboard(props) {
   });
   React.useEffect(() => {
     props.dispatch(checkLogin(props.history));
-    var hours = 48; // to clear the localStorage after hour
-    var now = new Date().getTime();
-    var setupTime = localStorage.getItem("setupTime");
-    if (setupTime == null) {
-      localStorage.setItem("setupTime", now);
-    } else {
-      if (now - setupTime > hours * 60 * 60 * 1000) {
-        signOut(getAuth())
-        .then((response) => {
-          localStorage.clear();
-          localStorage.setItem("setupTime", now);
-          props.history.push({ pathname: "/login" });
-        })
-      }
-    }
     mainPanel.current.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
   }, [location]);

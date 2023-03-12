@@ -134,21 +134,12 @@ export const checkLogin = (history) => {
               getAuth().onAuthStateChanged(function (user) {
                 if (user) {
                   // User is signed in.
-                  //SUKSES
-                  dispatchSuccess(dispatch, CHECK_LOGIN, data);
+                  dispatch(checkTime(data, history));
                 } else {
                   // No user is signed in.
                   localStorage.clear();
                   dispatchError(dispatch, CHECK_LOGIN, "Anda belum login!");
-                  Swal.fire({
-                    title: "Error",
-                    text: "Anda belum login!",
-                    icon: "error",
-                    confirmButtonColor: "#f69d93",
-                    confirmButtonText: "OK",
-                  }).then(() => {
-                    history.push({ pathname: "/login" });
-                  });
+                  history.push({ pathname: "/login" });
                 }
               });
             } else {
@@ -201,6 +192,32 @@ export const checkLogin = (history) => {
       history.push({ pathname: "/login" });
     }
   };
+};
+
+export const checkTime = (data, history) => {
+  return (dispatch) => {
+    //Cek waktu berapa lama user telah login
+    var hours = 48; // to clear the localStorage after hour
+    var now = new Date().getTime();
+    var setupTime = localStorage.getItem("setupTime");
+    //Jika waktu belum di set di localStorage, set waktu sekarang
+    if (setupTime == null) {
+      localStorage.setItem("setupTime", now);
+      //SUKSES
+      dispatchSuccess(dispatch, CHECK_LOGIN, data);
+    } else {
+      //Jika waktu login sudah lebih dari 48 jam
+      if (now - setupTime > hours * 60 * 60 * 1000) {
+        signOut(getAuth()).then((response) => {
+          localStorage.clear();
+          history.push({ pathname: "/login" });
+        });
+      } else {
+        //SUKSES
+        dispatchSuccess(dispatch, CHECK_LOGIN, data);
+      }
+    }
+  }
 };
 
 export const logoutUser = (history) => {
