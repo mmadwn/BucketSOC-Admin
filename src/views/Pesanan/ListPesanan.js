@@ -106,77 +106,79 @@ class ListPesanan extends Component {
         });
       }
 
-      const csvData = Object.values(getListPesananResult).reverse().map((pesanan) => {
-        const namaProduk = [];
-        const hargaProduk = [];
-        const kuantitasProduk = [];
-        const totalHargaProduk = [];
-        const catatanProduk = [];
-        if (pesanan.item) {
-          Object.keys(pesanan.item).forEach((key) => {
-            namaProduk.push(pesanan.item[key].produk.nama);
-            hargaProduk.push(pesanan.item[key].produk.harga);
-            kuantitasProduk.push(pesanan.item[key].jumlah);
-            totalHargaProduk.push(pesanan.item[key].total_harga);
-            catatanProduk.push(pesanan.item[key].catatan);
-          });
-        }
-        return {
-          order_id: pesanan.order_id,
-          status_pesanan: pesanan.status_pesanan,
-          total_tagihan: pesanan.total_tagihan,
-          total_harga_barang: pesanan.total_harga_barang,
-          total_ongkir: pesanan.total_ongkir,
-          tanggal_pemesanan: pesanan.tanggal_pemesanan,
-          tanggal_pengiriman: pesanan.tanggal_pengiriman,
-          metode_pengiriman: pesanan.metode_pengiriman,
-          asuransi: pesanan.asuransi ? 'Ya' : 'Tidak',
-          biteship_id: pesanan.biteship_id,
-          url_midtrans: pesanan.url_midtrans,
-          nama: pesanan.user.nama,
-          email: pesanan.user.email,
-          nomerHp: pesanan.user.nomerHp,
-          alamat: pesanan.user.alamat,
-          detail_alamat: pesanan.user.detail_alamat,
-          latitude: pesanan.user.latitude,
-          longitude: pesanan.user.longitude,
-          ...namaProduk.reduce(
-            (acc, curr, index) => ({
-              ...acc,
-              [`item[${index}].produk.nama`]: curr,
-            }),
-            {}
-          ),
-          ...hargaProduk.reduce(
-            (acc, curr, index) => ({
-              ...acc,
-              [`item[${index}].produk.harga`]: curr,
-            }),
-            {}
-          ),
-          ...kuantitasProduk.reduce(
-            (acc, curr, index) => ({
-              ...acc,
-              [`item[${index}].jumlah`]: curr,
-            }),
-            {}
-          ),
-          ...totalHargaProduk.reduce(
-            (acc, curr, index) => ({
-              ...acc,
-              [`item[${index}].total_harga`]: curr,
-            }),
-            {}
-          ),
-          ...catatanProduk.reduce(
-            (acc, curr, index) => ({
-              ...acc,
-              [`item[${index}].catatan`]: curr,
-            }),
-            {}
-          ),
-        };
-      });
+      const csvData = Object.values(getListPesananResult)
+        .reverse()
+        .map((pesanan) => {
+          const namaProduk = [];
+          const hargaProduk = [];
+          const kuantitasProduk = [];
+          const totalHargaProduk = [];
+          const catatanProduk = [];
+          if (pesanan.item) {
+            Object.keys(pesanan.item).forEach((key) => {
+              namaProduk.push(pesanan.item[key].produk.nama);
+              hargaProduk.push(pesanan.item[key].produk.harga);
+              kuantitasProduk.push(pesanan.item[key].jumlah);
+              totalHargaProduk.push(pesanan.item[key].total_harga);
+              catatanProduk.push(pesanan.item[key].catatan);
+            });
+          }
+          return {
+            order_id: pesanan.order_id,
+            status_pesanan: pesanan.status_pesanan,
+            total_tagihan: pesanan.total_tagihan,
+            total_harga_barang: pesanan.total_harga_barang,
+            total_ongkir: pesanan.total_ongkir,
+            tanggal_pemesanan: pesanan.tanggal_pemesanan,
+            tanggal_pengiriman: pesanan.tanggal_pengiriman,
+            metode_pengiriman: pesanan.metode_pengiriman,
+            asuransi: pesanan.asuransi ? "Ya" : "Tidak",
+            biteship_id: pesanan.biteship_id,
+            url_midtrans: pesanan.url_midtrans,
+            nama: pesanan.user.nama,
+            email: pesanan.user.email,
+            nomerHp: pesanan.user.nomerHp,
+            alamat: pesanan.user.alamat,
+            detail_alamat: pesanan.user.detail_alamat,
+            latitude: pesanan.user.latitude,
+            longitude: pesanan.user.longitude,
+            ...namaProduk.reduce(
+              (acc, curr, index) => ({
+                ...acc,
+                [`item[${index}].produk.nama`]: curr,
+              }),
+              {}
+            ),
+            ...hargaProduk.reduce(
+              (acc, curr, index) => ({
+                ...acc,
+                [`item[${index}].produk.harga`]: curr,
+              }),
+              {}
+            ),
+            ...kuantitasProduk.reduce(
+              (acc, curr, index) => ({
+                ...acc,
+                [`item[${index}].jumlah`]: curr,
+              }),
+              {}
+            ),
+            ...totalHargaProduk.reduce(
+              (acc, curr, index) => ({
+                ...acc,
+                [`item[${index}].total_harga`]: curr,
+              }),
+              {}
+            ),
+            ...catatanProduk.reduce(
+              (acc, curr, index) => ({
+                ...acc,
+                [`item[${index}].catatan`]: curr,
+              }),
+              {}
+            ),
+          };
+        });
 
       this.setState({
         csvData: csvData,
@@ -236,15 +238,17 @@ class ListPesanan extends Component {
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">Tabel Data Pesanan</CardTitle>
-                <CSVLink
-                  data={csvData}
-                  headers={csvHeaders}
-                  filename={"Data Pesanan " + nowDate + ".csv"}
-                  className="btn float-left full-btn"
-                  style={{ backgroundColor: "#232531" }}
-                >
-                  <i className="nc-icon nc-cloud-download-93" /> Download Data
-                </CSVLink>
+                {getListPesananResult ? (
+                  <CSVLink
+                    data={csvData}
+                    headers={csvHeaders}
+                    filename={"Data Pesanan " + nowDate + ".csv"}
+                    className="btn float-left full-btn"
+                    style={{ backgroundColor: "#232531" }}
+                  >
+                    <i className="nc-icon nc-cloud-download-93" /> Download Data
+                  </CSVLink>
+                ) : null}
               </CardHeader>
               <CardBody>
                 {getListPesananResult ? (

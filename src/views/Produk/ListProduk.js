@@ -78,8 +78,7 @@ class ListProduk extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    const { deleteProdukResult, getListProdukResult } =
-      this.props;
+    const { deleteProdukResult, getListProdukResult } = this.props;
     if (
       getListProdukResult &&
       prevProps.getListProdukResult !== getListProdukResult
@@ -188,15 +187,17 @@ class ListProduk extends Component {
                 >
                   <i className="nc-icon nc-simple-add" /> Tambah Produk
                 </Link>
-                <CSVLink
-                  data={csvData}
-                  headers={csvHeaders}
-                  filename={"Data Produk " + nowDate + ".csv"}
-                  className="btn float-left full-btn"
-                  style={{ backgroundColor: "#232531" }}
-                >
-                  <i className="nc-icon nc-cloud-download-93" /> Download Data
-                </CSVLink>
+                {getListProdukResult ? (
+                  <CSVLink
+                    data={csvData}
+                    headers={csvHeaders}
+                    filename={"Data Produk " + nowDate + ".csv"}
+                    className="btn float-left full-btn"
+                    style={{ backgroundColor: "#232531" }}
+                  >
+                    <i className="nc-icon nc-cloud-download-93" /> Download Data
+                  </CSVLink>
+                ) : null}
               </CardHeader>
               <CardBody>
                 {getListProdukResult ? (

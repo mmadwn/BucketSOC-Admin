@@ -46,7 +46,7 @@ class ListUser extends Component {
     const { getListUserError, getListUserLoading, getListUserResult } =
       this.props;
     const { csvData, csvHeaders } = this.state;
-    const nowDate = new Date().toLocaleString('id-ID')
+    const nowDate = new Date().toLocaleString("id-ID");
     //initialize datatable
     $(document).ready(function () {
       var table = $("#datatable").DataTable({
@@ -75,15 +75,17 @@ class ListUser extends Component {
             <Card>
               <CardHeader>
                 <CardTitle tag="h4">Tabel Data User</CardTitle>
-                <CSVLink
-                  data={csvData}
-                  headers={csvHeaders}
-                  filename={"Data User " + nowDate + ".csv"}
-                  className="btn float-left full-btn"
-                  style={{ backgroundColor: "#232531" }}
-                >
-                  <i className="nc-icon nc-cloud-download-93" /> Download Data
-                </CSVLink>
+                {getListUserResult ? (
+                  <CSVLink
+                    data={csvData}
+                    headers={csvHeaders}
+                    filename={"Data User " + nowDate + ".csv"}
+                    className="btn float-left full-btn"
+                    style={{ backgroundColor: "#232531" }}
+                  >
+                    <i className="nc-icon nc-cloud-download-93" /> Download Data
+                  </CSVLink>
+                ) : null}
               </CardHeader>
               <CardBody>
                 {getListUserResult ? (
