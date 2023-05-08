@@ -47,6 +47,22 @@ const INVOICE_API_HEADER = {
   "Content-Type": "application/json",
 };
 
+app.post("/midtrans-snap", (req, res) => {
+  axios({
+    method: "POST",
+    url: MIDTRANS_API_SNAP_URL + "transactions",
+    timeout: API_TIMEOUT,
+    headers: MIDTRANS_API_HEADER,
+    data: req.body.data,
+  })
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch((error) => {
+      res.status(500).send(error.message);
+    });
+});
+
 app.post("/midtrans-status", (req, res) => {
   axios({
     method: "GET",
@@ -84,7 +100,7 @@ app.post("/midtrans-refund", (req, res) => {
     timeout: API_TIMEOUT,
     headers: MIDTRANS_API_HEADER,
     data: {
-      reason: "Selesai (Dibatalkan Penjual)",
+      reason: req.body.reason,
     },
   })
     .then((response) => {
@@ -112,6 +128,22 @@ app.post("/invoice", (req, res) => {
     })
     .catch((error) => {
       res.status(500).send(error.message);
+    });
+});
+
+app.post("/biteship-rates", (req, res) => {
+  axios({
+    method: "POST",
+    url: BITESHIP_API_URL + "rates/couriers",
+    timeout: API_TIMEOUT,
+    headers: BITESHIP_API_HEADER,
+    data: req.body.data,
+  })
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch((error) => {
+      res.status(500).send(error.response.data);
     });
 });
 

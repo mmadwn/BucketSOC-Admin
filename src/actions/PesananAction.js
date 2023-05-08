@@ -948,6 +948,7 @@ export const cancelPesanan = (pesanan) => {
           if (pesanan.url_midtrans) {
             const parameter = {
               order_id: pesanan.order_id,
+              reason: "Selesai (Dibatalkan Penjual)",
             };
 
             axios
