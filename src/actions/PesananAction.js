@@ -121,7 +121,10 @@ export const updateStatusMidtrans = (
     };
 
     axios
-      .post("http://localhost:8000/midtrans-status", parameter)
+      .post(
+        "https://us-central1-bucketsoc.cloudfunctions.net/app/midtrans-status",
+        parameter
+      )
       .then((response) => {
         if (
           response.data.transaction_status === "settlement" ||
@@ -220,7 +223,10 @@ export const updateStatusBiteship = (
     };
 
     axios
-      .post("http://localhost:8000/biteship-status", parameter)
+      .post(
+        "https://us-central1-bucketsoc.cloudfunctions.net/app/biteship-status",
+        parameter
+      )
       .then((response) => {
         if (response.status !== 200) {
           // ERROR
@@ -372,7 +378,10 @@ export const updateStatusDetailPesanan = (order_id) => {
           };
 
           axios
-            .post("http://localhost:8000/midtrans-status", parameter)
+            .post(
+              "https://us-central1-bucketsoc.cloudfunctions.net/app/midtrans-status",
+              parameter
+            )
             .then((response) => {
               if (
                 response.data.transaction_status === "settlement" ||
@@ -392,7 +401,11 @@ export const updateStatusDetailPesanan = (order_id) => {
 
                   .catch((error) => {
                     //ERROR
-                    dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                    dispatchError(
+                      dispatch,
+                      UPDATE_STATUS_DETAIL,
+                      error.message
+                    );
                     Swal.fire({
                       title: "Error",
                       text: error.message + " [1] order id : " + order_id,
@@ -420,7 +433,11 @@ export const updateStatusDetailPesanan = (order_id) => {
                   })
                   .catch((error) => {
                     //ERROR
-                    dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                    dispatchError(
+                      dispatch,
+                      UPDATE_STATUS_DETAIL,
+                      error.message
+                    );
                     Swal.fire({
                       title: "Error",
                       text: error.message + " [2] order id : " + order_id,
@@ -446,7 +463,11 @@ export const updateStatusDetailPesanan = (order_id) => {
                   })
                   .catch((error) => {
                     //ERROR
-                    dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                    dispatchError(
+                      dispatch,
+                      UPDATE_STATUS_DETAIL,
+                      error.message
+                    );
                     Swal.fire({
                       title: "Error",
                       text: error.message + " [3] order id : " + order_id,
@@ -478,7 +499,10 @@ export const updateStatusDetailPesanan = (order_id) => {
            };
 
            axios
-             .post("http://localhost:8000/biteship-status", parameter)
+             .post(
+               "https://us-central1-bucketsoc.cloudfunctions.net/app/biteship-status",
+               parameter
+             )
              .then((response) => {
                if (response.status !== 200) {
                  // ERROR
@@ -511,7 +535,11 @@ export const updateStatusDetailPesanan = (order_id) => {
                      })
                      .catch((error) => {
                        //ERROR
-                       dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                       dispatchError(
+                         dispatch,
+                         UPDATE_STATUS_DETAIL,
+                         error.message
+                       );
                        Swal.fire({
                          title: "Error",
                          text: error.message + " [6] order id : " + order_id,
@@ -540,7 +568,11 @@ export const updateStatusDetailPesanan = (order_id) => {
                      })
                      .catch((error) => {
                        //ERROR
-                       dispatchError(dispatch, UPDATE_STATUS_DETAIL, error.message);
+                       dispatchError(
+                         dispatch,
+                         UPDATE_STATUS_DETAIL,
+                         error.message
+                       );
                        Swal.fire({
                          title: "Error",
                          text: error.message + " [7] order id : " + order_id,
@@ -636,7 +668,10 @@ export const confirmOrderWithBiteship = (
     dispatchLoading(dispatch, CONFIRM_PESANAN);
 
     axios
-      .post("http://localhost:8000/biteship-order", parameter)
+      .post(
+        "https://us-central1-bucketsoc.cloudfunctions.net/app/biteship-order",
+        parameter
+      )
       .then((response) => {
         if (response.status !== 200) {
           // ERROR
@@ -752,7 +787,10 @@ export const requestBiteshipPickUp = (
     };
 
     axios
-      .post("http://localhost:8000/biteship-pickup", parameter)
+      .post(
+        "https://us-central1-bucketsoc.cloudfunctions.net/app/biteship-pickup",
+        parameter
+      )
       .then((response) => {
         if (response.status !== 200) {
           // ERROR
@@ -821,7 +859,10 @@ export const changeDeliveryDate = (
       };
 
       axios
-        .post("http://localhost:8000/biteship-update", parameter)
+        .post(
+          "https://us-central1-bucketsoc.cloudfunctions.net/app/biteship-update",
+          parameter
+        )
         .then((response) => {
           if (response.status !== 200) {
             // ERROR
@@ -952,12 +993,18 @@ export const cancelPesanan = (pesanan) => {
             };
 
             axios
-              .post("http://localhost:8000/midtrans-status", parameter)
+              .post(
+                "https://us-central1-bucketsoc.cloudfunctions.net/app/midtrans-status",
+                parameter
+              )
               .then((response) => {
                 //jika status pembayaran masih pending, batalkan pembayaran
                 if (response.data.transaction_status === "pending") {
                   axios
-                    .post("http://localhost:8000/midtrans-cancel", parameter)
+                    .post(
+                      "https://us-central1-bucketsoc.cloudfunctions.net/app/midtrans-cancel",
+                      parameter
+                    )
                     .then((response) => {
                       //Jika pembatalan pesanan berhasil
                       if (response.data.transaction_status === "cancel") {
@@ -1044,7 +1091,10 @@ export const cancelPesanan = (pesanan) => {
                 ) {
                   //Mencoba untuk melakukan refund
                   axios
-                    .post("http://localhost:8000/midtrans-refund", parameter)
+                    .post(
+                      "https://us-central1-bucketsoc.cloudfunctions.net/app/midtrans-refund",
+                      parameter
+                    )
                     .then((response) => {
                       //Jika refund berhasil
                       if (response.data.transaction_status === "refund") {
@@ -1100,7 +1150,7 @@ export const cancelPesanan = (pesanan) => {
                         title: "Error",
                         text: "Tidak dapat melakukan pengembalian dana karena pembeli tidak membayar menggunakan QRIS atau E-Wallet. Apakah ingin tetap membatalkan pesanan dengan pengembalian dana secara manual?",
                         icon: "question",
-                        width: '800px',
+                        width: "800px",
                         showCancelButton: true,
                         confirmButtonColor: "#d33",
                         cancelButtonColor: "#f69d93",
@@ -1245,11 +1295,18 @@ export const lacakPengiriman = (biteship_id) => {
     }
 
      axios
-       .post("http://localhost:8000/biteship-status", parameter)
+       .post(
+         "https://us-central1-bucketsoc.cloudfunctions.net/app/biteship-status",
+         parameter
+       )
        .then((response) => {
          if (response.status !== 200) {
            // ERROR
-           dispatchError(dispatch, LACAK_PENGIRIMAN, "Error " + response.status);
+           dispatchError(
+             dispatch,
+             LACAK_PENGIRIMAN,
+             "Error " + response.status
+           );
            Swal.fire({
              title: "Error",
              text: "Error " + biteship_id,

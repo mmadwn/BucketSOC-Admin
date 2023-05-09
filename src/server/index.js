@@ -1,3 +1,4 @@
+const functions = require("firebase-functions");
 const express = require("express");
 const cors = require("cors");
 const { default: axios } = require("axios");
@@ -18,16 +19,18 @@ const API_TIMEOUT = 120000;
 //const BITESHIP_API_KEY = "biteship_live.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQXBsaWthc2kgQW5kcm9pZCIsInVzZXJJZCI6IjYzODc5NjViNTcyNGJjMjUwODRiYTAxZSIsImlhdCI6MTY2OTgzMDM1OH0.30YPDkBaJUPHC4DIKT0Y4Q063-sIjTD0DhPOOB5GCC4";
 
 //BITESHIP TESTING
-const BITESHIP_API_KEY = "biteship_test.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdGluZyIsInVzZXJJZCI6IjYzODc5NjViNTcyNGJjMjUwODRiYTAxZSIsImlhdCI6MTY2OTgzMDQxM30.l_aayhOYhf3AM7m6_BIUT0ETNzQMsSJmCEvbJj-Whdo";
+const BITESHIP_API_KEY =
+  "biteship_test.eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdGluZyIsInVzZXJJZCI6IjYzODc5NjViNTcyNGJjMjUwODRiYTAxZSIsImlhdCI6MTY2OTgzMDQxM30.l_aayhOYhf3AM7m6_BIUT0ETNzQMsSJmCEvbJj-Whdo";
 
 const BITESHIP_API_URL = "https://api.biteship.com/v1/";
 const BITESHIP_API_HEADER = {
-  "Authorization": BITESHIP_API_KEY,
+  Authorization: BITESHIP_API_KEY,
   "Content-Type": "application/json",
 };
 
 //MIDTRANS SANDBOX
-const MIDTRANS_API_KEY = "Basic U0ItTWlkLXNlcnZlci1XV19XODdST2tGbnRKeUZlcllqN2VqY1Q=";
+const MIDTRANS_API_KEY =
+  "Basic U0ItTWlkLXNlcnZlci1XV19XODdST2tGbnRKeUZlcllqN2VqY1Q=";
 const MIDTRANS_API_SNAP_URL = "https://app.sandbox.midtrans.com/snap/v1/";
 const MIDTRANS_API_STATUS_URL = "https://api.sandbox.midtrans.com/v2/";
 
@@ -37,9 +40,9 @@ const MIDTRANS_API_STATUS_URL = "https://api.sandbox.midtrans.com/v2/";
 // const MIDTRANS_API_STATUS_URL = "https://api.midtrans.com/v2/"
 
 const MIDTRANS_API_HEADER = {
-  "Accept": "application/json",
+  Accept: "application/json",
   "Content-Type": "application/json",
-  "Authorization": MIDTRANS_API_KEY,
+  Authorization: MIDTRANS_API_KEY,
 };
 
 const INVOICE_API_URL = "https://invoice-generator.com";
@@ -68,7 +71,7 @@ app.post("/midtrans-status", (req, res) => {
     method: "GET",
     url: MIDTRANS_API_STATUS_URL + req.body.order_id + "/status",
     timeout: API_TIMEOUT,
-    headers: MIDTRANS_API_HEADER
+    headers: MIDTRANS_API_HEADER,
   })
     .then((response) => {
       res.json(response.data);
@@ -79,18 +82,18 @@ app.post("/midtrans-status", (req, res) => {
 });
 
 app.post("/midtrans-cancel", (req, res) => {
- axios({
-   method: "POST",
-   url: MIDTRANS_API_STATUS_URL + req.body.order_id + "/cancel",
-   timeout: API_TIMEOUT,
-   headers: MIDTRANS_API_HEADER,
- })
-   .then((response) => {
-     res.json(response.data);
-   })
-   .catch((error) => {
-     res.status(500).send(error.message);
-   });
+  axios({
+    method: "POST",
+    url: MIDTRANS_API_STATUS_URL + req.body.order_id + "/cancel",
+    timeout: API_TIMEOUT,
+    headers: MIDTRANS_API_HEADER,
+  })
+    .then((response) => {
+      res.json(response.data);
+    })
+    .catch((error) => {
+      res.status(500).send(error.message);
+    });
 });
 
 app.post("/midtrans-refund", (req, res) => {
@@ -223,3 +226,5 @@ app.post("/biteship-pickup", (req, res) => {
       res.status(500).send(error.response.data);
     });
 });
+
+exports.app = functions.https.onRequest(app);

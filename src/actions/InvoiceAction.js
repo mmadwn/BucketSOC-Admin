@@ -15,7 +15,7 @@ export const createInvoice = (data) => {
 
     axios({
       method: "POST",
-      url: "http://localhost:8000/invoice",
+      url: "https://us-central1-bucketsoc.cloudfunctions.net/app/invoice",
       responseType: "blob",
       data: parameter,
     })
