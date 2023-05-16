@@ -29,15 +29,15 @@ const BITESHIP_API_HEADER = {
 };
 
 //MIDTRANS SANDBOX
-const MIDTRANS_API_KEY =
-  "Basic U0ItTWlkLXNlcnZlci1XV19XODdST2tGbnRKeUZlcllqN2VqY1Q=";
+const MIDTRANS_API_KEY = "Basic U0ItTWlkLXNlcnZlci1XV19XODdST2tGbnRKeUZlcllqN2VqY1Q=";
 const MIDTRANS_API_SNAP_URL = "https://app.sandbox.midtrans.com/snap/v1/";
 const MIDTRANS_API_STATUS_URL = "https://api.sandbox.midtrans.com/v2/";
 
 //MIDTRANS PRODUCTION
-// const MIDTRANS_API_KEY = 'Basic TWlkLXNlcnZlci1TYXo3dVhYcGdFM1VzNGNQU2JWUFlKWWY=';
-// const MIDTRANS_API_SNAP_URL = "https://app.midtrans.com/snap/v1/"
-// const MIDTRANS_API_STATUS_URL = "https://api.midtrans.com/v2/"
+//const MIDTRANS_API_KEY = "Basic TWlkLXNlcnZlci1WWEVpVXZpbVlsSG81VUlkbnhHdGZUMkM=";
+//const MIDTRANS_API_KEY = "Basic TWlkLXNlcnZlci1TYXo3dVhYcGdFM1VzNGNQU2JWUFlKWWY=;
+//const MIDTRANS_API_SNAP_URL = "https://app.midtrans.com/snap/v1/";
+//const MIDTRANS_API_STATUS_URL = "https://api.midtrans.com/v2/";
 
 const MIDTRANS_API_HEADER = {
   Accept: "application/json",
