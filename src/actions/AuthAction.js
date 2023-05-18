@@ -33,7 +33,7 @@ export const loginUser = (email, password) => {
                 //Simpan data user ke localstorage dari database
                 window.localStorage.setItem(
                   "user",
-                  JSON.stringify(response.user)
+                  JSON.stringify(Profile[0])
                 );
                 dispatchSuccess(dispatch, LOGIN_USER, Profile[0]);
               })
