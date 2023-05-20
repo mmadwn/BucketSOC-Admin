@@ -17,7 +17,7 @@
 
 */
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
@@ -36,7 +36,7 @@ function Sidebar(props) {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(sidebar.current, {
         suppressScrollX: true,
-        suppressScrollY: false
+        suppressScrollY: false,
       });
     }
     return function cleanup() {
@@ -52,20 +52,14 @@ function Sidebar(props) {
       data-active-color={props.activeColor}
     >
       <div className="logo">
-        <a
-          href="http://localhost:3000/admin/dashboard"
-          className="simple-text logo-mini"
-        >
+        <Link to="/admin/dashboard" className="simple-text logo-mini">
           <div className="logo-img">
             <img src={logo} alt="react-logo" />
           </div>
-        </a>
-        <a
-          href="http://localhost:3000/admin/dashboard"
-          className="simple-text logo-normal"
-        >
+        </Link>
+        <Link to="/admin/dashboard" className="simple-text logo-normal">
           Bucket SOC
-        </a>
+        </Link>
       </div>
       <div className="sidebar-wrapper" ref={sidebar}>
         <Nav>
