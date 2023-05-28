@@ -53,7 +53,6 @@ class DetailPesanan extends Component {
       date: new Date().toLocaleString("id-ID"),
       DateTimeModal: false,
       ShippingModal: false,
-      tracking: false,
       selectedDate: "",
       selectedTime: "",
       tanggalBaruDatabase: "",
@@ -102,7 +101,6 @@ class DetailPesanan extends Component {
       finishPesananResult,
       cancelPesananResult,
       siapDiambilResult,
-      lacakPengirimanResult,
     } = this.props;
 
     if (
@@ -220,16 +218,6 @@ class DetailPesanan extends Component {
         confirmButtonText: "OK",
       }).then(() => {
         window.location.reload();
-      });
-    }
-
-    if (
-      lacakPengirimanResult &&
-      prevProps.lacakPengirimanResult !== lacakPengirimanResult
-    ) {
-      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
-      this.setState({
-        tracking: lacakPengirimanResult,
       });
     }
   }
@@ -708,7 +696,7 @@ class DetailPesanan extends Component {
   };
 
   render() {
-    const { DateTimeModal, ShippingModal, id, tracking } = this.state;
+    const { DateTimeModal, ShippingModal, id } = this.state;
     const {
       getDetailPesananResult,
       getDetailPesananLoading,
@@ -716,6 +704,8 @@ class DetailPesanan extends Component {
       createInvoiceLoading,
       confirmPesananLoading,
       requestPickUpLoading,
+      lacakPengirimanLoading,
+      lacakPengirimanResult,
       changeDeliveryDateLoading,
       finishPesananLoading,
       cancelPesananLoading,
@@ -1494,7 +1484,7 @@ class DetailPesanan extends Component {
               overflowY: "auto",
             }}
           >
-            {tracking ? (
+            {lacakPengirimanResult ? (
               <div>
                 <div>
                   <FormGroup>
@@ -1513,7 +1503,7 @@ class DetailPesanan extends Component {
                           }}
                           className="status"
                         >
-                          {tracking.status}
+                          {lacakPengirimanResult.status}
                         </Label>
                       </Col>
                     </Row>
@@ -1530,7 +1520,7 @@ class DetailPesanan extends Component {
                             textTransform: "uppercase",
                           }}
                         >
-                          {tracking.id}
+                          {lacakPengirimanResult.id}
                         </Label>
                       </Col>
                     </Row>
@@ -1542,7 +1532,7 @@ class DetailPesanan extends Component {
                       </Col>
                       <Col>
                         <Label style={{ marginBottom: 0 }}>
-                          {tracking.courier.company === "grab"
+                          {lacakPengirimanResult.courier.company === "grab"
                             ? "GrabExpress Instant"
                             : "GoSend Instant"}
                         </Label>
@@ -1559,7 +1549,7 @@ class DetailPesanan extends Component {
                       </Col>
                       <Col>
                         <Label style={{ marginBottom: 0 }}>
-                          {tracking.courier.waybill_id}
+                          {lacakPengirimanResult.courier.waybill_id}
                         </Label>
                       </Col>
                     </Row>
@@ -1571,7 +1561,7 @@ class DetailPesanan extends Component {
                       </Col>
                       <Col>
                         <Label style={{ marginBottom: 0 }}>
-                          {tracking.courier.name}
+                          {lacakPengirimanResult.courier.name}
                         </Label>
                       </Col>
                     </Row>
@@ -1583,15 +1573,15 @@ class DetailPesanan extends Component {
                       </Col>
                       <Col>
                         <Label style={{ marginBottom: 0 }}>
-                          {tracking.courier.phone}
+                          {lacakPengirimanResult.courier.phone}
                         </Label>
                       </Col>
                     </Row>
                   </FormGroup>
-                  {tracking.courier.link ? (
+                  {lacakPengirimanResult.courier.link ? (
                     <FormGroup>
                       <a
-                        href={tracking.courier.link}
+                        href={lacakPengirimanResult.courier.link}
                         target="_blank"
                         rel="noreferrer"
                         style={{
@@ -1607,100 +1597,107 @@ class DetailPesanan extends Component {
                   ) : null}
                 </div>
                 <hr />
-                {tracking.courier.history.reverse().map((list, index) => {
-                  return (
-                    <div
-                      key={index}
-                      style={{
-                        flexDirection: "row",
-                        display: "flex",
-                        marginBottom: "10px",
-                      }}
-                    >
+                {lacakPengirimanResult.courier.history
+                  .reverse()
+                  .map((list, index) => {
+                    return (
                       <div
+                        key={index}
                         style={{
-                          width: "14px",
-                          marginRight: "10px",
+                          flexDirection: "row",
                           display: "flex",
-                          justifyContent: "center",
+                          marginBottom: "10px",
                         }}
                       >
                         <div
                           style={{
-                            backgroundColor: "#f69d93",
-                            width: "1.5px",
-                            height:
-                              (index === 0 &&
-                                tracking.courier.history.length !== 1) ||
-                              (index === tracking.courier.history.length - 1 &&
-                                tracking.courier.history.length !== 1)
-                                ? 28
-                                : index === 0 &&
-                                  tracking.courier.history.length === 1
-                                ? 0
-                                : 80,
-                            position: "absolute",
-                            marginTop: index === 0 ? 27 : 0,
-                          }}
-                        />
-                        <div
-                          style={{
-                            backgroundColor: "#f69d93",
-                            borderRadius: "1000px",
                             width: "14px",
-                            height: "13px",
-                            alignSelf: "center",
-                          }}
-                        />
-                      </div>
-                      <div style={{ width: "100%" }}>
-                        <div style={{ flexDirection: "row" }}>
-                          <Label
-                            style={{
-                              fontSize: "15px",
-                              fontWeight: "bold",
-                              color: "#f69d93",
-                              width: "50%",
-                              textTransform: "capitalize",
-                              marginBottom: 0,
-                            }}
-                          >
-                            {list.status}
-                          </Label>
-                          <Label
-                            style={{
-                              fontSize: "13px",
-                              textAlign: "right",
-                              width: "50%",
-                              marginBottom: 0,
-                            }}
-                          >
-                            {list.updated_at.substring(8, 10) +
-                              "-" +
-                              list.updated_at.substring(5, 7) +
-                              "-" +
-                              list.updated_at.substring(0, 4) +
-                              " " +
-                              list.updated_at.substring(11, 13) +
-                              "." +
-                              list.updated_at.substring(14, 16)}
-                          </Label>
-                        </div>
-                        <Label
-                          style={{
-                            fontSize: "14px",
-                            textAlign: "justify",
-                            marginBottom: "0px",
+                            marginRight: "10px",
+                            display: "flex",
+                            justifyContent: "center",
                           }}
                         >
-                          {list.note}
-                        </Label>
+                          <div
+                            style={{
+                              backgroundColor: "#f69d93",
+                              width: "1.5px",
+                              height:
+                                (index === 0 &&
+                                  lacakPengirimanResult.courier.history
+                                    .length !== 1) ||
+                                (index ===
+                                  lacakPengirimanResult.courier.history.length -
+                                    1 &&
+                                  lacakPengirimanResult.courier.history
+                                    .length !== 1)
+                                  ? 28
+                                  : index === 0 &&
+                                    lacakPengirimanResult.courier.history
+                                      .length === 1
+                                  ? 0
+                                  : 80,
+                              position: "absolute",
+                              marginTop: index === 0 ? 27 : 0,
+                            }}
+                          />
+                          <div
+                            style={{
+                              backgroundColor: "#f69d93",
+                              borderRadius: "1000px",
+                              width: "14px",
+                              height: "13px",
+                              alignSelf: "center",
+                            }}
+                          />
+                        </div>
+                        <div style={{ width: "100%" }}>
+                          <div style={{ flexDirection: "row" }}>
+                            <Label
+                              style={{
+                                fontSize: "15px",
+                                fontWeight: "bold",
+                                color: "#f69d93",
+                                width: "50%",
+                                textTransform: "capitalize",
+                                marginBottom: 0,
+                              }}
+                            >
+                              {list.status}
+                            </Label>
+                            <Label
+                              style={{
+                                fontSize: "13px",
+                                textAlign: "right",
+                                width: "50%",
+                                marginBottom: 0,
+                              }}
+                            >
+                              {list.updated_at.substring(8, 10) +
+                                "-" +
+                                list.updated_at.substring(5, 7) +
+                                "-" +
+                                list.updated_at.substring(0, 4) +
+                                " " +
+                                list.updated_at.substring(11, 13) +
+                                "." +
+                                list.updated_at.substring(14, 16)}
+                            </Label>
+                          </div>
+                          <Label
+                            style={{
+                              fontSize: "14px",
+                              textAlign: "justify",
+                              marginBottom: "0px",
+                            }}
+                          >
+                            {list.note}
+                          </Label>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
-            ) : (
+            ) : lacakPengirimanLoading ? (
               <div
                 style={{
                   justifyContent: "center",
@@ -1711,7 +1708,7 @@ class DetailPesanan extends Component {
               >
                 <Spinner color="primary" />
               </div>
-            )}
+            ) : null}
           </ModalBody>
         </Modal>
       </div>
