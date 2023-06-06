@@ -1,8 +1,6 @@
 import {
   GET_LIST_PESANAN,
-  UPDATE_STATUS,
   GET_DETAIL_PESANAN,
-  UPDATE_STATUS_DETAIL,
   CONFIRM_PESANAN,
   REQUEST_PICK_UP,
   CHANGE_DELIVERY_DATE,
@@ -17,17 +15,9 @@ const initialState = {
   getListPesananResult: false,
   getListPesananError: false,
 
-  updateStatusLoading: false,
-  updateStatusResult: false,
-  updateStatusError: false,
-
   getDetailPesananLoading: false,
   getDetailPesananResult: false,
   getDetailPesananError: false,
-
-  updateStatusDetailLoading: false,
-  updateStatusDetailResult: false,
-  updateStatusDetailError: false,
 
   confirmPesananLoading: false,
   confirmPesananResult: false,
@@ -68,28 +58,12 @@ export default function (state = initialState, action) {
         getListPesananError: action.payload.errorMessage,
       };
 
-    case UPDATE_STATUS:
-      return {
-        ...state,
-        updateStatusLoading: action.payload.loading,
-        updateStatusResult: action.payload.data,
-        updateStatusError: action.payload.errorMessage,
-      };
-
     case GET_DETAIL_PESANAN:
       return {
         ...state,
         getDetailPesananLoading: action.payload.loading,
         getDetailPesananResult: action.payload.data,
         getDetailPesananError: action.payload.errorMessage,
-      };
-
-    case UPDATE_STATUS_DETAIL:
-      return {
-        ...state,
-        updateStatusDetailLoading: action.payload.loading,
-        updateStatusDetailResult: action.payload.data,
-        updateStatusDetailError: action.payload.errorMessage,
       };
 
     case CONFIRM_PESANAN:

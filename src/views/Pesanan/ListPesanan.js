@@ -16,7 +16,6 @@ import {
 import $ from "jquery";
 import { getListPesanan } from "actions/PesananAction";
 import Item from "components/Item";
-import { updateStatus } from "actions/PesananAction";
 import { CSVLink } from "react-csv";
 
 class ListPesanan extends Component {
@@ -34,19 +33,11 @@ class ListPesanan extends Component {
 
   componentDidMount() {
     document.title = "Data Pesanan - Sistem Informasi Admin Bucket SOC";
-    this.props.dispatch(updateStatus());
+    this.props.dispatch(getListPesanan());
   }
 
   componentDidUpdate(prevProps) {
-    const { updateStatusResult, getListPesananResult } = this.props;
-    if (
-      updateStatusResult &&
-      prevProps.updateStatusResult !== updateStatusResult
-    ) {
-      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
-      this.props.dispatch(getListPesanan());
-    }
-
+    const { getListPesananResult } = this.props;
     if (
       getListPesananResult &&
       prevProps.getListPesananResult !== getListPesananResult
@@ -567,10 +558,6 @@ const mapStateToProps = (state) => ({
   getListPesananLoading: state.PesananReducer.getListPesananLoading,
   getListPesananResult: state.PesananReducer.getListPesananResult,
   getListPesananError: state.PesananReducer.getListPesananError,
-
-  updateStatusLoading: state.PesananReducer.updateStatusLoading,
-  updateStatusResult: state.PesananReducer.updateStatusResult,
-  updateStatusError: state.PesananReducer.updateStatusError,
 });
 
 export default connect(mapStateToProps, null)(ListPesanan);

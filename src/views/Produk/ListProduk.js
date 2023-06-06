@@ -225,7 +225,7 @@ class ListProduk extends Component {
                               >
                                 <img
                                   src={getListProdukResult[key].gambar[0]}
-                                  alt={getListProdukResult[key].nama}
+                                  alt={""}
                                   width="80px"
                                   height="80px"
                                 />

@@ -42,7 +42,6 @@ import { cancelPesanan } from "actions/PesananAction";
 import { confirmOrderNoBiteship } from "actions/PesananAction";
 import { siapDiambil } from "actions/PesananAction";
 import { lacakPengiriman } from "actions/PesananAction";
-import { updateStatusDetailPesanan } from "actions/PesananAction";
 
 class DetailPesanan extends Component {
   constructor(props) {
@@ -86,14 +85,13 @@ class DetailPesanan extends Component {
   componentDidMount() {
     const {dispatch} = this.props;
     document.title = "Detail Pesanan " + this.props.match.params.id + " - Sistem Informasi Admin Bucket SOC";
-    dispatch(updateStatusDetailPesanan(this.props.match.params.id));
+    dispatch(getDetailPesanan(this.props.match.params.id));
   }
 
   //Jika proses tambah kategori ke firebse database berhasil
   componentDidUpdate(prevProps) {
     const {
       dispatch,
-      updateStatusDetailResult,
       getDetailPesananResult,
       confirmPesananResult,
       requestPickUpResult,
@@ -102,14 +100,6 @@ class DetailPesanan extends Component {
       cancelPesananResult,
       siapDiambilResult,
     } = this.props;
-
-    if (
-      updateStatusDetailResult &&
-      prevProps.updateStatusDetailResult !== updateStatusDetailResult
-    ) {
-      //jika nilainya true && nilai sebelumnya tidak sama dengan yang baru
-      dispatch(getDetailPesanan(this.props.match.params.id));
-    }
 
     if (
       getDetailPesananResult &&
@@ -1717,10 +1707,6 @@ class DetailPesanan extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  updateStatusDetailLoading: state.PesananReducer.updateStatusDetailLoading,
-  updateStatusDetailResult: state.PesananReducer.updateStatusDetailResult,
-  updateStatusDetailError: state.PesananReducer.updateStatusDetailError,
-
   getDetailPesananLoading: state.PesananReducer.getDetailPesananLoading,
   getDetailPesananResult: state.PesananReducer.getDetailPesananResult,
   getDetailPesananError: state.PesananReducer.getDetailPesananError,

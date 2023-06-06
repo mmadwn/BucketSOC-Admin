@@ -24,7 +24,7 @@ export default class Item extends Component {
                   width="60px"
                   height="60px"
                   src={item[key].produk.gambar[0]}
-                  alt={"Not Found"}
+                  alt={""}
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "https://i.ibb.co/LxRv167/default-image.jpg";
