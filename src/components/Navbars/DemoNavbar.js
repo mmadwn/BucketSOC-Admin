@@ -1,7 +1,7 @@
 import { logoutUser } from "actions/AuthAction";
 import React from "react";
 import { connect } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   Collapse,
   Navbar,
@@ -128,8 +128,8 @@ function Header(props) {
               </DropdownToggle>
               <DropdownMenu right>
                 <DropdownItem
-                  tag="a"
-                  href={user ? "/admin/profile/edit/" + user.uid : null}
+                  tag={Link}
+                  to={user ? "/admin/profile/edit/" + user.uid : null}
                 >
                   Edit Profile
                 </DropdownItem>
