@@ -1,25 +1,8 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.3.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/main/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React from "react";
-// javascript plugin used to create scrollbars on windows
+import React, { Component } from "react";
 import PerfectScrollbar from "perfect-scrollbar";
 import { Route, Switch, useLocation } from "react-router-dom";
+import { connect } from "react-redux";
+import { checkLogin } from "actions/AuthAction";
 
 import DemoNavbar from "components/Navbars/DemoNavbar.js";
 import Footer from "components/Footer/Footer.js";
@@ -27,77 +10,121 @@ import Sidebar from "components/Sidebar/Sidebar.js";
 import FixedPlugin from "components/FixedPlugin/FixedPlugin.js";
 
 import routes from "routes.js";
-import { connect } from "react-redux";
-import { checkLogin } from "actions/AuthAction";
+import { Spinner } from "reactstrap";
 
-var ps;
+let ps;
 
-function Dashboard(props) {
-  const [backgroundColor, setBackgroundColor] = React.useState("black");
-  const [activeColor, setActiveColor] = React.useState("info");
-  const mainPanel = React.useRef();
-  const location = useLocation();
-  React.useEffect(() => {
+class Dashboard extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      backgroundColor: "black",
+      activeColor: "info",
+    };
+    this.mainPanel = React.createRef();
+  }
+
+  componentDidMount() {
+    const { mainPanel } = this;
+    const { location, dispatch, history } = this.props;
+
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(mainPanel.current);
       document.body.classList.toggle("perfect-scrollbar-on");
     }
-    return function cleanup() {
-      if (navigator.platform.indexOf("Win") > -1) {
-        ps.destroy();
-        document.body.classList.toggle("perfect-scrollbar-on");
-      }
-    };
-  });
-  React.useEffect(() => {
-    props.dispatch(checkLogin(props.history));
+
+    if (!window.localStorage.getItem("user")) {
+      history.push({ pathname: "/login" });
+    }
+
+    dispatch(checkLogin(history));
+
     mainPanel.current.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
-  }, [location]);
-  const handleActiveClick = (color) => {
-    setActiveColor(color);
-  };
-  const handleBgClick = (color) => {
-    setBackgroundColor(color);
-  };
-
-  //Redirect ke login jika data di localstorage tidak ada
-  if (!window.localStorage.getItem("user")) {
-    props.history.push({ pathname: "/login" });
   }
 
-  return (
-    <div className="wrapper">
-      <Sidebar
-        {...props}
-        routes={routes}
-        bgColor={backgroundColor}
-        activeColor={activeColor}
-      />
-      <div className="main-panel" ref={mainPanel}>
-        <DemoNavbar {...props} />
-        <Switch>
-          {routes.map((prop, key) => {
-            return (
-              <Route
-                path={prop.layout + prop.path}
-                component={prop.component}
-                key={key}
-                exact
-              />
-            );
-          })}
-        </Switch>
-        <Footer fluid />
+  //Jika proses tambah Banner ke firebse database berhasil
+  componentDidUpdate(prevProps) {
+    const { checkLoginResult } = this.props;
+    if (checkLoginResult && prevProps.checkLoginResult !== checkLoginResult) {
+      this.setState({
+        login: true,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    if (navigator.platform.indexOf("Win") > -1) {
+      ps.destroy();
+      document.body.classList.toggle("perfect-scrollbar-on");
+    }
+  }
+
+  handleActiveClick = (color) => {
+    this.setState({ activeColor: color });
+  };
+
+  handleBgClick = (color) => {
+    this.setState({ backgroundColor: color });
+  };
+
+  render() {
+    const { backgroundColor, activeColor } = this.state;
+    const { history, checkLoginLoading, checkLoginResult } = this.props;
+
+    return (
+      <div className="wrapper">
+        <Sidebar
+          {...this.props}
+          routes={routes}
+          bgColor={backgroundColor}
+          activeColor={activeColor}
+        />
+        <div className="main-panel" ref={this.mainPanel}>
+          <DemoNavbar {...this.props} />
+          {checkLoginResult ? (
+            <>
+              <Switch>
+                {routes.map((prop, key) => {
+                  return (
+                    <Route
+                      path={prop.layout + prop.path}
+                      component={prop.component}
+                      key={key}
+                      exact
+                    />
+                  );
+                })}
+              </Switch>
+              <Footer fluid />
+            </>
+          ) : checkLoginLoading ? (
+            <div
+              style={{
+                justifyContent: "center",
+                display: "flex",
+                height: "100%",
+              }}
+            >
+              <Spinner color="primary" style={{ alignSelf: "center" }} />
+            </div>
+          ) : null}
+        </div>
+        <FixedPlugin
+          bgColor={backgroundColor}
+          activeColor={activeColor}
+          handleActiveClick={this.handleActiveClick}
+          handleBgClick={this.handleBgClick}
+        />
       </div>
-      <FixedPlugin
-        bgColor={backgroundColor}
-        activeColor={activeColor}
-        handleActiveClick={handleActiveClick}
-        handleBgClick={handleBgClick}
-      />
-    </div>
-  );
+    );
+  }
 }
 
-export default connect()(Dashboard);
+const mapStateToProps = (state) => ({
+  checkLoginLoading: state.AuthReducer.checkLoginLoading,
+  checkLoginResult: state.AuthReducer.checkLoginResult,
+  checkLoginError: state.AuthReducer.checkLoginError,
+});
+
+export default connect(mapStateToProps, null)(Dashboard);

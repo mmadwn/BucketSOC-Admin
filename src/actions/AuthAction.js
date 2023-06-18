@@ -31,10 +31,7 @@ export const loginUser = (email, password) => {
               .then((response) => {
                 // Signed in
                 //Simpan data user ke localstorage dari database
-                window.localStorage.setItem(
-                  "user",
-                  JSON.stringify(Profile[0])
-                );
+                window.localStorage.setItem("user", JSON.stringify(Profile[0]));
                 dispatchSuccess(dispatch, LOGIN_USER, Profile[0]);
               })
               .catch((error) => {
@@ -137,6 +134,22 @@ export const checkLogin = (history) => {
                   dispatch(checkTime(data, history));
                 } else {
                   // No user is signed in.
+                  const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.addEventListener("mouseenter", Swal.stopTimer);
+                      toast.addEventListener("mouseleave", Swal.resumeTimer);
+                    },
+                  });
+
+                  Toast.fire({
+                    icon: "error",
+                    title: "Anda belum login!",
+                  });
                   localStorage.clear();
                   dispatchError(dispatch, CHECK_LOGIN, "Anda belum login!");
                   history.push({ pathname: "/login" });
@@ -144,31 +157,48 @@ export const checkLogin = (history) => {
               });
             } else {
               //ERROR jika bukan admin
+              const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.addEventListener("mouseenter", Swal.stopTimer);
+                  toast.addEventListener("mouseleave", Swal.resumeTimer);
+                },
+              });
+
+              Toast.fire({
+                icon: "error",
+                title: "Anda belum login!",
+              });
               localStorage.clear();
               dispatchError(dispatch, CHECK_LOGIN, "Anda bukan Admin!");
-              Swal.fire({
-                title: "Error",
-                text: "Anda bukan Admin!",
-                icon: "error",
-                confirmButtonColor: "#f69d93",
-                confirmButtonText: "OK",
-              }).then(() => {
-                history.push({ pathname: "/login" });
-              });
+              history.push({ pathname: "/login" });
+              
             }
           } else {
             //ERROR jika akun tidak ditemukan di database
+            const Toast = Swal.mixin({
+              toast: true,
+              position: "top-end",
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+              didOpen: (toast) => {
+                toast.addEventListener("mouseenter", Swal.stopTimer);
+                toast.addEventListener("mouseleave", Swal.resumeTimer);
+              },
+            });
+
+            Toast.fire({
+              icon: "error",
+              title: "Anda belum login!",
+            });
             localStorage.clear();
             dispatchError(dispatch, CHECK_LOGIN, "Akun tidak terdaftar!");
-            Swal.fire({
-              title: "Error",
-              text: "Akun tidak terdaftar!",
-              icon: "error",
-              confirmButtonColor: "#f69d93",
-              confirmButtonText: "OK",
-            }).then(() => {
-              history.push({ pathname: "/login" });
-            });
+            history.push({ pathname: "/login" });
           }
         },
         {
@@ -183,6 +213,8 @@ export const checkLogin = (history) => {
             icon: "error",
             confirmButtonColor: "#f69d93",
             confirmButtonText: "OK",
+          }).then(() => {
+            history.push({ pathname: "/login" });
           });
         }
       );
@@ -208,16 +240,24 @@ export const checkTime = (data, history) => {
     } else {
       //Jika waktu login sudah lebih dari 48 jam
       if (now - setupTime > hours * 60 * 60 * 1000) {
-        signOut(getAuth()).then((response) => {
-          localStorage.clear();
-          history.push({ pathname: "/login" });
+        Swal.fire({
+          title: "Alert",
+          text: "Sesi Anda telah habis. Silakan login kembali!",
+          icon: "error",
+          confirmButtonColor: "#f69d93",
+          confirmButtonText: "OK",
+        }).then(() => {
+          signOut(getAuth()).then((response) => {
+            localStorage.clear();
+            history.push({ pathname: "/login" });
+          });
         });
       } else {
         //SUKSES
         dispatchSuccess(dispatch, CHECK_LOGIN, data);
       }
     }
-  }
+  };
 };
 
 export const logoutUser = (history) => {
